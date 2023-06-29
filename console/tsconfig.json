@@ -2,6 +2,14 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@juice-js/tenants": [
+        "dist/juice-js/tenants"
+      ],
+      "@juice/tenants": [
+        "dist/juice/tenants"
+      ]
+    },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

@@ -1,0 +1,45 @@
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{ 'Create new organization' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="padding-top: 10px;">
+        <mat-form-field>
+            <mat-label>{{ 'Identifier' | translate }}</mat-label>
+            <input matInput [formControl]="identifierFormControl" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="identifierFormControl.hasError('required')">
+                {{ 'Please enter an identifier' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>{{ 'Organization name' | translate }}</mat-label>
+            <input matInput [formControl]="nameFormControl" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="nameFormControl.hasError('required')">
+                {{ 'Please enter a name' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>{{ 'Admin user' | translate }}</mat-label>
+            <input matInput [(ngModel)]="model.adminUser">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>{{ 'Admin email' | translate }}</mat-label>
+            <input matInput [formControl]="emailFormControl" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                {{ 'Please enter a valid email address' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>{{ 'DB connection' | translate }}</mat-label>
+            <input matInput [(ngModel)]="model.connectionString">
+        </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="submit()" [disabled]="createForm.invalid"><mat-icon>save</mat-icon>{{ 'Submit' | translate }}</button>
+        <button mat-raised-button (click)="cancel()"><mat-icon>cancel</mat-icon>{{ 'Cancel' | translate }}</button>
+    </mat-card-actions>
+</mat-card>

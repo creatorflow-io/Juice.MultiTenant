@@ -1,0 +1,10 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ confirmTitle | translate }}</mat-card-title>
+      <mat-card-subtitle [class]="confirmMessageClasses">{{ confirmMessage | translate }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions align="end">
+      <button mat-button (click)="confirm()" [color]="confirmButtonColor">{{ confirmButtonText | translate }}</button>
+      <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
+    </mat-card-actions>
+  </mat-card>

@@ -1,0 +1,51 @@
+:host{
+    display: block;
+}
+mat-form-field{
+    width: 100%;
+}
+.mat-mdc-button-base {
+    margin: 0 8px 8px 0;
+  }
+
+.additional-selection{
+    opacity: 0.75;
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+.clear-statuses{
+    padding: 10px;
+    cursor: pointer;
+}
+
+.button-cell{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    button{
+        margin: 6px;
+    }
+}
+
+.actions-cell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button{
+        margin: 6px;
+    }
+}
+
+.table-form{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    mat-card-actions{
+        flex: 1 1 auto;
+    }
+}
+
+.mat-mdc-menu-item{
+    min-height: 38px;
+}

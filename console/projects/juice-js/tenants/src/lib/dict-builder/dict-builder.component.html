@@ -1,0 +1,43 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{ title | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="padding-top: 10px;">
+        <mat-form-field *ngFor="let kvp of models">
+            <mat-label>{{ kvp.key }}</mat-label>
+            <input matInput *ngIf="isEditing(kvp.key)" [(ngModel)]="editKeyModel" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="keyExists(editKeyModel)">
+                {{ 'This key is already existed' | translate }}
+            </mat-error>
+
+            <button *ngIf="isEditing(kvp.key) && kvp.key!=editKeyModel" matSuffix mat-icon-button matTooltip="{{ 'Restore key' | translate}}" (click)="cancelEditKey()">
+                <mat-icon>restore</mat-icon>
+            </button>
+            <button *ngIf="isEditing(kvp.key) && !keyExists(editKeyModel)" matSuffix mat-icon-button matTooltip="{{ 'Update key' | translate}}" (click)="updateKey(kvp.key)">
+                <mat-icon>save</mat-icon>
+            </button>
+
+            <input matInput  *ngIf="!isEditing(kvp.key)"  [(ngModel)]="kvp.value">
+            
+            <button *ngIf="!isEditing(kvp.key)" matSuffix mat-icon-button matTooltip="{{ 'Edit key' | translate}}" (click)="editKey(kvp.key)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button *ngIf="!isEditing(kvp.key) && kvp.value!=model[kvp.key]" matSuffix mat-icon-button matTooltip="{{ 'Update value' | translate}}" (click)="updateValue(kvp.key)">
+                <mat-icon>save</mat-icon>
+            </button>
+            <button *ngIf="kvp.value && !isEditing(kvp.key)" matSuffix mat-icon-button matTooltip="{{ 'Clear value' | translate}}" (click)="clear(kvp.key)">
+                <mat-icon>close</mat-icon>
+            </button>
+            <button matSuffix mat-icon-button matTooltip="{{ 'Remove key-value' | translate}}" color="warn" (click)="remove(kvp.key)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-form-field>
+        <button mat-icon-button matTooltip="{{ 'Add new key' | translate }}" (click)="add()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="save()"><mat-icon>save</mat-icon>{{ 'Save' | translate }}</button>
+        <button mat-raised-button (click)="cancel()"><mat-icon>cancel</mat-icon>{{ 'Cancel' | translate }}</button>
+    </mat-card-actions>
+</mat-card>

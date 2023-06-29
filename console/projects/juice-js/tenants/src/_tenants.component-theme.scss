@@ -1,0 +1,44 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($theme){
+    // Get the color config from the theme.
+    $color-config: mat.get-color-config($theme);
+    // Get the primary color palette from the color-config.
+    $primary-palette: map.get($color-config, 'primary');
+    $accent-palette: map.get($color-config, 'accent');
+    $warn-palette: map.get($color-config, 'warn');
+    $green-palette: mat.define-palette(mat.$green-palette, 500, 300, 700);
+    .accent-color {
+        color: mat.get-color-from-palette($accent-palette, 'darker') !important;
+        .mdc-list-item__primary-text{
+            color: mat.get-color-from-palette($accent-palette, 'darker') !important;
+        }
+    }
+    
+    .warn-color {
+        color: mat.get-color-from-palette($warn-palette, 'darker') !important;
+        .mdc-list-item__primary-text{
+            color: mat.get-color-from-palette($warn-palette, 'darker') !important;
+        }
+    }    
+
+    .success-color, .mat-success.mat-mdc-button:not(:disabled){
+        color: mat.get-color-from-palette($green-palette, 'darker') !important;
+        .mdc-list-item__primary-text{
+            color: mat.get-color-from-palette($green-palette, 'darker') !important;
+        }
+    }
+
+    .accent-bg {
+        background-color: mat.get-color-from-palette($accent-palette, 'lighter') !important;
+    }
+    
+    .warn-bg {
+        background-color: mat.get-color-from-palette($warn-palette, 'lighter') !important;
+    }    
+
+    .success-bg{
+        background-color: mat.get-color-from-palette($green-palette, 'lighter') !important;
+    }
+}
