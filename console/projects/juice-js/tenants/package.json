@@ -2,6 +2,12 @@
   "name": "@juice-js/tenants",
   "version": "1.0.1",
   "description": "Juice tenants admin module",
+  "author": "jack@creatorflow.io",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/creatorflow-io/juice-tenants/issues"
+  },
+  "homepage": "https://github.com/creatorflow-io/juice-tenants#readme",
   "peerDependencies": {
     "@angular/common": "^16.1.1",
     "@angular/core": "^16.1.1",
