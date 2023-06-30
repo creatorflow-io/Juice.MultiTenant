@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TenantService } from './tenant.service';
+import { TenantAdminService } from './tenant-admin.service';
 import { HttpClientModule } from '@angular/common/http';
-import { ApiConfiguration } from '../api-configuration';
+import { TenantConfiguration } from '../tenant-configuration';
 
 describe('TenantsService', () => {
-  let service: TenantService;
+  let service: TenantAdminService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -14,12 +14,12 @@ describe('TenantsService', () => {
       ],
       providers: [
         {
-          provide: ApiConfiguration,
+          provide: TenantConfiguration,
           useValue: {}
         }
       ]
     });
-    service = TestBed.inject(TenantService);
+    service = TestBed.inject(TenantAdminService);
   });
 
   it('should be created', () => {

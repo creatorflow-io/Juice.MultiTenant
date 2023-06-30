@@ -4,12 +4,11 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core'
 import { TenantsComponent } from './tenants.component';
 import { TenantDetailComponent } from './tenant-detail/tenant-detail.component';
-import { TenantService } from './shared/services/tenant.service';
-import { ApiConfiguration, ApiConfigurationParams } from './shared/api-configuration';
+import { TenantAdminService } from './shared/services/tenant-admin.service';
+import { TenantConfiguration, TenantConfigurationParams } from './shared/tenant-configuration';
 import { MaterialModule } from './shared/material.module';
 import { TenantSummaryComponent } from './tenant-summary/tenant-summary.component';
 import { TenantCreateComponent } from './tenant-create/tenant-create.component';
-import { DictBuilderComponent } from './dict-builder/dict-builder.component';
 import { TenantUpdateComponent } from './tenant-update/tenant-update.component';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatMultiSortModule } from 'ngx-mat-multi-sort';
@@ -22,7 +21,6 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     TenantDetailComponent,
     TenantSummaryComponent,
     TenantCreateComponent,
-    DictBuilderComponent,
     TenantUpdateComponent,
     ConfirmDialogComponent
   ],
@@ -41,20 +39,19 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     TenantSummaryComponent,
     TenantCreateComponent,
     TenantUpdateComponent,
-    DictBuilderComponent,
     TranslateModule
   ]
 })
 export class TenantsModule { 
 
-  public static forRoot(environment: ApiConfigurationParams): ModuleWithProviders<TenantsModule> {
+  public static forRoot(environment: TenantConfigurationParams): ModuleWithProviders<TenantsModule> {
 
     return {
         ngModule: TenantsModule,
         providers: [
-            TenantService,
+            TenantAdminService,
             {
-                provide: ApiConfiguration,
+                provide: TenantConfiguration,
                 useValue: environment
             }
         ]

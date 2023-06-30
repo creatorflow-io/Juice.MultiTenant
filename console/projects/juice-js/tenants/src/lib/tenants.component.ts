@@ -1,17 +1,20 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { TenantService } from './shared/services/tenant.service';
+import { TenantAdminService } from './shared/services/tenant-admin.service';
 import { MatMultiSort, MatMultiSortTableDataSource, TableData  } from 'ngx-mat-multi-sort';
-import {MatPaginator} from '@angular/material/paginator';
-import { Tenant, TenantBasic } from './shared/models/tenant.model';
+import { MatPaginator } from '@angular/material/paginator';
+import { TenantBasic } from './shared/models/tenant.model';
 import { ActivatedRoute, Router, UrlSerializer } from '@angular/router';
 import { Location } from '@angular/common';
 import { TenantStatus, TenantStatusHelper } from './shared/models/tenant.status';
 import { TableQueryResult } from './shared/models/table.query-result';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent, TenantCreateComponent, TenantDetailComponent, TenantUpdateComponent } from '../public-api';
+import { DictBuilderComponent, KeyValue, ModelType } from '@juice-js/dict-builder';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
+import { TenantSetting } from './shared/models/tenant.setting.model';
+import { TenantConfiguration } from './shared/tenant-configuration';
 
 @Component({
   selector: 'juice-tenants',
@@ -41,7 +44,7 @@ export class TenantsComponent implements AfterViewInit{
 
   form: FormGroup = new FormGroup({});
 
-  constructor(private tenantService: TenantService,
+  constructor(private tenantService: TenantAdminService,
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
@@ -49,7 +52,8 @@ export class TenantsComponent implements AfterViewInit{
     private fb: FormBuilder,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private localizer: TranslateService
+    private localizer: TranslateService,
+    private options: TenantConfiguration
     ) {
 
       this.table = new TableData<TenantBasic>([
@@ -72,15 +76,22 @@ export class TenantsComponent implements AfterViewInit{
       statuses: []
     });
 
-    let sub = this.route.queryParams.subscribe(params =>{
+    let firstLoad = true;
+    this.route.queryParams.subscribe(params =>{
+      console.debug("route.queryParams.subscribe", params);
+      if(firstLoad){
+        firstLoad = false;
+        this.initFormAndTableEvents();
+        return;
+      }
       var q = params['q'] || "";
       this.filterText?.setValue(q);
       if(params['statuses']=='any'){
         this.statuses?.setValue([]);
       }else{
         this.statuses?.setValue(params['statuses']?
-         params['statuses']:
-         [TenantStatus.Active, TenantStatus.PendingApproval, TenantStatus.PendingToActive]);
+         Array.isArray(params['statuses']) ? params['statuses'] : [params['statuses']]
+         :[TenantStatus.Active, TenantStatus.PendingApproval, TenantStatus.PendingToActive]);
       }
 
       this.table.pageSize = params['pageSize']? Number.parseInt(params['pageSize']): 10;
@@ -97,9 +108,6 @@ export class TenantsComponent implements AfterViewInit{
               this.table.sortDirs = [sortDirs];
           }
       }
-      
-      this.initFormAndTableEvents();
-      sub.unsubscribe();
     });
   }
 
@@ -166,6 +174,8 @@ export class TenantsComponent implements AfterViewInit{
   //#region actions
   add(){
     const dialogRef = this.dialog.open(TenantCreateComponent, {
+      width: this.options.dialogWidth,
+      maxHeight: this.options.dialogMaxHeight,
       data: {}
     });
 
@@ -182,8 +192,10 @@ export class TenantsComponent implements AfterViewInit{
   }
 
   edit(id: string){
-    console.log("edit", id);
+    console.debug("edit", id);
     const dialogRef = this.dialog.open(TenantUpdateComponent, {
+      width: this.options.dialogWidth,
+      maxHeight: this.options.dialogMaxHeight,
       data: {id: id}
     });
 
@@ -202,13 +214,15 @@ export class TenantsComponent implements AfterViewInit{
 
   detail(id: string){
     const dialogRef = this.dialog.open(TenantDetailComponent, {
+      width: this.options.dialogWidth,
+      maxHeight: this.options.dialogMaxHeight,
     });
     let instance = dialogRef.componentInstance;
     instance.loadTenant(id);
   }
 
   delete(id: string){
-    console.log("delete", id);
+    console.debug("delete", id);
     this.confirm(this.doDelete.bind(this, id),
     {
       title: "Dangerous action!", 
@@ -226,12 +240,12 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was deleted!");
       }, error: (error: any) => {
         this.openSnackBar("Error deleting tenant!");
-        console.log(error);
+        console.debug(error);
       }});
   }
 
   activate(id: string){
-    console.log("activate", id);
+    console.debug("activate", id);
     this.confirm(this.doActivate.bind(this, id),
     {
       message: "Please confirm that you want to activate this tenant.",
@@ -248,13 +262,13 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was activated!");
       }, error: (error: any) => {
         this.openSnackBar("Error activating tenant!");
-        console.log(error);
+        console.debug(error);
       }
     });
   }
 
   reactivate(id: string){
-    console.log("reactivate", id);
+    console.debug("reactivate", id);
     this.confirm(this.doReactivate.bind(this, id),
     {
       message: "Please confirm that you want to reactivate this tenant.",
@@ -270,13 +284,13 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was reactivated!");
       }, error: (error: any) => {
         this.openSnackBar("Error reactivating tenant!");
-        console.log(error);
+        console.debug(error);
       }
     });
   }
 
   deactivate(id: string){
-    console.log("deactivate", id);
+    console.debug("deactivate", id);
     this.confirm(this.doDeactivate.bind(this, id),
     {
       message: "Please confirm that you want to deactivate this tenant. Users will not be able to login!",
@@ -293,13 +307,13 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was activated!");
       }, error: (error: any) => {
         this.openSnackBar("Error activating tenant!");
-        console.log(error);
+        console.debug(error);
       }
     });
   }
 
   suspend(id: string){
-    console.log("suspend", id);
+    console.debug("suspend", id);
     this.confirm(this.doSuspend.bind(this, id),
     {
       message: "Please confirm that you want to suspend this tenant. Users will not be able to login!",
@@ -316,13 +330,13 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was suspended!");
       }, error: (error: any) => {
         this.openSnackBar("Error suspending tenant!");
-        console.log(error);
+        console.debug(error);
       }
     });
   }
 
   abandon(id: string){
-    console.log("abandon", id);
+    console.debug("abandon", id);
     this.confirm(this.doAbandon.bind(this, id),
     {
       message: "Please confirm that you want to abandon this tenant. All data will be deleted and this action cannot be undone.",
@@ -339,13 +353,13 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was abandoned!");
       }, error: (error: any) => {
         this.openSnackBar("Error abandoning tenant!");
-        console.log(error);
+        console.debug(error);
       }
     });
   }
 
   approve(id: string){
-    console.log("approve", id);
+    console.debug("approve", id);
     this.confirm(this.doApprove.bind(this, id),
     {
       message: "Please confirm that you want to approve this tenant.",
@@ -362,13 +376,13 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was approved!");
       }, error: (error: any) => {
         this.openSnackBar("Error approving tenant!");
-        console.log(error);
+        console.debug(error);
       }
     });
   }
 
   reject(id: string){
-    console.log("reject", id);
+    console.debug("reject", id);
     this.confirm(this.doReject.bind(this, id),
     {
       message: "Please confirm that you want to reject this tenant.",
@@ -385,8 +399,46 @@ export class TenantsComponent implements AfterViewInit{
         this.openSnackBar("Tenant was rejected!");
       }, error: (error: any) => {
         this.openSnackBar("Error rejecting tenant!");
-        console.log(error);
+        console.debug(error);
       }
+    });
+  }
+
+  settings(id: string){
+    const dialogRef = this.dialog.open(DictBuilderComponent, {
+      width: this.options.dialogWidth,
+      maxHeight: this.options.dialogMaxHeight,
+    });
+    
+    let instance = dialogRef.componentInstance;
+    instance.loading = true;
+    instance.type = ModelType.Configuration;
+
+    this.tenantService.getTenantSettings(id).subscribe({
+      next: (settings: TenantSetting[]) => {
+        instance.loading = false;
+        instance.models = settings.map(s => new KeyValue(s.key, s.value, s.inherited, s.overridden));
+      }, error: (error: any) => {
+        this.openSnackBar("Error getting tenant settings!");
+        console.debug(error);
+      }
+    });
+
+    instance.saved.subscribe((model: any) => {
+      var settings = instance.models.map(m => new TenantSetting(m.key, m.value, m.inherited));
+      this.tenantService.updateTenantSettings(id, settings).subscribe({
+        next: () => {
+          this.openSnackBar("Tenant's settings was updated!");
+          dialogRef.close();
+        }, error: (error: any) => {
+          this.openSnackBar("Error updating tenant settings!");
+          console.debug(error);
+        }
+      });
+    });
+    instance.cancelled.subscribe(() => {
+      this.openSnackBar("Tenant setting was cancelled!");
+      dialogRef.close();
     });
   }
   //#endregion
@@ -462,8 +514,8 @@ export class TenantsComponent implements AfterViewInit{
   }
 
   openSnackBar(message: string) {
-    this.localizer.get("Close").subscribe((value: string) => {
-        this.snackBar.open(message, value, {
+    this.localizer.get([message, "Close"]).subscribe((value: any) => {
+      this.snackBar.open(value[message], value["Close"], {
           duration: 3000
       });
     });

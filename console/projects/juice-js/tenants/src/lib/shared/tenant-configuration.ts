@@ -3,12 +3,16 @@
 // export const TENANT_OPTIONS_TOKEN = new InjectionToken<TenantConfiguration>('tenant.options');
 
 
-export class ApiConfiguration {
+export class TenantConfiguration {
     apiEndpoint: string = "";
     apiVersion: string = "2";
+    dialogWidth: string = "800px";
+    dialogMaxHeight: string = "600px";
 }
 
-export interface ApiConfigurationParams {
+export interface TenantConfigurationParams {
     apiEndpoint?: string;
     apiVersion?: string;
+    dialogWidth?: string;
+    dialogMaxHeight?: string;
 }

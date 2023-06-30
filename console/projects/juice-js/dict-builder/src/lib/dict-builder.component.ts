@@ -4,9 +4,67 @@ export class KeyValue {
   key: string;
   value: string;
 
-  constructor(k: string, v: string) {
+  private _originalKey: string;
+  private _originalValue: string;
+  private _inherited: boolean;
+  private _overridden: boolean;
+  private _keyEditing: boolean = false;
+  private _lastKey: string;
+  private _lastValue: string;
+
+  get keyEditing(): boolean{
+    return this._keyEditing || this.key != this._lastKey;
+  }
+  get keyChanged(): boolean{
+    return this.key != this._originalKey;
+  }
+  
+  get inherited(): boolean{
+    return this._inherited && this.value == this._originalValue;
+  }
+  get override(): boolean{
+    return this._overridden || (this._inherited && this.value != this._originalValue);
+  }
+
+  get valueEditing(): boolean{
+    return this.value != this._lastValue;
+  }
+
+  get lastValue(): string{
+    return this._lastValue;
+  }
+
+  public EditKey(){
+    this._keyEditing = true;
+  }
+
+  public AcceptKey(){
+    this._lastKey = this.key;
+    this._keyEditing = false;
+  }
+  
+  public AcceptValue(){
+    this._lastValue = this.value;
+  }
+
+  public RestoreKey(){
+    this.key = this._lastKey;
+    this._keyEditing = false;
+  }
+
+  public RestoreValue(){
+    this.value = this._lastValue;
+  }
+
+  constructor(k: string, v: string, i: boolean = false, o: boolean = false) {
     this.key = k;
+    this._originalKey = k;
+    this._lastKey = k;
     this.value = v;
+    this._lastValue = v;
+    this._originalValue = v;
+    this._inherited = i;
+    this._overridden = o;
   }
 }
 
@@ -35,6 +93,7 @@ export class KeyErrorStateMatcher implements ErrorStateMatcher {
 export class DictBuilderComponent implements OnInit{
   @Input() title = "Settings";
   @Input() model : any = {};
+  @Input() parent: any = {};
 
   @Input() type: ModelType = ModelType.StandardObject;
 
@@ -45,14 +104,13 @@ export class DictBuilderComponent implements OnInit{
   @Output() cancelled = new EventEmitter();
 
   models: KeyValue[] = new Array<KeyValue>();
-  
-  editingKey: string = "";
-  editKeyModel: string = "";
 
   matcher = new KeyErrorStateMatcher();
 
+  loading: boolean = false;
+
   ngOnInit(): void {
-    this.models = this.objectToKeyValueArray(this.model);
+    this.models = this.objectToKeyValueArray(this.model, this.parent);
   }
 
   objectFromKeyValueArray(arr: KeyValue[]) {
@@ -61,16 +119,21 @@ export class DictBuilderComponent implements OnInit{
     return obj;
   }
 
-  objectToKeyValueArray(obj: any) {
-    return Object.keys(obj).map(k => { return { key: k, value: obj[k] } });
+  objectToKeyValueArray(obj: any, parent: any) {
+    var parentKeys = Object.keys(parent);
+    return Object.keys(obj)
+      .map(k => { return new KeyValue(k, obj[k], false) })
+      .concat(parentKeys.filter(k => !obj.hasOwnProperty(k))
+        .map(k => { return new KeyValue(k, parent[k], true) })
+      );
+  }
+
+  keyDuplicated(key: string) {
+    return this.models.filter(m => m.key == key).length > 1;
   }
 
   keyExists(key: string) {
-    return key != this.editingKey && this.models.findIndex(m => m.key == key) > -1;
-  }
-
-  isEditing(key: string) {
-    return key == this.editingKey;
+    return this.models.findIndex(m => m.key == key) > -1;
   }
 
   getNewKey() {
@@ -99,20 +162,16 @@ export class DictBuilderComponent implements OnInit{
   }
 
   add(){
-    if(this.editingKey != ""){
-      this.updateValue(this.editingKey);
-      this.updateKey(this.editingKey);
-    }
-    
     var newKey = this.getNewKey();
-    this.editingKey = newKey;
-    this.editKeyModel = newKey;
     this.models.push(new KeyValue(newKey, ""));
   }
   updateValue(key: string){
     var index = this.models.findIndex(m => m.key == key);
-    this.model[key] = this.models[index].value;
-    this.onchange.emit(new SimpleChange(new KeyValue(key, this.model[key]), new KeyValue(key, this.models[index].value), false));
+    let lastValue = this.models[index].lastValue;
+    this.models[index].AcceptValue();
+    // after accepting the value, the model is updated and the lastValue is updated to value
+    this.model[key] = this.models[index].lastValue;
+    this.onchange.emit(new SimpleChange(new KeyValue(key, lastValue), new KeyValue(key, this.model[key]), false));
   }
 
   clear(key: string){
@@ -127,30 +186,26 @@ export class DictBuilderComponent implements OnInit{
     this.onchange.emit(new SimpleChange(new KeyValue(key, value), null, false));
   }
   
-  editKey(key: string){
-    this.editingKey = key;
-    this.editKeyModel = key;
-  }
-  cancelEditKey(){
-    this.editingKey = "";
-    this.editKeyModel = "";
-  }
   updateKey(key: string){
-    this.editKeyModel = this.type == ModelType.Configuration
-      ? this.standardizeConfigurationKey(this.editKeyModel)
-      : this.standardizePropertyKey(this.editKeyModel) ;
 
-    if(this.keyExists(this.editKeyModel)){
+    var validKey = this.type == ModelType.Configuration
+      ? this.standardizeConfigurationKey(key)
+      : this.standardizePropertyKey(key) ;
+
+    if(this.keyDuplicated(validKey) || (validKey != key && this.keyExists(validKey))){
       return;
     }
+
     var index = this.models.findIndex(m => m.key == key);
-    this.models[index].key = this.editKeyModel;
-    this.model[this.editKeyModel] = this.models[index].value;
-    delete this.model[key];
+    this.models[index].key = validKey;
+    this.models[index].AcceptKey();
+
+    this.model[validKey] = this.models[index].value;
+    if(validKey != key){
+      delete this.model[key];
+    }
     this.onchange.emit(new SimpleChange(new KeyValue(key, this.models[index].value),
-       new KeyValue(this.editKeyModel, this.models[index].value), false));
-    this.editingKey = "";
-    this.editKeyModel = "";
+       new KeyValue(validKey, this.models[index].value), false));
   }
 
   save() {

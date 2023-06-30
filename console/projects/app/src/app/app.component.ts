@@ -1,5 +1,5 @@
 import { Component, OnInit, SimpleChange } from '@angular/core';
-import { ModelType } from '@juice-js/tenants';
+import { ModelType } from '@juice-js/dict-builder';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -13,6 +13,7 @@ export class AppComponent implements OnInit{
   identifier = 'ts';
   id = 'ts';
   settings: any = { "key1": "value1", "key2": "value2" };
+  parent: any = { "key1": "value1", "key3": "value2" };
   public get ModelType(){
     return ModelType;
   }

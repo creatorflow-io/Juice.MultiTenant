@@ -143,6 +143,40 @@
           }
         }
       }
+    },
+    "@juice-js/dict-builder": {
+      "projectType": "library",
+      "root": "projects/juice-js/dict-builder",
+      "sourceRoot": "projects/juice-js/dict-builder/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/juice-js/dict-builder/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/juice-js/dict-builder/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/juice-js/dict-builder/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/juice-js/dict-builder/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "karmaConfig": "projects/juice-js/dict-builder/karma.conf.js"
+          }
+        }
+      }
     }
   }
 }

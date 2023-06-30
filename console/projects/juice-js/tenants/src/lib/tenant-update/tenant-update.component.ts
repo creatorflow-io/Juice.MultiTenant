@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { TenantUpdate } from '../shared/models/tenant.update.model';
-import { TenantService } from '../../public-api';
+import { TenantAdminService } from '../../public-api';
 import {
   FormControl,
   FormGroup,
@@ -35,7 +35,7 @@ export class TenantUpdateComponent{
   @Output() updated = new EventEmitter<string>();
   @Output() cancelled = new EventEmitter<string>();
 
-  constructor(private tenantService: TenantService) { }
+  constructor(private tenantService: TenantAdminService) { }
 
   ngOnChanges(): void {
     this.tenantService.getTenant(this.id).subscribe((result) => {

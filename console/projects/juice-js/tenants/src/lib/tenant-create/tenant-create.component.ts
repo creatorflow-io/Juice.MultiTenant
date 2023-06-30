@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 import { TenantCreate, TenantCreated } from '../shared/models/tenant.create.model';
-import { TenantService } from '../../public-api';
+import { TenantAdminService } from '../../public-api';
 
 import {
   FormControl,
@@ -33,7 +33,7 @@ export class TenantCreateComponent implements OnInit{
   @Output() created = new EventEmitter<TenantCreated>();
   @Output() cancelled = new EventEmitter();
 
-  constructor(private tenantService: TenantService) { }
+  constructor(private tenantService: TenantAdminService) { }
 
   ngOnInit(): void {
 
@@ -57,7 +57,7 @@ export class TenantCreateComponent implements OnInit{
             this.model = new TenantCreate();
           },
           error:(err) => {
-            
+
           }
         });
     }

@@ -1,19 +1,20 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ApiConfiguration } from '../api-configuration';
+import { TenantConfiguration } from '../tenant-configuration';
 import { Tenant, TenantBasic } from '../models/tenant.model';
 import { TenantCreate, TenantCreated } from '../models/tenant.create.model';
 import { TenantUpdate } from '../models/tenant.update.model';
 import { TenantStatus } from '../models/tenant.status';
 import { TableQueryResult } from '../models/table.query-result';
 import { Observable } from 'rxjs';
+import { TenantSetting } from '../models/tenant.setting.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TenantService {
+export class TenantAdminService {
 
-  constructor(private http: HttpClient, private options: ApiConfiguration) { 
+  constructor(private http: HttpClient, private options: TenantConfiguration) { 
 
   }
 
@@ -88,5 +89,13 @@ export class TenantService {
 
   public abandonTenant(id: string) {
     return this.http.put(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/admin/${id}/abandon`, null);
+  }
+
+  public getTenantSettings(id: string) {
+    return this.http.get<TenantSetting[]>(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/admin/${id}/settings`);
+  }
+
+  public updateTenantSettings(id: string, settings: TenantSetting[]) {
+    return this.http.put(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/admin/${id}/settings`, settings);
   }
 }

@@ -9,36 +9,56 @@
     $accent-palette: map.get($color-config, 'accent');
     $warn-palette: map.get($color-config, 'warn');
     $green-palette: mat.define-palette(mat.$green-palette, 500, 300, 700);
-    .accent-color {
+    .color-primary {
+        color: mat.get-color-from-palette($primary-palette, 'darker') !important;
+        .mdc-list-item__primary-text{
+            color: mat.get-color-from-palette($primary-palette, 'darker') !important;
+        }
+        &.mat-mdc-menu-item .mat-icon-no-color{
+            color: mat.get-color-from-palette($primary-palette, 'darker') !important;
+        }
+    }
+
+    .color-accent {
         color: mat.get-color-from-palette($accent-palette, 'darker') !important;
         .mdc-list-item__primary-text{
             color: mat.get-color-from-palette($accent-palette, 'darker') !important;
         }
+        &.mat-mdc-menu-item .mat-icon-no-color{
+            color: mat.get-color-from-palette($accent-palette, 'darker') !important;
+        }
     }
     
-    .warn-color {
+    .color-warn {
         color: mat.get-color-from-palette($warn-palette, 'darker') !important;
         .mdc-list-item__primary-text{
             color: mat.get-color-from-palette($warn-palette, 'darker') !important;
         }
+        &.mat-mdc-menu-item .mat-icon-no-color{
+            color: mat.get-color-from-palette($warn-palette, 'darker') !important;
+        }
     }    
 
-    .success-color, .mat-success.mat-mdc-button:not(:disabled){
+    .color-success, 
+    .mat-success.mat-mdc-button:not(:disabled){
         color: mat.get-color-from-palette($green-palette, 'darker') !important;
         .mdc-list-item__primary-text{
             color: mat.get-color-from-palette($green-palette, 'darker') !important;
         }
+        &.mat-mdc-menu-item .mat-icon-no-color{
+            color: mat.get-color-from-palette($green-palette, 'darker') !important;
+        }
     }
 
-    .accent-bg {
+    .bg-accent {
         background-color: mat.get-color-from-palette($accent-palette, 'lighter') !important;
     }
     
-    .warn-bg {
+    .bg-warn {
         background-color: mat.get-color-from-palette($warn-palette, 'lighter') !important;
     }    
 
-    .success-bg{
+    .bg-success{
         background-color: mat.get-color-from-palette($green-palette, 'lighter') !important;
     }
 }

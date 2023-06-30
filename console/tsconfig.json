@@ -3,6 +3,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
+      "@juice-js/dict-builder": [
+        "dist/juice-js/dict-builder"
+      ],
       "@juice-js/tenants": [
         "dist/juice-js/tenants"
       ],

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { TenantService } from '../shared/services/tenant.service';
+import { TenantAdminService } from '../shared/services/tenant-admin.service';
 import { Tenant } from '../shared/models/tenant.model';
 import { TenantStatusHelper } from '../shared/models/tenant.status';
 
@@ -16,7 +16,7 @@ export class TenantDetailComponent implements OnChanges {
   properties: any;
   statusHelper = TenantStatusHelper;
 
-  constructor(private tenantService: TenantService) { }
+  constructor(private tenantService: TenantAdminService) { }
 
   public loadTenant(identifier: string){
     this.tenantService.getTenant(identifier).subscribe(tenant => {

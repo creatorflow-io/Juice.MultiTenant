@@ -1,0 +1,48 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{ title | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="padding-top: 10px;">
+        <mat-progress-bar *ngIf="loading" mode="indeterminate" style="width: 100%; margin-bottom: 20px;"></mat-progress-bar>
+        <mat-form-field *ngFor="let kvp of models">
+            <mat-label ><span class="color-primary">{{ kvp.key }}</span><span *ngIf="kvp.inherited">- {{ 'inherited' | translate }}</span><span *ngIf="kvp.override" class="color-warn">- {{ 'overridden' | translate }}</span></mat-label>
+            <input matInput *ngIf="kvp.keyEditing" [(ngModel)]="kvp.key" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="keyDuplicated(kvp.key)">
+                {{ 'This key is already existed' | translate }}
+            </mat-error>
+
+            <button *ngIf="kvp.keyEditing" matSuffix mat-icon-button matTooltip="{{ 'Restore key' | translate}}" (click)="kvp.RestoreKey()">
+                <mat-icon>restore</mat-icon>
+            </button>
+            <button *ngIf="kvp.keyEditing" matSuffix mat-icon-button matTooltip="{{ 'Update key' | translate}}" (click)="updateKey(kvp.key)">
+                <mat-icon>save</mat-icon>
+            </button>
+
+            <input matInput  *ngIf="!kvp.keyEditing"  [(ngModel)]="kvp.value">
+            
+            <button *ngIf="!kvp.keyEditing && !kvp.valueEditing" matSuffix mat-icon-button matTooltip="{{ 'Edit key' | translate}}" (click)="kvp.EditKey()">
+                <mat-icon>edit</mat-icon>
+            </button>
+            
+            <button *ngIf="!kvp.keyEditing && kvp.valueEditing" matSuffix mat-icon-button matTooltip="{{ 'Update value' | translate}}" (click)="updateValue(kvp.key)">
+                <mat-icon>save</mat-icon>
+            </button>
+            <button *ngIf="!kvp.keyEditing && kvp.valueEditing" matSuffix mat-icon-button matTooltip="{{ 'Restore value' | translate}}" (click)="kvp.RestoreValue()">
+                <mat-icon>restore</mat-icon>
+            </button>
+            <button *ngIf="kvp.value && !kvp.keyEditing" matSuffix mat-icon-button matTooltip="{{ 'Clear value' | translate}}" (click)="clear(kvp.key)">
+                <mat-icon>close</mat-icon>
+            </button>
+            <button matSuffix mat-icon-button matTooltip="{{ 'Remove key-value' | translate}}" color="warn" (click)="remove(kvp.key)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-form-field>
+        <button *ngIf="!loading" mat-icon-button matTooltip="{{ 'Add new key' | translate }}" (click)="add()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button mat-raised-button [disabled]="loading" color="primary" (click)="save()"><mat-icon>save</mat-icon>{{ 'Save' | translate }}</button>
+        <button mat-raised-button (click)="cancel()"><mat-icon>cancel</mat-icon>{{ 'Cancel' | translate }}</button>
+    </mat-card-actions>
+</mat-card>

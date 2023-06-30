@@ -21,9 +21,9 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-card-actions align="end">
+        <div style="flex: 1 auto; text-align: right;">
             <button type="button" mat-button (click)="add()" color="primary"><mat-icon>add</mat-icon> {{ 'New Organization'}}</button>
-        </mat-card-actions>
+        </div>
     </form>
     <table mat-table [dataSource]="table.dataSource" matMultiSort (matSortChange)="table.onSortEvent()">
   
@@ -53,20 +53,22 @@
 
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef style="text-align: center;"> {{'Actions'|translate}} </th>
-            <td mat-cell *matCellDef="let row" class="actions-cell"> 
-                <button mat-button (click)="detail(row.id)">
-                    <mat-icon>info</mat-icon>{{'Detail' | translate}}
-                </button>
-                <button mat-button (click)="edit(row.id)">
-                    <mat-icon>edit</mat-icon>{{'Edit' | translate}}
-                </button>
-                
-                <button [disabled]="!canAbandon(row.status)" mat-button (click)="abandon(row.id)" color="warn">
-                    <mat-icon>delete</mat-icon>{{'Abandon' | translate}}
-                </button>
-                <button mat-icon-button [matMenuTriggerFor]="appMenu" [matMenuTriggerData]="{id: row.id, status: row.status}">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
+            <td mat-cell *matCellDef="let row" > 
+                <div class="actions-cell">
+                    <button mat-button (click)="settings(row.id)">
+                        <mat-icon>settings</mat-icon>{{'Settings' | translate}}
+                    </button>
+                    <button mat-button (click)="detail(row.id)">
+                        <mat-icon>info</mat-icon>{{'Detail' | translate}}
+                    </button>
+                    <button mat-button (click)="edit(row.id)">
+                        <mat-icon>edit</mat-icon>{{'Edit' | translate}}
+                    </button>
+                    
+                    <button mat-icon-button [matMenuTriggerFor]="appMenu" [matMenuTriggerData]="{id: row.id, status: row.status}">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                </div>
             </td>
         </ng-container>
 
@@ -84,26 +86,29 @@
 </div>
 <mat-menu #appMenu="matMenu" class="minimum-density">
     <ng-template matMenuContent let-id="id" let-status="status">
-        <button *ngIf="canApproval(status)" class="success-color" mat-menu-item (click)="approve(id)">
+        <button *ngIf="canApproval(status)" class="color-success" mat-menu-item (click)="approve(id)">
             <mat-icon>check_circle_outline</mat-icon>{{'Approve' | translate}}
         </button>
-        <button *ngIf="canApproval(status)" class="warn-color" mat-menu-item (click)="reject(id)">
+        <button *ngIf="canApproval(status)" class="color-warn" mat-menu-item (click)="reject(id)">
             <mat-icon>highlight_off</mat-icon>{{'Reject' | translate}}
         </button>
-        <button *ngIf="canActivate(status)" class="success-color" mat-menu-item (click)="activate(id)">
+        <button *ngIf="canActivate(status)" class="color-success" mat-menu-item (click)="activate(id)">
             <mat-icon>present_to_all</mat-icon>{{'Activate' | translate}}
         </button>
-        <button *ngIf="canReactivate(status)" class="success-color" mat-menu-item (click)="reactivate(id)">
-            <mat-icon>present_to_all</mat-icon>{{'Activate' | translate}}
+        <button *ngIf="canReactivate(status)" class="color-success" mat-menu-item (click)="reactivate(id)">
+            <mat-icon >present_to_all</mat-icon>{{'Activate' | translate}}
         </button>
-        <button *ngIf="canDeactivate(status)" class="warn-color" mat-menu-item (click)="deactivate(id)">
-            <mat-icon>cancel_presentation</mat-icon>{{'Deactivate' | translate}}
+        <button *ngIf="canDeactivate(status)" class="color-warn" mat-menu-item (click)="deactivate(id)">
+            <mat-icon >cancel_presentation</mat-icon>{{'Deactivate' | translate}}
         </button>
-        <button *ngIf="canSuspend(status)" class="warn-color" mat-menu-item (click)="suspend(id)">
-            <mat-icon>cancel_presentation</mat-icon>{{'Suspend' | translate}}
+        <button *ngIf="canSuspend(status)" class="color-warn" mat-menu-item (click)="suspend(id)">
+            <mat-icon >cancel_presentation</mat-icon>{{'Suspend' | translate}}
         </button>
-        <button *ngIf="canDelete(status)" class="warn-color" mat-menu-item (click)="delete(id)">
-            <mat-icon>delete</mat-icon>{{'Delete' | translate}}
+        <button [disabled]="!canAbandon(status)" mat-menu-item (click)="abandon(id)" class="color-warn">
+            <mat-icon >delete</mat-icon>{{'Abandon' | translate}}
+        </button>
+        <button *ngIf="canDelete(status)" class="color-warn" mat-menu-item (click)="delete(id)">
+            <mat-icon >delete</mat-icon>{{'Delete' | translate}}
         </button>
     </ng-template>
 </mat-menu>

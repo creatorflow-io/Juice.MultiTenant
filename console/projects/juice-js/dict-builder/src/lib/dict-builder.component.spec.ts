@@ -1,8 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DictBuilderComponent } from './dict-builder.component';
-import { MaterialModule } from '../shared/material.module';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { MatInputModule } from '@angular/material/input';
 
 describe('DictBuilderComponent', () => {
   let component: DictBuilderComponent;
@@ -11,8 +17,14 @@ describe('DictBuilderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ 
-        MaterialModule,
-        TranslateModule.forRoot()
+        TranslateModule.forRoot(),
+        MatButtonModule,
+        MatCardModule,
+        MatProgressBarModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatInputModule,
       ],
       declarations: [ DictBuilderComponent ]
     })

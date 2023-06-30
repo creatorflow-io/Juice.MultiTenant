@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { TenantBasic } from '../shared/models/tenant.model';
-import { TenantService } from '../shared/services/tenant.service';
+import { TenantAdminService } from '../shared/services/tenant-admin.service';
 
 @Component({
   selector: 'juice-tenant-summary',
@@ -14,7 +14,7 @@ export class TenantSummaryComponent implements OnChanges{
 
   tenant!: TenantBasic;
 
-  constructor(private tenantService: TenantService) { }
+  constructor(private tenantService: TenantAdminService) { }
 
   public loadTenant(identifier: string){
     this.tenantService.getSummary(identifier).subscribe(tenant => {
