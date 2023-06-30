@@ -22,6 +22,9 @@
             </mat-select>
         </mat-form-field>
         <div style="flex: 1 auto; text-align: right;">
+            <button mat-button (click)="rootSettings()">
+                <mat-icon>settings</mat-icon>{{'Settings' | translate}}
+            </button>
             <button type="button" mat-button (click)="add()" color="primary"><mat-icon>add</mat-icon> {{ 'New Organization'}}</button>
         </div>
     </form>

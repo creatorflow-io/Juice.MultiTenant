@@ -411,6 +411,7 @@ export class TenantsComponent implements AfterViewInit{
     });
     
     let instance = dialogRef.componentInstance;
+    instance.title = "Tenant settings";
     instance.loading = true;
     instance.type = ModelType.Configuration;
 
@@ -428,7 +429,7 @@ export class TenantsComponent implements AfterViewInit{
       var settings = instance.models.map(m => new TenantSetting(m.key, m.value, m.inherited));
       this.tenantService.updateTenantSettings(id, settings).subscribe({
         next: () => {
-          this.openSnackBar("Tenant's settings was updated!");
+          this.openSnackBar("Tenant settings was updated!");
           dialogRef.close();
         }, error: (error: any) => {
           this.openSnackBar("Error updating tenant settings!");
@@ -438,6 +439,45 @@ export class TenantsComponent implements AfterViewInit{
     });
     instance.cancelled.subscribe(() => {
       this.openSnackBar("Tenant setting was cancelled!");
+      dialogRef.close();
+    });
+  }
+
+  rootSettings(){
+    const dialogRef = this.dialog.open(DictBuilderComponent, {
+      width: this.options.dialogWidth,
+      maxHeight: this.options.dialogMaxHeight,
+    });
+    
+    let instance = dialogRef.componentInstance;
+    instance.title = "Root settings";
+    instance.loading = true;
+    instance.type = ModelType.Configuration;
+
+    this.tenantService.getRootSettings().subscribe({
+      next: (settings: TenantSetting[]) => {
+        instance.loading = false;
+        instance.models = settings.map(s => new KeyValue(s.key, s.value, false, false));
+      }, error: (error: any) => {
+        this.openSnackBar("Error getting root settings!");
+        console.debug(error);
+      }
+    });
+
+    instance.saved.subscribe((model: any) => {
+      var settings = instance.models.map(m => new TenantSetting(m.key, m.value, false));
+      this.tenantService.updateRootSettings(settings).subscribe({
+        next: () => {
+          this.openSnackBar("Root settings was updated!");
+          dialogRef.close();
+        }, error: (error: any) => {
+          this.openSnackBar("Error updating root settings!");
+          console.debug(error);
+        }
+      });
+    });
+    instance.cancelled.subscribe(() => {
+      this.openSnackBar("Root setting was cancelled!");
       dialogRef.close();
     });
   }
