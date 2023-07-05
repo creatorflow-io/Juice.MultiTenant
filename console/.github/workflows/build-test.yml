@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
       - run: npm run build @juice-js/dict-builder --if-present
       - run: npm run build @juice-js/tenants --if-present
-      - run: npm test
+      - run: npm test -- --watch=false --browsers=ChromeHeadless
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PAT }}
