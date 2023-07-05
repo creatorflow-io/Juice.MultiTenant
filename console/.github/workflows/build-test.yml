@@ -24,6 +24,6 @@ jobs:
           always-auth: true
           registry-url: https://npm.pkg.github.com
           scope: '@juice-js'
-      - run: npm ci --force
+      - run: npm ci
       - run: npm run build --if-present
       - run: npm test
