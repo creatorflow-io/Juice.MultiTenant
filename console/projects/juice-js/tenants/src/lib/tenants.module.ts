@@ -13,7 +13,6 @@ import { TenantUpdateComponent } from './tenant-update/tenant-update.component';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatMultiSortModule } from 'ngx-mat-multi-sort';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import { TenantsTestingModule } from '../public-api';
 
 
 @NgModule({
@@ -40,7 +39,6 @@ import { TenantsTestingModule } from '../public-api';
     TenantSummaryComponent,
     TenantCreateComponent,
     TenantUpdateComponent,
-    TenantsTestingModule,
     TranslateModule
   ]
 })
