@@ -75,15 +75,16 @@ export class TenantsComponent implements AfterViewInit{
       filterText: [],
       statuses: []
     });
-
+    
     let firstLoad = true;
     this.route.queryParams.subscribe(params =>{
       console.debug("route.queryParams.subscribe", params);
+      
       if(firstLoad){
         firstLoad = false;
         this.initFormAndTableEvents();
-        return;
       }
+      
       var q = params['q'] || "";
       this.filterText?.setValue(q);
       if(params['statuses']=='any'){
@@ -125,7 +126,6 @@ export class TenantsComponent implements AfterViewInit{
   ngAfterViewInit(): void {
 
     this.table.dataSource.sort = this.sort;
-    
   }
 
   //#region filters
@@ -139,7 +139,7 @@ export class TenantsComponent implements AfterViewInit{
   }
 
   getData(fromRoute: boolean = false) {
-    var q = this.filterText?.value;
+    var q = this.filterText?.value ?? "";
     
     if(!fromRoute){
       var statuses = this.statuses?.value;

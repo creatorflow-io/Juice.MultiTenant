@@ -1,0 +1,18 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "dev/**" ]
+    paths-ignore:
+      - '*.md'
+  workflow_dispatch:
+
+steps:
+- uses: actions/checkout@v3
+- name: Use Node.js
+  uses: actions/setup-node@v3
+  with:
+    node-version: '18.x'
+- run: npm install
+- run: npm run build --if-present
+- run: npm test
