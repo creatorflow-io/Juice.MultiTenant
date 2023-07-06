@@ -22,9 +22,8 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@juice-js'
       - run: npm ci
+      - run: npm version prerelease --preid=alpha --no-git-tag-version
       - run: npm run build @juice-js/dict-builder --if-present
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
-      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/github
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm publish --access public --tag alpha

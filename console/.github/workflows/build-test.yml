@@ -31,4 +31,4 @@ jobs:
       - run: npm test -- --watch=false --browsers=ChromeHeadless
         env:
           CI: true
-          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PAT }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
