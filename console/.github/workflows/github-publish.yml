@@ -24,4 +24,4 @@ jobs:
       - run: npm test -- --watch=false --browsers=ChromeHeadless
       - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/github
         env:
-          GH_TOKEN: ${{ secrets.GIT_HUB_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
