@@ -26,4 +26,5 @@ jobs:
       - run: npm run build @juice-js/dict-builder --if-present
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
-      - run: npm publish --access public --tag alpha
+      - run: npm publish --project @juice-js/dict-builder --tag alpha
+      - run: npm publish --project @juice-js/tenants --tag alpha
