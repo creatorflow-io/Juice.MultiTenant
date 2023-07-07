@@ -11,7 +11,9 @@ jobs:
       issues: write
       pull-requests: write
       packages: write
-    
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       # Setup .npmrc file to publish to GitHub Packages
@@ -22,7 +24,5 @@ jobs:
       - run: npm run build @juice-js/dict-builder --if-present
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
-      - run: npx semantic-release --branches=alpha --debug
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,[@semantic-release/npm,{ "pkgRoot":"./projects/juice-js/dict-builder"}] --branches=alpha --debug
+      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,[@semantic-release/npm,{ "pkgRoot":"./projects/juice-js/tenants"}] --branches=alpha --debug
