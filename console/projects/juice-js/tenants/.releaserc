@@ -5,3 +5,7 @@ branches:
 debug: true
 ci: true
 dryRun: false
+plugins:
+  - "@semantic-release/exec"
+    prepareCmd: "set-version ${nextRelease.version}"
+    publishCmd: "publish ${nextRelease.version}"
