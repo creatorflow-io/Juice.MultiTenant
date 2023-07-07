@@ -24,5 +24,4 @@ jobs:
       - run: npm run build @juice-js/dict-builder --if-present
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
-      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm --pkgRoot=./projects/juice-js/dict-builder
-      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/exec --pkgRoot=./projects/juice-js/tenants --prepareCmd=npm version ${nextRelease.version} --execCmd=npm publish
+      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm --pkgRoot=./projects/juice-js/tenants
