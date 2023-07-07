@@ -4,14 +4,16 @@ on:
     branches: [ alpha, beta ]
 
 jobs:
-  build:
+  dict-builder-build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
       pull-requests: write
       packages: write
-      
+    defaults:
+      run:
+        working-directory: ./projects/juice-js/dict-builder
     steps:
       - uses: actions/checkout@v3
       # Setup .npmrc file to publish to GitHub Packages
@@ -22,13 +24,34 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@juice-js'
       - run: npm ci
-      - run: npm version prerelease --preid=alpha --no-git-tag-version --project @juice-js/dict-builder
-      - run: npm version prerelease --preid=alpha --no-git-tag-version --project @juice-js/tenants
+      - run: npm version prerelease --preid=alpha --no-git-tag-version
       - run: npm run build @juice-js/dict-builder --if-present
+      - run: npm test -- --watch=false --browsers=ChromeHeadless
+  tenants-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+    defaults:
+      run:
+        working-directory: ./projects/juice-js/tenants
+    steps:
+      - uses: actions/checkout@v3
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://npm.pkg.github.com'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@juice-js'
+      - run: npm ci
+      - run: npm version prerelease --preid=alpha --no-git-tag-version
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
-  publish:
-    needs: build
+  dict-builder-publish:
+    needs: dict-builder-build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -49,7 +72,28 @@ jobs:
           scope: '@juice-js'
       - run: npm ci
       - run: npm version prerelease --preid=alpha --no-git-tag-version --project @juice-js/dict-builder
-      - run: npm version prerelease --preid=alpha --no-git-tag-version --project @juice-js/tenants
       - run: npm publish --project @juice-js/dict-builder --tag beta
+  tenants-publish:
+    needs: tenants-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+    env:
+      CI: true
+      NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PAT }}
+    steps:
+      - uses: actions/checkout@v3
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://npm.pkg.github.com'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@juice-js'
+      - run: npm ci
+      - run: npm version prerelease --preid=alpha --no-git-tag-version --project @juice-js/tenants
       - run: npm publish --project @juice-js/tenants --tag beta
       
