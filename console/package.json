@@ -9,10 +9,6 @@
     "test": "ng test"
   },
   "private": true,
-  "workspaces": [
-    "projects/*",
-    "!projects/app/**"
-  ],
   "dependencies": {
     "@angular/animations": "^15.2.9",
     "@angular/cdk": "^15.2.9",
@@ -35,7 +31,6 @@
     "@angular/cli": "^15.2.9",
     "@angular/compiler-cli": "^15.2.9",
     "semantic-release": "^21.0.7",
-    "@qiwi/multi-semantic-release": "^7.0.0",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
