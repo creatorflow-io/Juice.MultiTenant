@@ -5,5 +5,3 @@ branches:
 debug: true
 ci: true
 dryRun: false
-localPackages:
-  - "@juice-js/dict-builder"
