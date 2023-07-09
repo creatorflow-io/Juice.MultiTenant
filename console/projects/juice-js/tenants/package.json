@@ -16,8 +16,7 @@
     "@angular/core": "^15.2.9",
     "@angular/material": "^15.2.9",
     "@ngx-translate/core": "^14.0.0",
-    "ngx-mat-multi-sort": "^0.10.2",
-    "@juice-js/dict-builder": "^1.0.3"
+    "ngx-mat-multi-sort": "^0.10.2"
   },
   "exports":{
     "./theming": {
@@ -25,7 +24,8 @@
     }
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@juice-js/dict-builder": "^1.0.3"
   },
   "sideEffects": false
 }
