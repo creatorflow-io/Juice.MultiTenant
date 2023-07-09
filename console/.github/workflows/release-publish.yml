@@ -2,17 +2,32 @@ name: Publish Package to npmjs
 on:
   release:
     types: [published]
+  push:
+    branches: [main, master]
+  pull_request:
+    types: [closed]
+
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v3
-      # Setup .npmrc file to publish to npm
+      # Setup .npmrc file to publish to GitHub Packages
       - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm run build @juice-js/dict-builder --if-present
+      - run: npm run build @juice-js/tenants --if-present
+      - run: npm test -- --watch=false --browsers=ChromeHeadless
+      - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm --pkgRoot=./dist/juice-js/dict-builder
+      - run: npx semantic-release --plugins=@semantic-release/release-notes-generator,@juice-js/semantic-release-npm --pkgRoot=./dist/juice-js/tenants --localPackages=@juice-js/dict-builder
+
