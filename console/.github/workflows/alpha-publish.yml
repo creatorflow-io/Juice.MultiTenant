@@ -25,4 +25,4 @@ jobs:
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
       - run: npx semantic-release --plugins=@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm --pkgRoot=./dist/juice-js/dict-builder
-      - run: npx semantic-release --plugins=@semantic-release/release-notes-generator,@juice-js/semantic-release-npm --pkgRoot=./dist/juice-js/tenants --localPackages=@juice-js/dict-builder --debug
+      - run: npx @juice-js/semantic-release-npm --pkgRoot=./dist/juice-js/tenants --localPackages=@juice-js/dict-builder --debug
