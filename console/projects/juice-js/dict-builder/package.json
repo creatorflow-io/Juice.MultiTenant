@@ -12,6 +12,10 @@
     "access": "public",
     "provenance": true
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/creatorflow-io/juice-tenants.git"
+  },
   "peerDependencies": {
     "@angular/common": "^15.2.9",
     "@angular/core": "^15.2.9",
