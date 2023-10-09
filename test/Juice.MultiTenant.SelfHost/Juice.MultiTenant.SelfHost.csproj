@@ -8,11 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Remove="tenants\TenantA\appsettings.Development.json" />
-        <Content Remove="tenants\TenantB\appsettings.Development.json" />
-    </ItemGroup>
-
-    <ItemGroup>
         <None Include="tenants\TenantA\appsettings.Development.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
