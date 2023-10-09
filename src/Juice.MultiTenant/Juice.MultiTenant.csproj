@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(AppTargetFramework)</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Description>Multi-tenant domain</Description>
+    </PropertyGroup>
+
+    <ItemGroup Label="Refs">
+        <PackageReference Include="Juice.Extensions.Configuration" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceRefVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Juice.MultiTenant.Shared\Juice.MultiTenant.Shared.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
+        <PackageReference Include="Finbuckle.MultiTenant" Version="$(FinbuckleVersion)" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(AppTargetFramework)</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Description>Provides Tenant/TenantSettings services via gRPC and integration events</Description>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore.Server" Version="$(GrpcVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="6.*" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    </ItemGroup>
+
+    <ItemGroup Label="Refs">
+        <PackageReference Include="Juice.AspNetCore" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.Integrations" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.MediatR.RequestManager.EF" Version="$(JuiceRefVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Juice.MultiTenant.EF\Juice.MultiTenant.EF.csproj" />
+        <ProjectReference Include="..\Juice.MultiTenant.Api.Contracts\Juice.MultiTenant.Api.Contracts.csproj" />
+    </ItemGroup>
+</Project>

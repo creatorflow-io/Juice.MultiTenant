@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(AppTargetFramework)</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Description>Contracts for multi-tenant API</Description>
+    </PropertyGroup>
+
+    <ItemGroup Label="refs">
+        <PackageReference Include="Juice.EventBus" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice" Version="$(JuiceRefVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Juice.MultiTenant.Shared\Juice.MultiTenant.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Label="gRPC">
+        <Protobuf Include="Protos\tenant.proto" />
+        <Protobuf Include="Protos\tenantsettings.proto" />
+        <PackageReference Include="Google.Protobuf" Version="$(ProtobufVersion)" />
+        <PackageReference Include="Grpc.Tools" Version="$(GrpcVersion)" PrivateAssets="All" />
+        <PackageReference Include="Grpc.Core.Api" Version="$(GrpcVersion)" />
+    </ItemGroup>
+</Project>
