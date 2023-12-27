@@ -12,7 +12,8 @@ namespace Juice.MultiTenant
             string name,
             string? serializedProperties,
             string? connectionString,
-            string? ownerUser)
+            string? ownerUser,
+            string? tenantClass)
         {
             Id = id;
             Identifier = identifier;
@@ -20,10 +21,13 @@ namespace Juice.MultiTenant
             ConnectionString = connectionString;
             SerializedProperties = serializedProperties ?? "{}";
             OwnerUser = ownerUser;
+            TenantClass = tenantClass;
         }
         public string? Identifier { get; set; }
         public string? ConnectionString { get; set; }
 
         public string? OwnerUser { get; private set; }
+        public string? TenantClass { get; private set; }
+
     }
 }

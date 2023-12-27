@@ -37,6 +37,7 @@
         <ProjectReference Include="..\..\src\Juice.MultiTenant.EF.PostgreSQL\Juice.MultiTenant.EF.PostgreSQL.csproj" />
         <ProjectReference Include="..\..\src\Juice.MultiTenant.EF.SqlServer\Juice.MultiTenant.EF.SqlServer.csproj" />
         <ProjectReference Include="..\..\src\Juice.MultiTenant.Grpc\Juice.MultiTenant.Grpc.csproj" />
+        <ProjectReference Include="..\Juice.MultiTenant.Tests.Shared\Juice.MultiTenant.Tests.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup Label="gRPC">

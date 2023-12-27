@@ -1,10 +1,13 @@
 ﻿using System.Text.Json;
 using Finbuckle.MultiTenant;
+using Juice.MultiTenant.Shared.Enums;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Juice.MultiTenant.Grpc.Finbuckle
 {
-    internal class MultiTenantGprcStore<TTenantInfo> : IMultiTenantStore<TTenantInfo> where TTenantInfo : class, ITenantInfo, new()
+    public class MultiTenantGprcStore<TTenantInfo> :
+        IMultiTenantStore<TTenantInfo>, IForeachableTenantStore<TTenantInfo>
+        where TTenantInfo : class, ITenant, ITenantInfo, new()
     {
         private readonly TenantStore.TenantStoreClient _client;
         private readonly IMemoryCache _cache;
@@ -13,6 +16,48 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
             _client = client;
             _cache = cache;
         }
+
+        public async Task ForeachAsync(Func<TTenantInfo, Task> action,
+            string? query, string? @class,
+            IEnumerable<TenantStatus>? statuses,
+            CancellationToken cancellationToken = default)
+        {
+            var skip = 0;
+            int take = 10;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var tenantResult = await _client.GetAllAsync(new TenantQuery
+                {
+                    Class = @class,
+                    Query = query,
+                    Skip = skip,
+                    Take = take,
+                    Status = string.Join(',', statuses ?? Array.Empty<TenantStatus>())
+                }, deadline: DateTime.UtcNow.AddSeconds(10));
+                if (tenantResult?.Tenants?.Any() ?? false)
+                {
+                    skip += tenantResult.Tenants.Count;
+                    foreach (var tenant in tenantResult.Tenants)
+                    {
+                        var tenantInfo = JsonSerializer.Deserialize<TTenantInfo>(
+                                                       JsonSerializer.Serialize(tenant));
+                        if (tenantInfo != null)
+                        {
+                            await action(tenantInfo);
+                        }
+                    }
+                    if (tenantResult.Tenants.Count < take)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
         public async Task<IEnumerable<TTenantInfo>> GetAllAsync()
         {
             var tenantResult = await _client.GetAllAsync(new TenantQuery { }, deadline: DateTime.UtcNow.AddSeconds(3));
@@ -26,12 +71,13 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<bool> TryAddAsync(TTenantInfo tenantInfo)
         {
+            var tenant = (ITenantInfo)tenantInfo;
             var result = await _client.TryAddAsync(new Grpc.TenantInfo
             {
                 ConnectionString = tenantInfo.ConnectionString,
-                Id = tenantInfo.Id,
-                Identifier = tenantInfo.Identifier,
-                Name = tenantInfo.Name,
+                Id = tenant.Id,
+                Identifier = tenant.Identifier,
+                Name = tenant.Name,
             }, deadline: DateTime.UtcNow.AddSeconds(3));
             return result.Succeeded;
         }
@@ -66,12 +112,13 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<bool> TryUpdateAsync(TTenantInfo tenantInfo)
         {
+            var tenant = (ITenantInfo)tenantInfo;
             var result = await _client.TryUpdateAsync(new Grpc.TenantInfo
             {
                 ConnectionString = tenantInfo.ConnectionString,
-                Id = tenantInfo.Id,
-                Identifier = tenantInfo.Identifier,
-                Name = tenantInfo.Name
+                Id = tenant.Id,
+                Identifier = tenant.Identifier,
+                Name = tenant.Name
             }, deadline: DateTime.UtcNow.AddSeconds(3));
             return result.Succeeded;
         }

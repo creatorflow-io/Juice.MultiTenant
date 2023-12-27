@@ -17,12 +17,13 @@ namespace Juice.MultiTenant.Grpc
         /// <param name="grpcEndpoint"></param>
         /// <returns></returns>
         public static FinbuckleMultiTenantBuilder<TTenantInfo> WithGprcStore<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder, string grpcEndpoint)
-           where TTenantInfo : class, ITenantInfo, new()
+           where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
             builder.Services.AddGrpcClient<TenantStore.TenantStoreClient>(o =>
             {
                 o.Address = new Uri(grpcEndpoint);
             });
+            builder.Services.AddScoped<MultiTenantGprcStore<TTenantInfo>>();
             return builder.WithStore<MultiTenantGprcStore<TTenantInfo>>(ServiceLifetime.Scoped);
         }
 

@@ -1,7 +1,7 @@
 ﻿using System.Net.Mime;
 using Juice.AspNetCore.Mvc.Filters;
-using Juice.MultiTenant.Api.Identity;
 using Juice.MultiTenant.Api.Mvc.Filters;
+using Juice.MultiTenant.Identity;
 using Juice.MultiTenant.Shared.Authorization;
 using Juice.MultiTenant.Shared.Enums;
 using Juice.Services;

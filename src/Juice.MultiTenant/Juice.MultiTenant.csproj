@@ -10,12 +10,14 @@
     <ItemGroup Label="Refs">
         <PackageReference Include="Juice.Extensions.Configuration" Version="$(JuiceRefVersion)" />
         <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.MediatR" Version="$(JuiceRefVersion)" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Juice.MultiTenant.Shared\Juice.MultiTenant.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
         <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
         <PackageReference Include="Finbuckle.MultiTenant" Version="$(FinbuckleVersion)" />
     </ItemGroup>

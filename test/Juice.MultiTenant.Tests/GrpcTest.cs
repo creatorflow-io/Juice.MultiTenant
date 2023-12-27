@@ -8,8 +8,13 @@ using FluentAssertions;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Juice.MultiTenant.Grpc;
+using Juice.MultiTenant.Grpc.Finbuckle;
 using Juice.MultiTenant.Settings.Grpc;
 using Juice.XUnit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -144,6 +149,46 @@ namespace Juice.MultiTenant.Tests
                 _output.WriteLine(reply.Message ?? "");
 
                 reply.Succeeded.Should().BeTrue();
+            }
+        }
+        [IgnoreOnCIFact(DisplayName = "Foreach tenants with gRPC")]
+        public async Task Each_tenantsAsync()
+        {
+            using var host = Host.CreateDefaultBuilder()
+                 .ConfigureAppConfiguration((hostContext, configApp) =>
+                 {
+                     configApp.Sources.Clear();
+                     configApp.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                     configApp.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
+                 })
+                .ConfigureServices((context, services) =>
+                {
+                    var configuration = context.Configuration;
+
+                    services.AddSingleton(provider => _output);
+
+                    services.AddLogging(builder =>
+                    {
+                        builder.ClearProviders()
+                        .AddTestOutputLogger()
+                        .AddConfiguration(configuration.GetSection("Logging"));
+                    });
+
+                    services.AddMemoryCache();
+                    services
+                        .AddMultiTenant()
+                        .WithGprcStore("https://localhost:7045");
+
+                }).Build();
+
+            {
+                using var scope = host.Services.CreateScope();
+                var store = scope.ServiceProvider.GetRequiredService<MultiTenantGprcStore<TenantInfo>>();
+
+                await store.ForeachAsync(async tenant =>
+                {
+                    _output.WriteLine("Tenant identifier: {0}, tenant name: {1}", tenant.Identifier ?? "", tenant.Name ?? "");
+                }, "a", default, default);
             }
         }
 

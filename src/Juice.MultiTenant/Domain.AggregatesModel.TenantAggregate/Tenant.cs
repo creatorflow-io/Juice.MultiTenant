@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 {
-    public class Tenant : DynamicEntity<string>, IAggregrateRoot<INotification>,
+    public class Tenant : DynamicEntity<string>, IAggregateRoot<INotification>, IValidatable,
         ITenant, ITenantInfo
     {
         public string? Identifier { get; set; }
@@ -18,16 +18,23 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 
         [NotMapped]
         public IList<INotification> DomainEvents { get; } = new List<INotification>();
+        [NotMapped]
+        public IList<string> ValidationErrors { get; } = new List<string>();
 
         /// <summary>
         /// You can decide to use userid or username for the tenant owner.
         /// </summary>
         public string? OwnerUser { get; private set; }
 
+        public string? TenantClass { get; private set; }
+
         #region methods
 
         public virtual void Update(string name, string identifier, string? connectionString)
         {
+            this.NotExceededLength(name, LengthConstants.NameLength);
+            this.NotExceededLength(identifier, Constants.TenantIdentifierMaxLength);
+            this.NotExceededLength(connectionString, Constants.ConfigurationValueMaxLength);
             Name = name;
             Identifier = identifier;
             ConnectionString = connectionString;
@@ -201,6 +208,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 
         public virtual void SetOwner(string owner)
         {
+            this.NotExceededLength(owner, Constants.TenantOwnerMaxLength);
             this.AddDomainEvent(new TenantOwnerChangedDomainEvent(Id, Identifier, OwnerUser, owner));
 
             OwnerUser = owner;
@@ -215,6 +223,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 
         public virtual void TransferOwner(string? from, string to)
         {
+            this.NotExceededLength(to, Constants.TenantOwnerMaxLength, "owner");
             if (OwnerUser == from)
             {
                 OwnerUser = to;
@@ -225,6 +234,14 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
                 throw new InvalidOperationException("Only the current owner can transfer ownership.");
             }
         }
+
+        public virtual void UpdateClass(string tenantClass)
+        {
+            this.NotExceededLength(tenantClass, LengthConstants.ShortNameLength);
+            TenantClass = tenantClass;
+            this.AddDomainEvent(new TenantClassChangedDomainEvent(Id, Identifier, tenantClass));
+        }
+
         public override void SetProperty(object? value, [CallerMemberName] string? name = null)
         {
             base.SetProperty(value, name);

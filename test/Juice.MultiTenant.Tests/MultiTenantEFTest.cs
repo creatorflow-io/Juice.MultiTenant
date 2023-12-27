@@ -10,6 +10,7 @@ using Juice.Extensions.Options.Stores;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Juice.MultiTenant.EF;
 using Juice.MultiTenant.EF.Migrations;
+using Juice.MultiTenant.EF.Stores;
 using Juice.Services;
 using Juice.XUnit;
 using Microsoft.EntityFrameworkCore;
@@ -187,5 +188,50 @@ namespace Juice.MultiTenant.Tests
 
         }
 
+        [IgnoreOnCITheory(DisplayName = "Foreach tenants with EF store"), TestPriority(1)]
+        [InlineData("SqlServer")]
+        [InlineData("PostgreSQL")]
+        public async Task Each_tenantsAsync(string provider)
+        {
+            using var host = Host.CreateDefaultBuilder()
+                 .ConfigureAppConfiguration((hostContext, configApp) =>
+                 {
+                     configApp.Sources.Clear();
+                     configApp.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                     configApp.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
+                 })
+                .ConfigureServices((context, services) =>
+                {
+                    var configuration = context.Configuration;
+
+                    services.AddSingleton(provider => _output);
+
+                    services.AddLogging(builder =>
+                    {
+                        builder.ClearProviders()
+                        .AddTestOutputLogger()
+                        .AddConfiguration(configuration.GetSection("Logging"));
+                    });
+
+                    services
+                        .AddMultiTenant()
+                        .WithEFStore(configuration, options =>
+                        {
+                            options.DatabaseProvider = provider;
+                            options.Schema = "App";
+                        });
+
+                }).Build();
+
+            {
+                using var scope = host.Services.CreateScope();
+                var store = scope.ServiceProvider.GetRequiredService<MultiTenantEFCoreStore<TenantInfo>>();
+
+                await store.ForeachAsync(async tenant =>
+                {
+                    _output.WriteLine("Tenant identifier: {0}, tenant name: {1}", tenant.Identifier ?? "", tenant.Name ?? "");
+                }, "a", default, default);
+            }
+        }
     }
 }

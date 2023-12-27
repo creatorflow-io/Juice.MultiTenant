@@ -1,5 +1,4 @@
-﻿using Juice.MultiTenant.Api.Identity;
-using Juice.MultiTenant.Shared.Authorization;
+﻿using Juice.MultiTenant.Shared.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Juice.MultiTenant.Api
@@ -82,12 +81,6 @@ namespace Juice.MultiTenant.Api
                     policy.RequireAssertion(context => true);
                 });
             });
-            return services;
-        }
-
-        public static IServiceCollection AddTenantOwnerResolverDefault(this IServiceCollection services)
-        {
-            services.AddScoped<IOwnerResolver, DefaultOwnerResolver>();
             return services;
         }
     }

@@ -54,14 +54,29 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                 .TenantInfo.AsNoTracking();
             if (!string.IsNullOrEmpty(request.Query))
             {
-                query = query.Where(ti => ti.Name.Contains(request.Query) || ti.Identifier.Contains(request.Query));
+                query = query.Where(ti => ti.Name.Contains(request.Query) || ti.Identifier!.Contains(request.Query));
             }
             if (!string.IsNullOrEmpty(request.Status))
             {
                 var statuses = request.Status.Split(';', ',')
                     .Select(s => Enum.Parse<TenantStatus>(s, true))
                     .ToArray();
-                query = query.Where(ti => statuses.Contains(ti.Status));
+                if (statuses.Any())
+                {
+                    query = query.Where(ti => statuses.Contains(ti.Status));
+                }
+            }
+
+            if (request.Class != null)
+            {
+                if (!string.IsNullOrEmpty(request.Class))
+                {
+                    query = query.Where(t => t.TenantClass == request.Class);
+                }
+                else
+                {
+                    query = query.Where(t => t.TenantClass != null);
+                }
             }
 
             var take = Math.Max(10, Math.Min(50, request.Take));

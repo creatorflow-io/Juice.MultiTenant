@@ -1,4 +1,7 @@
-﻿using Juice.EF.Migrations;
+﻿using Juice.EF.Extensions;
+using Juice.EF.Migrations;
+using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
+using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -76,6 +79,7 @@ namespace Juice.MultiTenant.EF
 
             services.AddDbContext<TenantStoreDbContext>(configure);
 
+            services.AddUnitOfWork<Tenant, TenantStoreDbContext>();
             return services;
         }
 
@@ -156,6 +160,8 @@ namespace Juice.MultiTenant.EF
                        .ReplaceService<IMigrationsAssembly, DbSchemaAwareMigrationAssembly>()
                    ;
                });
+
+            services.AddUnitOfWork<TenantSettings, TenantSettingsDbContext>();
 
             return services;
         }

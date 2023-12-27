@@ -35,6 +35,7 @@ namespace Juice.MultiTenant.Api
             builder.Services.AddMediatR(options =>
             {
                 options.RegisterServicesFromAssemblyContaining<CreateTenantCommand>();
+                options.RegisterServicesFromAssemblyContaining<ITenantSettingsCommand>();
                 options.RegisterServicesFromAssemblyContaining<AssemblySelector>();
             });
 

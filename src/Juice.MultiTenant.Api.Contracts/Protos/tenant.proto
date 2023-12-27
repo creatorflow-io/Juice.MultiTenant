@@ -32,6 +32,7 @@ message TenantQuery{
     string status = 2;
     int32 skip = 3;
     int32 take = 4;
+    google.protobuf.StringValue class = 5; 
 }
 
 message TenantInfo

@@ -17,7 +17,7 @@ namespace Juice.MultiTenant.EF.SqlServer.Migrations.TenantStore
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -70,6 +70,10 @@ namespace Juice.MultiTenant.EF.SqlServer.Migrations.TenantStore
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("TenantClass")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
