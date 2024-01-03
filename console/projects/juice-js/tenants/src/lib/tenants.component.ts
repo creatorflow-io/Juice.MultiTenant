@@ -78,11 +78,12 @@ export class TenantsComponent implements AfterViewInit{
     
     let firstLoad = true;
     this.route.queryParams.subscribe(params =>{
-      console.debug("route.queryParams.subscribe", params);
+      console.debug("route.queryParams.subscribe", params, firstLoad);
       
       if(firstLoad){
         firstLoad = false;
         this.initFormAndTableEvents();
+        return;
       }
       
       var q = params['q'] || "";

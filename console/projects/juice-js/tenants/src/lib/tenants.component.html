@@ -1,33 +1,39 @@
 <div  class="mat-elevation-z2 minimum-density">
-    <form [formGroup]="form" class="table-form">
-        <mat-form-field [style.width.px]="300">
-            <input matInput type="text" placeholder="{{ 'Search' | translate }}" formControlName="filterText" (keyup.enter)="getData()">
-            <button *ngIf="filterText?.value" type="button" matSuffix mat-icon-button aria-label="Clear" (click)="clearFilterText();">
-                <mat-icon>close</mat-icon>
-            </button>
-        </mat-form-field>
-        <mat-form-field [style.width.px]="200">
-            <mat-label>{{ 'Statuses' | translate }}</mat-label>
-            <mat-select formControlName="statuses" multiple [compareWith]="statusCompareFn" placeholder="{{ 'Any status' | translate }}">
-                <mat-select-trigger>
-                    {{statusOptions[statuses?.value?.[0]||-1] || ''}}
-                    <span *ngIf="(statuses?.value?.length || 0) > 1" class="additional-selection">
-                    (+{{(statuses?.value?.length || 0) - 1}} {{statuses?.value?.length === 2 ? 'other' : 'others'}})
-                    </span>
-                </mat-select-trigger>
-                <option class="clear-statuses" (click)="clearStatuses()">{{'Any status' | translate}}</option>
-                <mat-option *ngFor="let s of statusOptions | keyvalue" [value]="s.key">
-                {{s.value}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <div style="flex: 1 auto; text-align: right;">
-            <button mat-button (click)="rootSettings()">
-                <mat-icon>settings</mat-icon>{{'Settings' | translate}}
-            </button>
-            <button type="button" mat-button (click)="add()" color="primary"><mat-icon>add</mat-icon> {{ 'New Organization'}}</button>
+    <div class="controls">
+        <form [formGroup]="form" class="table-form">
+            <mat-form-field [style.width.px]="300">
+                <input matInput type="text" placeholder="{{ 'Search' | translate }}" formControlName="filterText" (keyup.enter)="getData()">
+                <button *ngIf="filterText?.value" type="button" matSuffix mat-icon-button aria-label="Clear" (click)="clearFilterText();">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+            <mat-form-field [style.width.px]="200">
+                <mat-label>{{ 'Statuses' | translate }}</mat-label>
+                <mat-select formControlName="statuses" multiple [compareWith]="statusCompareFn" placeholder="{{ 'Any status' | translate }}">
+                    <mat-select-trigger>
+                        {{statusOptions[statuses?.value?.[0]||-1] || ''}}
+                        <span *ngIf="(statuses?.value?.length || 0) > 1" class="additional-selection">
+                        (+{{(statuses?.value?.length || 0) - 1}} {{statuses?.value?.length === 2 ? 'other' : 'others'}})
+                        </span>
+                    </mat-select-trigger>
+                    <option class="clear-statuses" (click)="clearStatuses()">{{'Any status' | translate}}</option>
+                    <mat-option *ngFor="let s of statusOptions | keyvalue" [value]="s.key">
+                    {{s.value}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            
+        </form>
+        <div class="control-buttons">
+            <div class="control-buttons-container">
+                <button mat-button (click)="rootSettings()">
+                    <mat-icon>settings</mat-icon>{{'Settings' | translate}}
+                </button>
+                <button type="button" mat-button (click)="add()" color="primary"><mat-icon>add</mat-icon> {{ 'New Organization'}}</button>
+            </div>
+            <div class="spacer"></div>
         </div>
-    </form>
+    </div>
     <table mat-table [dataSource]="table.dataSource" matMultiSort (matSortChange)="table.onSortEvent()">
   
       <!--- Note that these columns can be defined in any order.
