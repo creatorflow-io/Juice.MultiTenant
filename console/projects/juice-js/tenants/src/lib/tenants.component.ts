@@ -67,15 +67,9 @@ export class TenantsComponent implements AfterViewInit{
       this.table.dataSource = new MatMultiSortTableDataSource<TenantBasic>(new MatMultiSort(), false);
       
       this.table.displayedColumns = this.displayedColumns;
-      
    }
 
-  ngOnInit(): void{
-    this.form = this.fb.group({
-      filterText: [],
-      statuses: []
-    });
-    
+  initRouteEvents(){
     let firstLoad = true;
     this.route.queryParams.subscribe(params =>{
       console.debug("route.queryParams.subscribe", params, firstLoad);
@@ -83,17 +77,17 @@ export class TenantsComponent implements AfterViewInit{
       if(firstLoad){
         firstLoad = false;
         this.initFormAndTableEvents();
+        this.getData(true);
         return;
       }
       
       var q = params['q'] || "";
       this.filterText?.setValue(q);
-      if(params['statuses']=='any'){
+      if(!params['statuses']){
         this.statuses?.setValue([]);
       }else{
-        this.statuses?.setValue(params['statuses']?
-         Array.isArray(params['statuses']) ? params['statuses'] : [params['statuses']]
-         :[TenantStatus.Active, TenantStatus.PendingApproval, TenantStatus.PendingToActive]);
+        this.statuses?.setValue(
+         Array.isArray(params['statuses']) ? params['statuses'] : [params['statuses']]);
       }
 
       this.table.pageSize = params['pageSize']? Number.parseInt(params['pageSize']): 10;
@@ -111,6 +105,14 @@ export class TenantsComponent implements AfterViewInit{
           }
       }
     });
+  }
+
+  ngOnInit(): void{
+    this.form = this.fb.group({
+      filterText: [],
+      statuses: []
+    });
+    this.initRouteEvents();
   }
 
   initFormAndTableEvents(){
@@ -144,9 +146,7 @@ export class TenantsComponent implements AfterViewInit{
     
     if(!fromRoute){
       var statuses = this.statuses?.value;
-      if(!statuses || statuses.length == 0){
-        statuses = 'any';
-      }
+      
       const tree = this.router.createUrlTree([], { queryParams: { 
           q: q,
           statuses: statuses,
