@@ -3,6 +3,7 @@ using Juice.MultiTenant.Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Juice.MultiTenant.Api.Controllers
 {
@@ -30,11 +31,10 @@ namespace Juice.MultiTenant.Api.Controllers
         [Authorize(Policies.TenantSettingsPolicy)]
         public async Task<ActionResult<IEnumerable<TenantSettingsModel>>> GetAsync(
             [FromServices] ITenantSettingsRepository repository,
-            [FromServices] TenantSettingsDbContext settingsDbContext,
-            [FromServices] ITenant? tenant = null
+            [FromServices] TenantSettingsDbContext settingsDbContext
             )
         {
-
+            var tenant = HttpContext.RequestServices.GetService<ITenant>();
             var rootSettings = await settingsDbContext.TenantSettings
                 .Where(s => string.IsNullOrEmpty(s.TenantId))
                 .ToListAsync(HttpContext.RequestAborted);

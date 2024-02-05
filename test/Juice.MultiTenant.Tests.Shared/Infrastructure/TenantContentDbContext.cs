@@ -47,7 +47,7 @@ namespace Juice.MultiTenant.Tests.Infrastructure
         {
             var provider = _options?.DatabaseProvider;
             var schema = _options?.Schema;
-            var connectionName =
+            var connectionName = _options?.ConnectionName ??
                 provider switch
                 {
                     "PostgreSQL" => "PostgreConnection",
@@ -55,7 +55,8 @@ namespace Juice.MultiTenant.Tests.Infrastructure
                     _ => throw new NotSupportedException($"Unsupported provider: {provider}")
                 }
                 ;
-            var connectionString = _configuration.GetConnectionString(connectionName);
+            var connectionString = TenantInfo?.ConnectionString ??
+                _configuration.GetConnectionString(connectionName);
             switch (provider)
             {
                 case "PostgreSQL":
