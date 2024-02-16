@@ -15,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { TenantSetting } from './shared/models/tenant.setting.model';
 import { TenantConfiguration } from './shared/tenant-configuration';
+import { TenantSettingsComponent } from './tenant-settings/tenant-settings.component';
 
 @Component({
   selector: 'juice-tenants',
@@ -406,7 +407,7 @@ export class TenantsComponent implements AfterViewInit{
   }
 
   settings(id: string){
-    const dialogRef = this.dialog.open(DictBuilderComponent, {
+    const dialogRef = this.dialog.open(TenantSettingsComponent, {
       width: this.options.dialogWidth,
       maxHeight: this.options.dialogMaxHeight,
     });
@@ -419,7 +420,7 @@ export class TenantsComponent implements AfterViewInit{
     this.tenantService.getTenantSettings(id).subscribe({
       next: (settings: TenantSetting[]) => {
         instance.loading = false;
-        instance.models = settings.map(s => new KeyValue(s.key, s.value, s.inherited, s.overridden));
+        instance.setModel(settings.map(s => new KeyValue(s.key, s.value, s.inherited, s.overridden)));
       }, error: (error: any) => {
         this.openSnackBar("Error getting tenant settings!");
         console.debug(error);
@@ -427,7 +428,7 @@ export class TenantsComponent implements AfterViewInit{
     });
 
     instance.saved.subscribe((model: any) => {
-      var settings = instance.models.map(m => new TenantSetting(m.key, m.value, m.inherited));
+      var settings = instance.getModel().map(m => new TenantSetting(m.key, m.value, m.inherited));
       this.tenantService.updateTenantSettings(id, settings).subscribe({
         next: () => {
           this.openSnackBar("Tenant settings was updated!");
@@ -445,7 +446,7 @@ export class TenantsComponent implements AfterViewInit{
   }
 
   rootSettings(){
-    const dialogRef = this.dialog.open(DictBuilderComponent, {
+    const dialogRef = this.dialog.open(TenantSettingsComponent, {
       width: this.options.dialogWidth,
       maxHeight: this.options.dialogMaxHeight,
     });
@@ -458,7 +459,7 @@ export class TenantsComponent implements AfterViewInit{
     this.tenantService.getRootSettings().subscribe({
       next: (settings: TenantSetting[]) => {
         instance.loading = false;
-        instance.models = settings.map(s => new KeyValue(s.key, s.value, false, false));
+        instance.setModel(settings.map(s => new KeyValue(s.key, s.value, false, false)));
       }, error: (error: any) => {
         this.openSnackBar("Error getting root settings!");
         console.debug(error);
@@ -466,7 +467,7 @@ export class TenantsComponent implements AfterViewInit{
     });
 
     instance.saved.subscribe((model: any) => {
-      var settings = instance.models.map(m => new TenantSetting(m.key, m.value, false));
+      var settings = instance.getModel().map(m => new TenantSetting(m.key, m.value, false));
       this.tenantService.updateRootSettings(settings).subscribe({
         next: () => {
           this.openSnackBar("Root settings was updated!");

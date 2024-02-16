@@ -13,6 +13,8 @@ import { TenantUpdateComponent } from './tenant-update/tenant-update.component';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatMultiSortModule } from 'ngx-mat-multi-sort';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { TenantSettingsComponent } from './tenant-settings/tenant-settings.component';
+import { DictBuilderModule } from '@juice-js/dict-builder';
 
 
 @NgModule({
@@ -22,7 +24,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     TenantSummaryComponent,
     TenantCreateComponent,
     TenantUpdateComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    TenantSettingsComponent
   ],
   imports: [
     TranslateModule,
@@ -31,7 +34,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     CommonModule,
     MaterialModule,
     ClipboardModule,
-    MatMultiSortModule
+    MatMultiSortModule,
+    DictBuilderModule
   ],
   exports: [
     TenantsComponent,

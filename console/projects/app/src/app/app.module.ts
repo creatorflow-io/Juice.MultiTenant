@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TranslateModule, MissingTranslationHandler } from '@ngx-translate/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 const {tenantOptions} = environment;
 
@@ -22,6 +23,7 @@ const {tenantOptions} = environment;
     AppRoutingModule,
     TenantsModule.forRoot(tenantOptions),
     TranslateModule.forRoot(),
+    OAuthModule.forRoot(),
     BrowserAnimationsModule,
     MaterialModule
   ],

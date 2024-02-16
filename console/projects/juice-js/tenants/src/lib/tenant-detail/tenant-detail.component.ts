@@ -21,7 +21,11 @@ export class TenantDetailComponent implements OnChanges {
   public loadTenant(identifier: string){
     this.tenantService.getTenant(identifier).subscribe(tenant => {
       this.tenant = tenant;
-      this.properties = JSON.parse(tenant.serializedProperties);
+      let properties = JSON.parse(tenant.serializedProperties);
+      this.properties = {};
+      Object.entries(properties).forEach(([key, value], index)  => {
+        this.properties[key] = typeof value == 'object' ? JSON.stringify(value) : value;
+      })
     });
   }
 

@@ -1,6 +1,6 @@
-<div  class="mat-elevation-z2 minimum-density">
+<div  class="mat-elevation-z2 density-compact">
     <div class="controls">
-        <form [formGroup]="form" class="table-form">
+        <form [formGroup]="form" class="table-form ">
             <mat-form-field [style.width.px]="300">
                 <input matInput type="text" placeholder="{{ 'Search' | translate }}" formControlName="filterText" (keyup.enter)="getData()">
                 <button *ngIf="filterText?.value" type="button" matSuffix mat-icon-button aria-label="Clear" (click)="clearFilterText();">
@@ -11,12 +11,12 @@
                 <mat-label>{{ 'Statuses' | translate }}</mat-label>
                 <mat-select formControlName="statuses" multiple [compareWith]="statusCompareFn" placeholder="{{ 'Any status' | translate }}">
                     <mat-select-trigger>
-                        {{statusOptions[statuses?.value?.[0]||-1] || ''}}
+                        {{statusOptions[statuses?.value?.[0]||-1] || ('Any status' | translate)}}
                         <span *ngIf="(statuses?.value?.length || 0) > 1" class="additional-selection">
                         (+{{(statuses?.value?.length || 0) - 1}} {{statuses?.value?.length === 2 ? 'other' : 'others'}})
                         </span>
                     </mat-select-trigger>
-                    <option class="clear-statuses" (click)="clearStatuses()">{{'Any status' | translate}}</option>
+                    <option class="clear-statuses mat-mdc-option" (click)="clearStatuses()">{{'Any status' | translate}}</option>
                     <mat-option *ngFor="let s of statusOptions | keyvalue" [value]="s.key">
                     {{s.value}}
                     </mat-option>

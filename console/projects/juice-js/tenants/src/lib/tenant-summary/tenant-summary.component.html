@@ -1,28 +1,26 @@
-<mat-card>
-    <mat-card-header>
-        <mat-card-title>{{ 'Organization summary' | translate }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <div *ngIf="tenant">
-            <h3>{{ tenant.name }}</h3>
+<h2 mat-dialog-title>{{ 'Organization summary' | translate }}</h2>
 
-            <mat-list>
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Unique Id' | translate }}</span>
-                    <span matListItemLine>{{ tenant.id }}</span>
-                </mat-list-item>
+<mat-dialog-content *ngIf="tenant">
+    <h3>{{ tenant.name }}</h3>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Identifier' | translate }}</span>
-                    <span matListItemLine>{{ tenant.identifier }}</span>
-                </mat-list-item>
+    <mat-list>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Unique Id' | translate }}</span>
+            <span matListItemLine>{{ tenant.id }}</span>
+        </mat-list-item>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Status' | translate }}</span>
-                    <span matListItemLine>{{ tenant.status }}</span>
-                </mat-list-item>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Identifier' | translate }}</span>
+            <span matListItemLine>{{ tenant.identifier }}</span>
+        </mat-list-item>
 
-            </mat-list>
-        </div>
-    </mat-card-content>
-</mat-card>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Status' | translate }}</span>
+            <span matListItemLine>{{ tenant.status }}</span>
+        </mat-list-item>
+
+    </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close><mat-icon>close</mat-icon>{{ 'Close' | translate }}</button>
+</mat-dialog-actions>

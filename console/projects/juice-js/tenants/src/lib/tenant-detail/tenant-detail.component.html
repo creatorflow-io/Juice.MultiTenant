@@ -1,50 +1,47 @@
-<mat-card>
-    <mat-card-header>
-        <mat-card-title>{{ 'Organization information' | translate }}</mat-card-title>
-    </mat-card-header>
+<h2 mat-dialog-title>{{ 'Organization information' | translate }}</h2>
 
-    <mat-card-content>
-        <div *ngIf="tenant">
-            <h3>{{ tenant.name }}</h3>
+<mat-dialog-content *ngIf="tenant">
+    <h3>{{ tenant.name }}</h3>
 
-            <mat-list>
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Unique Id' | translate }}</span>
-                    <span matListItemLine>{{ tenant.id }} 
-                        <button style="margin-left: 6px;" mat-icon-button [cdkCopyToClipboard]="tenant.id" 
-                        [attr.aria-label]="'Copy' | translate">
-                            <mat-icon>content_copy</mat-icon>
-                        </button>
-                    </span>
-                </mat-list-item>
+    <mat-list>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Unique Id' | translate }}</span>
+            <span matListItemLine>{{ tenant.id }} 
+                <button style="margin-left: 6px;" mat-icon-button [cdkCopyToClipboard]="tenant.id" 
+                [attr.aria-label]="'Copy' | translate">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+            </span>
+        </mat-list-item>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Identifier' | translate }}</span>
-                    <span matListItemLine>{{ tenant.identifier }}</span>
-                </mat-list-item>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Identifier' | translate }}</span>
+            <span matListItemLine>{{ tenant.identifier }}</span>
+        </mat-list-item>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Status' | translate }}</span>
-                    <span matListItemLine [class]="statusHelper.getColor(tenant.status)">{{ tenant.status }}</span>
-                </mat-list-item>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Status' | translate }}</span>
+            <span matListItemLine [class]="statusHelper.getColor(tenant.status)">{{ tenant.status }}</span>
+        </mat-list-item>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'ConnectionString' | translate }}</span>
-                    <span matListItemLine>{{ tenant.connectionString }}</span>
-                </mat-list-item>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'ConnectionString' | translate }}</span>
+            <span matListItemLine>{{ tenant.connectionString }}</span>
+        </mat-list-item>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Owner' | translate }}</span>
-                    <span matListItemLine>{{ tenant.ownerName }}</span>
-                </mat-list-item>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Owner' | translate }}</span>
+            <span matListItemLine>{{ tenant.ownerName }}</span>
+        </mat-list-item>
 
-                <mat-list-item>
-                    <span matListItemTitle>{{ 'Properties' | translate }}</span>
-                    <span matListItemLine *ngFor="let property of properties | keyvalue">
-                        {{ property.key }}: {{ property.value }}
-                    </span>
-                </mat-list-item>
-            </mat-list>
-        </div>
-    </mat-card-content>
-</mat-card>
+        <mat-list-item>
+            <span matListItemTitle>{{ 'Properties' | translate }}</span>
+            <span matListItemLine *ngFor="let property of properties | keyvalue">
+                {{ property.key }}: {{ property.value }}
+            </span>
+        </mat-list-item>
+    </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>{{ 'Close' | translate }}</button>
+</mat-dialog-actions>

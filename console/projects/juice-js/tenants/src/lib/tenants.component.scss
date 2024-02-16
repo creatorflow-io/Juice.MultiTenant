@@ -1,12 +1,10 @@
 :host{
     display: block;
 }
+
 mat-form-field{
     width: 100%;
 }
-.mat-mdc-button-base {
-    margin: 0 8px 8px 0;
-  }
 
 .additional-selection{
     opacity: 0.75;
@@ -19,33 +17,27 @@ mat-form-field{
     cursor: pointer;
 }
 
-.button-cell{
+.button-cell, .actions-cell{
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding-top: 2px;
     padding-bottom: 2px;
-    button{
-        margin-top: 6px;
-        height: 28px;
-    }
 }
-
+.button-cell{
+    justify-content: space-between;
+}
 .actions-cell{
-    display: flex;
     justify-content: center;
-    align-items: center;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    button{
-        height: 28px;
+    .mdc-button{
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 }
 
 .table-form{
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     mat-card-actions{
         flex: 1 1 auto;
     }

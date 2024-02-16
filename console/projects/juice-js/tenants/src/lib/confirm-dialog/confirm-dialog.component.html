@@ -1,10 +1,8 @@
-<mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ confirmTitle | translate }}</mat-card-title>
-      <mat-card-subtitle [class]="confirmMessageClasses">{{ confirmMessage | translate }}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-actions align="end">
-      <button mat-button (click)="confirm()" [color]="confirmButtonColor">{{ confirmButtonText | translate }}</button>
-      <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
-    </mat-card-actions>
-  </mat-card>
+<h2 mat-dialog-title>{{ confirmTitle | translate }}</h2>
+<mat-dialog-content>
+  <p [class]="confirmMessageClasses">{{ confirmMessage | translate }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="confirm()" [color]="confirmButtonColor">{{ confirmButtonText | translate }}</button>
+  <button mat-raised-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
+</mat-dialog-actions>

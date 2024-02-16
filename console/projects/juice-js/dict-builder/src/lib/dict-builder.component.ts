@@ -91,17 +91,12 @@ export class KeyErrorStateMatcher implements ErrorStateMatcher {
 })
 
 export class DictBuilderComponent implements OnInit{
-  @Input() title = "Settings";
   @Input() model : any = {};
   @Input() parent: any = {};
 
   @Input() type: ModelType = ModelType.StandardObject;
 
   @Output() onchange = new EventEmitter<SimpleChange>();
-  
-  @Output() saved = new EventEmitter<any>();
-  
-  @Output() cancelled = new EventEmitter();
 
   models: KeyValue[] = new Array<KeyValue>();
 
@@ -208,12 +203,8 @@ export class DictBuilderComponent implements OnInit{
        new KeyValue(validKey, this.models[index].value), false));
   }
 
-  save() {
+  save(): any {
     this.model = this.objectFromKeyValueArray(this.models);
-    this.saved.emit(this.model);
-  }
-  
-  cancel(){
-    this.cancelled.emit();
+    return this.model;
   }
 }

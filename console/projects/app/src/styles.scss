@@ -1,10 +1,12 @@
 
+/* You can add global styles to this file, and also import other style files */
+
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use '@angular/material' as mat;
-@use '@material/theme/theme-color' as mdc-theme-color;
-@use '../../../dist/juice-js/tenants/theming/tenants.component-theme' as tenants;
 
+@use '@angular/material' as mat;
+@use '@juice-js/layout' as layout;
+@use '../../../dist/juice-js/tenants/theming/tenants.component-theme' as tenants;
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -16,14 +18,22 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $app-primary: mat.define-palette(mat.$indigo-palette);
-$app-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-
-// The warn palette is optional (defaults to red).
+$app-primary-light: mat.define-palette(mat.$indigo-palette, A200);
+$app-accent: mat.define-palette(mat.$pink-palette);
 $app-warn: mat.define-palette(mat.$red-palette);
 
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
-$app-theme: mat.define-light-theme((
+// Define a light theme
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: $app-primary-light,
+    accent: $app-accent,
+    warn: $app-warn,
+  ),
+   // Only include `typography` and `density` in the default theme.
+   typography: mat.define-typography-config(),
+   density: -1//'minimum', // -1 -2 -3
+));
+$dark-theme: mat.define-dark-theme((
   color: (
     primary: $app-primary,
     accent: $app-accent,
@@ -31,27 +41,18 @@ $app-theme: mat.define-light-theme((
   )
 ));
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.all-component-themes($app-theme);
+@include mat.all-component-themes($light-theme);
+@include layout.layout-component-themes($light-theme);
+@include tenants.component-themes($light-theme);
 
-@include tenants.color($app-theme);
+.dark {
+  // Define a dark theme
+  @include mat.all-component-colors($dark-theme);
+  @include layout.layout-component-colors($dark-theme);
+  @include tenants.component-themes($dark-theme);
+  --mdc-filled-text-field-focus-label-text-color: #8c9eff !important;
+}
 
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-.minimum-density {
-  
-  $app-theme: mat.define-light-theme((
-    density: 'minimum',
-    typography: mat.define-typography-config(),
-  ));
-  @include mat.all-component-themes($app-theme);
-  .mat-form-field-hide-placeholder .mat-mdc-select-placeholder{
-    color: rgba(mdc-theme-color.prop-value(on-surface), 0.6);
-    -webkit-text-fill-color: rgba(mdc-theme-color.prop-value(on-surface), 0.6);
-  }
+.density-compact {
+    @include mat.all-component-densities(-2);
 }

@@ -1,53 +1,28 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@mixin color($theme){
+@mixin component-themes($theme){
     // Get the color config from the theme.
     $color-config: mat.get-color-config($theme);
     // Get the primary color palette from the color-config.
     $primary-palette: map.get($color-config, 'primary');
     $accent-palette: map.get($color-config, 'accent');
     $warn-palette: map.get($color-config, 'warn');
+
     $green-palette: mat.define-palette(mat.$green-palette, 500, 300, 700);
-    .color-primary {
-        color: mat.get-color-from-palette($primary-palette, 'darker') !important;
-        .mdc-list-item__primary-text{
-            color: mat.get-color-from-palette($primary-palette, 'darker') !important;
-        }
-        &.mat-mdc-menu-item .mat-icon-no-color{
-            color: mat.get-color-from-palette($primary-palette, 'darker') !important;
-        }
-    }
+    $is-dark-theme: map.get($theme, is-dark);
 
-    .color-accent {
-        color: mat.get-color-from-palette($accent-palette, 'darker') !important;
-        .mdc-list-item__primary-text{
-            color: mat.get-color-from-palette($accent-palette, 'darker') !important;
-        }
-        &.mat-mdc-menu-item .mat-icon-no-color{
-            color: mat.get-color-from-palette($accent-palette, 'darker') !important;
-        }
-    }
-    
-    .color-warn {
-        color: mat.get-color-from-palette($warn-palette, 'darker') !important;
-        .mdc-list-item__primary-text{
-            color: mat.get-color-from-palette($warn-palette, 'darker') !important;
-        }
-        &.mat-mdc-menu-item .mat-icon-no-color{
-            color: mat.get-color-from-palette($warn-palette, 'darker') !important;
-        }
-    }    
+    $color-primary: if($is-dark-theme, mat.get-color-from-palette($primary-palette, 100), mat.get-color-from-palette($primary-palette, 'darker'));
+    $primary-contrast: if($is-dark-theme, mat.get-color-from-palette($primary-palette, 400-contrast), mat.get-color-from-palette($primary-palette, 100-contrast));
+    $color-accent: if($is-dark-theme,  mat.get-color-from-palette($accent-palette, 200), mat.get-color-from-palette($accent-palette, 'darker'));
+    $color-warn: if($is-dark-theme, mat.get-color-from-palette($warn-palette), mat.get-color-from-palette($warn-palette, 'darker'));
+    $color-success: mat.get-color-from-palette($green-palette, 400);
 
-    .color-success, 
-    .mat-success.mat-mdc-button:not(:disabled){
-        color: mat.get-color-from-palette($green-palette, 'darker') !important;
-        .mdc-list-item__primary-text{
-            color: mat.get-color-from-palette($green-palette, 'darker') !important;
-        }
-        &.mat-mdc-menu-item .mat-icon-no-color{
-            color: mat.get-color-from-palette($green-palette, 'darker') !important;
-        }
+    .inherited{
+        color: $primary-contrast;
+    }
+    .overridden{
+        color: $color-accent;
     }
 
     .bg-accent {
@@ -60,5 +35,30 @@
 
     .bg-success{
         background-color: mat.get-color-from-palette($green-palette, 'lighter') !important;
+    }
+
+    .color-warn {
+        color: $color-warn !important;
+        .mdc-list-item__primary-text,
+        &.mat-mdc-menu-item .mat-icon-no-color{
+            color: $color-warn !important;
+        }
+    }    
+
+    .color-success{
+        color: $color-success !important;
+        .mdc-list-item__primary-text,
+        &.mat-mdc-menu-item .mat-icon-no-color{
+            color: $color-success !important;
+        }
+    }
+
+    .mat-success.mat-mdc-raised-button:not(:disabled){
+        background-color: $color-success !important;
+    }
+
+    .mat-form-field-hide-placeholder .mat-mdc-select-placeholder{
+        color: var(--mat-select-placeholder-text-color);
+        -webkit-text-fill-color: var(--mat-select-placeholder-text-color);
     }
 }
