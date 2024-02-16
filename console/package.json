@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.12",
+    "@angular/cli": "^16.2.12",
     "@juice-js/semantic-release-npm": "2.0.3-next.2",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.5.0",
