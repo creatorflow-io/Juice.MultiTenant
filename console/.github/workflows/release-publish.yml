@@ -24,6 +24,8 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - name: npm dependencies
+        run: npm install
       - run: npm run build @juice-js/dict-builder --if-present
       - run: npm run build @juice-js/tenants --if-present
       - run: npm test -- --watch=false --browsers=ChromeHeadless
