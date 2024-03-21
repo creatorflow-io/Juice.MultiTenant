@@ -66,7 +66,7 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     //    authTenant == null // root tenant
     //    && (principal?.Identity?.IsAuthenticated ?? false) // authenticated
     //    && principal.IsInRole("admin"))
-    .WithPerTenantAuthenticationConventions(crossTenantAuthorize: null)
+    .WithPerTenantAuthenticationConventions(crossTenantAuthorize: null, configOidc: null)
     .WithRemoteAuthenticationCallbackStrategy()
     .WithRouteStrategy()
     ;
