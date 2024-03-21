@@ -37,7 +37,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Juice.MultiTenant.Tests.Shared", "test\Juice.MultiTenant.Tests.Shared\Juice.MultiTenant.Tests.Shared.csproj", "{9B67239E-5674-467F-96D0-8A8E7BEAA10C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.MultiTenant.Tests.Shared", "test\Juice.MultiTenant.Tests.Shared\Juice.MultiTenant.Tests.Shared.csproj", "{9B67239E-5674-467F-96D0-8A8E7BEAA10C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Juice.MultiTenant.AspNetCore.SwaggerGen", "src\Juice.MultiTenant.AspNetCore.SwaggerGen\Juice.MultiTenant.AspNetCore.SwaggerGen.csproj", "{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,10 @@ Global
 		{9B67239E-5674-467F-96D0-8A8E7BEAA10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B67239E-5674-467F-96D0-8A8E7BEAA10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B67239E-5674-467F-96D0-8A8E7BEAA10C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +121,7 @@ Global
 		{17D63EE8-ECF6-4B16-8F2D-FDD9EA2CCBAA} = {6C7DB128-32D1-47A2-8A1D-48CB2095A253}
 		{3E98C072-699A-4A5C-B20C-F41BA6F544D1} = {6C7DB128-32D1-47A2-8A1D-48CB2095A253}
 		{9B67239E-5674-467F-96D0-8A8E7BEAA10C} = {6C7DB128-32D1-47A2-8A1D-48CB2095A253}
+		{52CCC84D-6727-40ED-B86F-4CD03A9BB67B} = {154FC320-0196-4266-992A-6DEA77499C33}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B46EA2A-77F3-47BC-8194-8ED3ECD30038}

@@ -80,6 +80,11 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     }).WithBasePathStrategy(options => options.RebaseAspNetCorePathBase = true)
     .WithHeaderStrategy()
     .WithRouteStrategy()
+    .WithPerTenantOptions<JwtBearerOptions>((options, tc) =>
+    {
+        var authority = builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>();
+        options.Authority = GetAuthority(authority, tc);
+    })
     ;
 
     builder.Services.AddTenantIntegrationEventSelfHandlers<Tenant>();
@@ -120,7 +125,7 @@ static void ConfigureSecurity(WebApplicationBuilder builder)
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
         {
-            options.Authority = builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>();
+            options.Authority = GetAuthority(builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>(), default);
             options.Audience = builder.Configuration.GetSection("OpenIdConnect:Audience").Get<string?>();
             options.RequireHttpsMetadata = false;
         });
@@ -159,8 +164,10 @@ static void ConfigureSwagger(WebApplicationBuilder builder)
     });
 
     builder.Services.ConfigureSwaggerApiOptions(builder.Configuration.GetSection("Api"));
-    builder.Services.AddSwaggerGen(c =>
+
+    builder.Services.AddPerTenantSwaggerGen<ITenant>((c, tc) =>
     {
+        var authority = GetAuthority(builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>(), tc);
         c.IgnoreObsoleteActions();
 
         c.IgnoreObsoleteProperties();
@@ -178,8 +185,8 @@ static void ConfigureSwagger(WebApplicationBuilder builder)
             {
                 AuthorizationCode = new OpenApiOAuthFlow
                 {
-                    AuthorizationUrl = new Uri(builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>() + "/connect/authorize"),
-                    TokenUrl = new Uri(builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>() + "/connect/token"),
+                    AuthorizationUrl = new Uri(authority + "/connect/authorize"),
+                    TokenUrl = new Uri(authority + "/connect/token"),
                     Scopes = new Dictionary<string, string>
                     {
                         { "openid", "OpenId" },
@@ -194,12 +201,7 @@ static void ConfigureSwagger(WebApplicationBuilder builder)
         c.OperationFilter<AuthorizeCheckOperationFilter>();
         c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
         c.DocumentFilter<TenantDocsFilter>();
-    });
 
-    builder.Services.AddSwaggerGenNewtonsoftSupport();
-
-    builder.Services.ConfigureSwaggerGen(c =>
-    {
         c.SwaggerDoc("v1", new OpenApiInfo
         {
             Version = "v1",
@@ -217,6 +219,8 @@ static void ConfigureSwagger(WebApplicationBuilder builder)
         c.IncludeReferencedXmlComments();
     });
 
+    builder.Services.AddSwaggerGenNewtonsoftSupport();
+
 }
 
 static void UseTenantSwagger(WebApplication app)
@@ -233,7 +237,11 @@ static void UseTenantSwagger(WebApplication app)
         c.OAuthUsePkce();
     });
 }
-
+static string GetAuthority(string configuredAuthority, ITenant? tenant)
+{
+    return configuredAuthority
+        .Replace('/' + Constants.TenantToken, !string.IsNullOrEmpty(tenant?.Identifier) ? '/' + tenant.Identifier : "");
+}
 
 
 

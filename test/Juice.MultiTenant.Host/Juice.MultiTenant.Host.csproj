@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Juice.MultiTenant.Api\Juice.MultiTenant.Api.csproj" />
+    <ProjectReference Include="..\..\src\Juice.MultiTenant.AspNetCore.SwaggerGen\Juice.MultiTenant.AspNetCore.SwaggerGen.csproj" />
   </ItemGroup>
   
   <ItemGroup>

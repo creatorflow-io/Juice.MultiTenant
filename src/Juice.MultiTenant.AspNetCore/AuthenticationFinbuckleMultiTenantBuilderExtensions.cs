@@ -15,6 +15,7 @@ namespace Juice.MultiTenant.AspNetCore
 
 
         /// <summary>
+        /// Configure per-tenant cookie authentication services.
         /// Override the default behavior of the <see cref="DependencyInjection.FinbuckleMultiTenantBuilderExtensions.WithPerTenantAuthenticationConventions"/> to use dynamic properties of the tenant.
         /// </summary>
         /// <typeparam name="TTenantInfo"></typeparam>
@@ -23,7 +24,8 @@ namespace Juice.MultiTenant.AspNetCore
         /// <returns></returns>
         public static FinbuckleMultiTenantBuilder<TTenantInfo> WithPerTenantAuthenticationConventions<TTenantInfo>(
             this FinbuckleMultiTenantBuilder<TTenantInfo> builder,
-            CrossTenantAuthorize? crossTenantAuthorize
+            CrossTenantAuthorize? crossTenantAuthorize,
+            Action<OpenIdConnectOptions, TTenantInfo>? configOidc
             )
             where TTenantInfo : class, IDynamic, ITenantInfo, new()
         {
@@ -90,6 +92,11 @@ namespace Juice.MultiTenant.AspNetCore
 
                 if (GetPropertyWithValidValue(tc, "OpenIdConnectClientSecret") is string clientSecret)
                     options.ClientSecret = clientSecret.Replace(Constants.TenantToken, tc.Identifier);
+
+                if(configOidc != null)
+                {
+                    configOidc(options, tc);
+                }
             });
 
             builder.WithPerTenantOptions<AuthenticationOptions>((options, tc) =>
@@ -105,6 +112,5 @@ namespace Juice.MultiTenant.AspNetCore
                 return (entity as IDynamic)?.GetProperty<string?>(() => default, propertyName);
             }
         }
-
     }
 }
