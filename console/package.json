@@ -3,7 +3,9 @@
   "version": "1.1.0-alpha.4",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4200 --ssl --ssl-cert $env:AppData\\ASP.NET\\Https\\aspnetapp.crt --ssl-key $env:AppData\\ASP.NET\\Https\\aspnetapp-decrypted.key",
+    "start": "run-script-os",
+    "start:windows": "ng serve --port 4200 --ssl --ssl-cert %APPDATA%\\ASP.NET\\https\\aspnetapp.crt --ssl-key %APPDATA%\\ASP.NET\\https\\aspnetapp-decrypted.key",
+    "start:default": "ng serve --port 4200 --ssl --ssl-cert $HOME/.aspnet/https/aspnetapp.crt --ssl-key $HOME/.aspnet/https/aspnetapp-decrypted.key",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -19,14 +21,14 @@
     "@angular/platform-browser": "^16.2.12",
     "@angular/platform-browser-dynamic": "^16.2.12",
     "@angular/router": "^16.2.12",
+    "@juice-js/auth": "1.0.0-alpha.6",
+    "@juice-js/layout": "1.0.0-alpha.6",
     "@ngx-translate/core": "^14.0.0",
     "angular-oauth2-oidc": "^15.0.1",
-    "@juice-js/layout": "1.0.0-alpha.6",
-    "@juice-js/auth": "1.0.0-alpha.6",
+    "ngx-mat-multi-sort": "16.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.0",
-    "ngx-mat-multi-sort": "16.0.2"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.12",
@@ -40,6 +42,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "ng-packagr": "^16.0.0",
+    "run-script-os": "^1.1.6",
     "semantic-release": "^22.0.5",
     "typescript": "~4.9.4"
   },
