@@ -3,7 +3,7 @@ using Juice.Domain;
 
 namespace Juice.MultiTenant.Tests.Domain
 {
-    public class TenantContent : DynamicEntity<Guid>
+    public class TenantContent : DynamicEntity<Guid>, IModificationInfo
     {
         public TenantContent(string code, string name)
         {
@@ -15,5 +15,7 @@ namespace Juice.MultiTenant.Tests.Domain
         public string TenantId { get; private set; }
 
         public DateTimeOffset? ModifiedDate { get; protected set; }
+
+        public string? ModifiedUser { get; protected set; }
     }
 }
