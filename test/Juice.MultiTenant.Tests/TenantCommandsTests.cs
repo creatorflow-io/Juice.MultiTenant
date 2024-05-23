@@ -56,7 +56,7 @@ namespace Juice.MultiTenant.Tests
 
                 // Register DbContext class
 
-                services.AddRequestManager(configuration, options =>
+                services.AddEFMediatorRequestManager(configuration, options =>
                 {
                     options.ConnectionName = provider switch
                     {
@@ -127,7 +127,7 @@ namespace Juice.MultiTenant.Tests
 
                 // Register DbContext class
 
-                services.AddRequestManager(configuration, options =>
+                services.AddEFMediatorRequestManager(configuration, options =>
                 {
                     options.ConnectionName = provider switch
                     {

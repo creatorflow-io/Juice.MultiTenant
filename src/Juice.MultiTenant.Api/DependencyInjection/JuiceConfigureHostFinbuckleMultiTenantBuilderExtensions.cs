@@ -1,9 +1,6 @@
 ﻿using Finbuckle.MultiTenant;
 using Juice.EF;
-using Juice.EventBus.IntegrationEventLog.EF;
-using Juice.Integrations;
 using Juice.Integrations.MediatR;
-using Juice.MediatR.RequestManager.EF;
 using Juice.MultiTenant.Api.Behaviors.DependencyInjection;
 using Juice.Services;
 using Microsoft.Extensions.Configuration;
@@ -60,7 +57,7 @@ namespace Juice.MultiTenant.Api
 
             builder.Services.AddTenantSettingsDbContext(configuration, configureTenantDb);
 
-            builder.Services.AddRequestManager(configuration, configureTenantDb);
+            builder.Services.AddEFMediatorRequestManager(configuration, configureTenantDb);
 
             builder.Services.AddHttpContextAccessor();
 
