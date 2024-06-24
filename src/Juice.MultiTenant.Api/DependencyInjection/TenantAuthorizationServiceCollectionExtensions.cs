@@ -1,5 +1,6 @@
 ﻿using Juice.MultiTenant.Shared.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Web;
 
 namespace Juice.MultiTenant.Api
 {
@@ -25,6 +26,7 @@ namespace Juice.MultiTenant.Api
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireRole("admin");
+                    //policy.RequireScope("tenants-api");
                 });
 
                 options.AddPolicy(Policies.TenantCreatePolicy, policy =>

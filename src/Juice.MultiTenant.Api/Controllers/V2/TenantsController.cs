@@ -1,5 +1,6 @@
 ﻿using Juice.AspNetCore.Models;
 using Juice.AspNetCore.Mvc.Filters;
+using Juice.Extensions;
 using Juice.MultiTenant.Shared.Authorization;
 using Juice.MultiTenant.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -31,8 +32,8 @@ namespace Juice.MultiTenant.Api.Controllers.V2
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policies.TenantAdminPolicy)]
-        public async Task<ActionResult<TableResult<TenantBasicModel>>> ListAsync([FromServices] TenantStoreDbContext dbContext,
-           [FromQuery] TableQuery request, [FromQuery] TenantStatus[] statuses)
+        public async Task<ActionResult<DatasourceResult<TenantBasicModel>>> ListAsync([FromServices] TenantStoreDbContext dbContext,
+           [FromQuery] DatasourceRequest request, [FromQuery] TenantStatus[] statuses)
         {
 
             request.Standardizing();
@@ -65,15 +66,14 @@ namespace Juice.MultiTenant.Api.Controllers.V2
 
             var count = await query.CountAsync();
 
-            var result = await request.ToTableResultAsync(
+            var result = await 
                 query.Select(ti => new TenantBasicModel
                 {
                     Id = ti.Id,
                     Name = ti.Name,
                     Identifier = ti.Identifier,
                     Status = ti.Status
-                }), HttpContext.RequestAborted
-                );
+                }).ToDatasourceResultAsync(request, HttpContext.RequestAborted);
 
             return Ok(result);
         }

@@ -1,5 +1,4 @@
 ﻿using Juice.AspNetCore.Mvc.Formatters;
-using Juice.EventBus.RabbitMQ;
 using Juice.Extensions.Swagger;
 using Juice.MultiTenant;
 using Juice.MultiTenant.Api;
@@ -7,6 +6,7 @@ using Juice.MultiTenant.Api.Grpc.Services;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -130,7 +130,8 @@ static void ConfigureSecurity(WebApplicationBuilder builder)
             options.RequireHttpsMetadata = false;
         });
 
-    builder.Services.AddTenantAuthorizationTest();
+    builder.Services.AddTenantAuthorizationDefault();
+
 }
 
 static void ConfigureOrigins(WebApplicationBuilder builder)
@@ -162,8 +163,6 @@ static void ConfigureSwagger(WebApplicationBuilder builder)
         setup.GroupNameFormat = "'v'VVV";
         setup.SubstituteApiVersionInUrl = true;
     });
-
-    builder.Services.ConfigureSwaggerApiOptions(builder.Configuration.GetSection("Api"));
 
     builder.Services.AddPerTenantSwaggerGen<ITenant>((c, tc) =>
     {
@@ -240,7 +239,7 @@ static void UseTenantSwagger(WebApplication app)
 static string GetAuthority(string configuredAuthority, ITenant? tenant)
 {
     return configuredAuthority
-        .Replace('/' + Constants.TenantToken, !string.IsNullOrEmpty(tenant?.Identifier) ? '/' + tenant.Identifier : "");
+        .Replace('/' + Juice.MultiTenant.Constants.TenantToken, !string.IsNullOrEmpty(tenant?.Identifier) ? '/' + tenant.Identifier : "");
 }
 
 

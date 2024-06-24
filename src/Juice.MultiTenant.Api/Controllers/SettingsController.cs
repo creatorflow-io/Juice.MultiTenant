@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Web.Resource;
 
 namespace Juice.MultiTenant.Api.Controllers
 {
@@ -23,7 +24,6 @@ namespace Juice.MultiTenant.Api.Controllers
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="settingsDbContext"></param>
-        /// <param name="tenant"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
