@@ -30,6 +30,7 @@
         <PackageReference Include="Juice.MediatR.RequestManager.EF.PostgreSQL" Version="$(JuiceRefVersion)" />
         <PackageReference Include="Juice.MediatR.RequestManager.EF.SqlServer" Version="$(JuiceRefVersion)" />
         <PackageReference Include="Juice.XUnit" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.MultiTenant.TestHelper" Version="$(JuiceRefVersion)" />
     </ItemGroup>
 
     <ItemGroup>
