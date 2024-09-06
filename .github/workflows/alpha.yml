@@ -14,5 +14,4 @@ jobs:
     uses: creatorflow-io/shared-workflows/.github/workflows/shared-pack.yml@master
     with:
        Stage: alpha
-       JuiceRefVersion: 7.0.4
     secrets: inherit

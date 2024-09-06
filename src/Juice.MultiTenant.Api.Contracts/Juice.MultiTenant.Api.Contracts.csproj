@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup Label="refs">
-        <PackageReference Include="Juice.EventBus" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.EventBus" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

@@ -8,9 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup Label="refs">
-        <PackageReference Include="Juice.EF.MultiTenant" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.Extensions.Configuration" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.EF.MultiTenant" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Configuration" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

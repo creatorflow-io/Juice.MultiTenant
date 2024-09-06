@@ -8,9 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup Label="Refs">
-        <PackageReference Include="Juice.Extensions.Configuration" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.MediatR" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.Extensions.Configuration" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.MediatR" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

@@ -12,12 +12,12 @@
   </ItemGroup>
   
   <ItemGroup Label="refs">
-      <PackageReference Include="Juice.AspNetCore" Version="$(JuiceRefVersion)" />
-      <PackageReference Include="Juice.EventBus.IntegrationEventLog.EF.PostgreSQL" Version="$(JuiceRefVersion)" />
-      <PackageReference Include="Juice.EventBus.IntegrationEventLog.EF.SqlServer" Version="$(JuiceRefVersion)" />
-      <PackageReference Include="Juice.EventBus.RabbitMQ" Version="$(JuiceRefVersion)" />
-      <PackageReference Include="Juice.MediatR.RequestManager.EF.PostgreSQL" Version="$(JuiceRefVersion)" />
-      <PackageReference Include="Juice.MediatR.RequestManager.EF.SqlServer" Version="$(JuiceRefVersion)" />
+      <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)" />
+      <PackageReference Include="Juice.EventBus.IntegrationEventLog.EF.PostgreSQL" Version="$(JuiceVersion)" />
+      <PackageReference Include="Juice.EventBus.IntegrationEventLog.EF.SqlServer" Version="$(JuiceVersion)" />
+      <PackageReference Include="Juice.EventBus.RabbitMQ" Version="$(JuiceVersion)" />
+      <PackageReference Include="Juice.MediatR.RequestManager.EF.PostgreSQL" Version="$(JuiceVersion)" />
+      <PackageReference Include="Juice.MediatR.RequestManager.EF.SqlServer" Version="$(JuiceVersion)" />
   </ItemGroup>
 
   <ItemGroup>
