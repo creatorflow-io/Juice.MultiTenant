@@ -1,4 +1,5 @@
 ﻿using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.Extensions.Configuration;
 using Juice.MultiTenant.Grpc.Finbuckle;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,7 @@ namespace Juice.MultiTenant.Grpc
         /// <param name="builder"></param>
         /// <param name="grpcEndpoint"></param>
         /// <returns></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> WithGprcStore<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder, string grpcEndpoint)
+        public static MultiTenantBuilder<TTenantInfo> WithGprcStore<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder, string grpcEndpoint)
            where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
             builder.Services.AddGrpcClient<TenantStore.TenantStoreClient>(o =>
@@ -35,7 +36,7 @@ namespace Juice.MultiTenant.Grpc
         /// <para></para>Configure MediatR, add Integration event service (NOTE: Required an event bus)
         /// </summary>
         /// <returns></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> ConfigureTenantClient<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder, IConfiguration configuration,
+        public static MultiTenantBuilder<TTenantInfo> ConfigureTenantClient<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder, IConfiguration configuration,
             string environment)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {

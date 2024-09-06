@@ -32,8 +32,6 @@ namespace Juice.MultiTenant.EF
 
                 entity.Property(ti => ti.Name).HasMaxLength(LengthConstants.NameLength);
 
-                entity.Property(ti => ti.ConnectionString).HasMaxLength(Constants.ConfigurationValueMaxLength);
-
                 entity.Property(ti => ti.OwnerUser).HasMaxLength(Constants.TenantOwnerMaxLength);
 
                 entity.HasIndex(ti => ti.Identifier).IsUnique();

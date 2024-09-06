@@ -1,4 +1,4 @@
-﻿using Finbuckle.MultiTenant;
+﻿using Finbuckle.MultiTenant.Abstractions;
 using Grpc.Core;
 using Juice.MultiTenant.Settings.Grpc;
 using Juice.MultiTenant.Shared.Authorization;

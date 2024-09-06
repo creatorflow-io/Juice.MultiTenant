@@ -1,4 +1,4 @@
-﻿using Finbuckle.MultiTenant;
+﻿using Finbuckle.MultiTenant.Abstractions;
 using Juice.EventBus;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 using Juice.MultiTenant.Api.IntegrationEvents.Handlers;

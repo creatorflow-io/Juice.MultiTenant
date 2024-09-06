@@ -53,7 +53,7 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
 
 
     public class InitializationProcessIdentifiedCommandHandler
-        : IdentifiedCommandHandler<InitializationProcessCommand>
+        : IdentifiedCommandHandler<InitializationProcessCommand, IOperationResult>
     {
         public InitializationProcessIdentifiedCommandHandler(IMediator mediator,
             IRequestManager requestManager, ILogger<InitializationProcessIdentifiedCommandHandler> logger)
@@ -61,9 +61,9 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicateRequestAsync(IdentifiedCommand<InitializationProcessCommand> mesage)
-            => Task.FromResult((IOperationResult)OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractInfo(InitializationProcessCommand command)
+        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(InitializationProcessCommand mesage)
+            => Task.FromResult(OperationResult.Success);
+        protected override (string IdProperty, string CommandId) ExtractDebugInfo(InitializationProcessCommand command)
             => (nameof(command.Id), command.Id);
     }
 }

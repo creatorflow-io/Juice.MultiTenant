@@ -1,5 +1,5 @@
-﻿using Finbuckle.MultiTenant;
-using Finbuckle.MultiTenant.Stores;
+﻿using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
 using Juice.MultiTenant.Api.IntegrationEvents.Handlers;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;

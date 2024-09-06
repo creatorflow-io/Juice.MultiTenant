@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.MultiTenant.Shared.Enums;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -74,7 +74,6 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
             var tenant = (ITenantInfo)tenantInfo;
             var result = await _client.TryAddAsync(new Grpc.TenantInfo
             {
-                ConnectionString = tenantInfo.ConnectionString,
                 Id = tenant.Id,
                 Identifier = tenant.Identifier,
                 Name = tenant.Name,
@@ -115,7 +114,6 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
             var tenant = (ITenantInfo)tenantInfo;
             var result = await _client.TryUpdateAsync(new Grpc.TenantInfo
             {
-                ConnectionString = tenantInfo.ConnectionString,
                 Id = tenant.Id,
                 Identifier = tenant.Identifier,
                 Name = tenant.Name

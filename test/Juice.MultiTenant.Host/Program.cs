@@ -1,4 +1,5 @@
-﻿using Juice.AspNetCore.Mvc.Formatters;
+﻿using Finbuckle.MultiTenant;
+using Juice.AspNetCore.Mvc.Formatters;
 using Juice.Extensions.Swagger;
 using Juice.MultiTenant;
 using Juice.MultiTenant.Api;
@@ -6,9 +7,7 @@ using Juice.MultiTenant.Api.Grpc.Services;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,7 +62,7 @@ app.MapGet("/tenant", async (context) =>
         context.Response.StatusCode = StatusCodes.Status404NotFound;
         return;
     }
-    await context.Response.WriteAsync(JsonConvert.SerializeObject(s, new ExpandoObjectConverter()));
+    await context.Response.WriteAsJsonAsync(s);
 });
 
 app.Run();
@@ -80,12 +79,13 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     }).WithBasePathStrategy(options => options.RebaseAspNetCorePathBase = true)
     .WithHeaderStrategy()
     .WithRouteStrategy()
-    .WithPerTenantOptions<JwtBearerOptions>((options, tc) =>
+    ;
+
+    builder.Services.ConfigureAllPerTenant<JwtBearerOptions, Juice.MultiTenant.TenantInfo>((options, tc) =>
     {
         var authority = builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>();
         options.Authority = GetAuthority(authority, tc);
-    })
-    ;
+    });
 
     builder.Services.AddTenantIntegrationEventSelfHandlers<Tenant>();
 
@@ -130,7 +130,8 @@ static void ConfigureSecurity(WebApplicationBuilder builder)
             options.RequireHttpsMetadata = false;
         });
 
-    builder.Services.AddTenantAuthorizationDefault();
+    //builder.Services.AddTenantAuthorizationDefault();
+    builder.Services.AddTenantAuthorizationTest();
 
 }
 

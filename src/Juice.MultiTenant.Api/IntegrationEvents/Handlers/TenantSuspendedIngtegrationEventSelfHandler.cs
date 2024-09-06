@@ -1,5 +1,5 @@
-﻿using Finbuckle.MultiTenant;
-using Finbuckle.MultiTenant.Stores;
+﻿using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
 using Juice.EventBus;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 

@@ -1,9 +1,8 @@
-﻿using System;
-using Juice.Domain;
+﻿using Juice.Domain;
 
 namespace Juice.MultiTenant.Tests.Domain
 {
-    public class TenantContent : DynamicEntity<Guid>, IModificationInfo
+    public class TenantContent : DynamicAuditEntity<Guid>
     {
         public TenantContent(string code, string name)
         {

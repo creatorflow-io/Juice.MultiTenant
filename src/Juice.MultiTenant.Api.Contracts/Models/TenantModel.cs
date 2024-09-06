@@ -7,20 +7,19 @@ namespace Juice.MultiTenant.Api.Contracts.Models
         public string Id { get; init; }
         public string Name { get; init; }
         public string? Identifier { get; init; }
-        public string? ConnectionString { get; init; }
         public TenantStatus Status { get; init; }
         public string? OwnerUser { get; private set; }
         public string? OwnerName { get; private set; }
         public string SerializedProperties { get; init; }
 
-        public TenantModel(string id, string name, string? identifier, string? connectionString,
+        public TenantModel(string id, string name, string? identifier,
             TenantStatus status, string? ownerUser, string properties)
-            : this(id, name, identifier, connectionString, status, properties)
+            : this(id, name, identifier, status, properties)
         {
             OwnerUser = ownerUser;
         }
 
-        public TenantModel(string id, string name, string? identifier, string? connectionString,
+        public TenantModel(string id, string name, string? identifier,
             TenantStatus status, string properties)
         {
             Id = id;
@@ -28,7 +27,6 @@ namespace Juice.MultiTenant.Api.Contracts.Models
             Identifier = identifier;
             Status = status;
             SerializedProperties = properties;
-            ConnectionString = connectionString;
         }
 
         public TenantModel SetOwnerName(string? ownerName)

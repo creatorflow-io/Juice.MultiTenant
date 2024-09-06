@@ -45,7 +45,7 @@ namespace Juice.MultiTenant.Api.Controllers
                 .TenantInfo.AsNoTracking()
                 .Where(ti => ti.Id == id || ti.Identifier == id)
                 .Select(ti => new TenantModel(
-                    ti.Id, ti.Name, ti.Identifier, ti.ConnectionString, ti.Status,
+                    ti.Id, ti.Name, ti.Identifier, ti.Status,
                     ti.OwnerUser,
                     ti.SerializedProperties
                 ))
@@ -91,8 +91,7 @@ namespace Juice.MultiTenant.Api.Controllers
             properties["AdminUser"] = model.AdminUser;
             properties["AdminEmail"] = model.AdminEmail;
 
-            var command = new CreateTenantCommand(id, model.Identifier, model.Name,
-                model.ConnectionString, properties);
+            var command = new CreateTenantCommand(id, model.Identifier, model.Name, properties);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -125,7 +124,7 @@ namespace Juice.MultiTenant.Api.Controllers
             )
         {
             var command = new UpdateTenantCommand(id, model.Identifier,
-                            model.Name, model.ConnectionString);
+                            model.Name);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)

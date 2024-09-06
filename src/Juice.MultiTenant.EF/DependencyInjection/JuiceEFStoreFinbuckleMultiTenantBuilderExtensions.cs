@@ -1,4 +1,5 @@
 ﻿using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF;
 using Juice.Extensions.Configuration;
 using Juice.MultiTenant.EF.Stores;
@@ -18,7 +19,7 @@ namespace Juice.MultiTenant.EF
         /// </summary>
         /// <returns>The same MultiTenantBuilder passed into the method.</returns>
         // ReSharper disable once InconsistentNaming
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> WithEFStore<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder, IConfiguration configuration, Action<Juice.EF.DbOptions> configureOptions)
+        public static MultiTenantBuilder<TTenantInfo> WithEFStore<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder, IConfiguration configuration, Action<Juice.EF.DbOptions> configureOptions)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
             builder.Services.AddDefaultStringIdGenerator();
@@ -33,7 +34,7 @@ namespace Juice.MultiTenant.EF
         /// Configure tenant for multi-tenant microservices working with Tenant DB directly
         /// </summary>
         /// <returns></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> ConfigureTenantEFDirectly<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder, IConfiguration configuration,
+        public static MultiTenantBuilder<TTenantInfo> ConfigureTenantEFDirectly<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder, IConfiguration configuration,
             Action<DbOptions> configureTenantDb, string environment)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {

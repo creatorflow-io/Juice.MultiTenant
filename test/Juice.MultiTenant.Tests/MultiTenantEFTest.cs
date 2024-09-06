@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF.Extensions;
-using Juice.Extensions.Configuration;
 using Juice.Extensions.DependencyInjection;
 using Juice.Extensions.Options;
 using Juice.Extensions.Options.Stores;

@@ -15,7 +15,6 @@ namespace Juice.MultiTenant.Api.Contracts.Models
         /// </summary>
         [Required]
         public string Name { get; set; }
-        public string? ConnectionString { get; set; }
 
         /// <summary>
         /// Optional admin user name, E.g. "admin"

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
-using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Juice.MultiTenant.Shared.Enums;
 using Juice.Services;
@@ -24,14 +24,14 @@ namespace Juice.MultiTenant.EF.Stores
         {
             return await dbContext.TenantInfo.AsNoTracking()
                     .Where(ti => ti.Id == id)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.ConnectionString, ti.OwnerUser, ti.TenantClass))
+                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.OwnerUser, ti.TenantClass))
                     .SingleOrDefaultAsync() as TTenantInfo;
         }
 
         public virtual async Task<IEnumerable<TTenantInfo>> GetAllAsync()
         {
             return (await dbContext.TenantInfo.AsNoTracking()
-                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.ConnectionString, ti.OwnerUser, ti.TenantClass))
+                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.OwnerUser, ti.TenantClass))
                 .ToListAsync())
                 .Select(ti => (ti as TTenantInfo)!)
                 .ToList();
@@ -41,7 +41,7 @@ namespace Juice.MultiTenant.EF.Stores
         {
             return await dbContext.TenantInfo.AsNoTracking()
                 .Where(ti => ti.Identifier == identifier && ti.Status == TenantStatus.Active)
-                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.ConnectionString, ti.OwnerUser, ti.TenantClass))
+                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.OwnerUser, ti.TenantClass))
                 .SingleOrDefaultAsync() as TTenantInfo;
         }
 
@@ -54,7 +54,6 @@ namespace Juice.MultiTenant.EF.Stores
                 Id = id,
                 Identifier = tenant.Identifier ?? id,
                 Name = tenant.Name ?? id,
-                ConnectionString = tenantInfo.ConnectionString
             };
             await dbContext.TenantInfo.AddAsync(entity);
             var result = await dbContext.SaveChangesAsync() > 0;
@@ -96,10 +95,6 @@ namespace Juice.MultiTenant.EF.Stores
             {
                 entity.Name = tenant.Name ?? "";
             }
-            if (entity.ConnectionString != tenantInfo.ConnectionString)
-            {
-                entity.ConnectionString = tenantInfo.ConnectionString;
-            }
 
             var result = await dbContext.SaveChangesAsync() > 0;
             dbContext.Entry(tenantInfo).State = EntityState.Detached;
@@ -136,7 +131,7 @@ namespace Juice.MultiTenant.EF.Stores
             while (!cancellationToken.IsCancellationRequested)
             {
                 var batch = await query.Skip(skip).Take(take)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.ConnectionString, ti.OwnerUser, ti.TenantClass))
+                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.OwnerUser, ti.TenantClass))
                     .ToListAsync(cancellationToken);
                 if (batch.Count == 0)
                 {

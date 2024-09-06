@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.Domain;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,8 +23,8 @@ namespace Juice.MultiTenant.AspNetCore
         /// <param name="builder"></param>
         /// <param name="crossTenantAuthorize"></param>
         /// <returns></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> WithPerTenantAuthenticationConventions<TTenantInfo>(
-            this FinbuckleMultiTenantBuilder<TTenantInfo> builder,
+        public static MultiTenantBuilder<TTenantInfo> WithPerTenantAuthenticationConventions<TTenantInfo>(
+            this MultiTenantBuilder<TTenantInfo> builder,
             CrossTenantAuthorize? crossTenantAuthorize,
             Action<OpenIdConnectOptions, TTenantInfo>? configOidc
             )
@@ -51,7 +52,7 @@ namespace Juice.MultiTenant.AspNetCore
                     else
                     {
                         var loggerFactory = context.HttpContext.RequestServices.GetService<ILoggerFactory>();
-                        loggerFactory?.CreateLogger<FinbuckleMultiTenantBuilder<TTenantInfo>>()
+                        loggerFactory?.CreateLogger<MultiTenantBuilder<TTenantInfo>>()
                             .LogInformation("No tenant found in authentication properties.");
                     }
 
@@ -69,7 +70,7 @@ namespace Juice.MultiTenant.AspNetCore
             });
 
             // Set per-tenant cookie options by convention.
-            builder.WithPerTenantOptions<CookieAuthenticationOptions>((options, tc) =>
+            builder.Services.ConfigureAllPerTenant<CookieAuthenticationOptions, TTenantInfo>((options, tc) =>
             {
                 if (GetPropertyWithValidValue(tc, "CookieLoginPath") is string loginPath)
                     options.LoginPath = loginPath.Replace(Constants.TenantToken, tc.Identifier);
@@ -82,7 +83,7 @@ namespace Juice.MultiTenant.AspNetCore
             });
 
             // Set per-tenant OpenIdConnect options by convention.
-            builder.WithPerTenantOptions<OpenIdConnectOptions>((options, tc) =>
+            builder.Services.ConfigureAllPerTenant<OpenIdConnectOptions, TTenantInfo>((options, tc) =>
             {
                 if (GetPropertyWithValidValue(tc, "OpenIdConnectAuthority") is string authority)
                     options.Authority = authority.Replace(Constants.TenantToken, tc.Identifier);
@@ -99,7 +100,7 @@ namespace Juice.MultiTenant.AspNetCore
                 }
             });
 
-            builder.WithPerTenantOptions<AuthenticationOptions>((options, tc) =>
+            builder.Services.ConfigureAllPerTenant<AuthenticationOptions, TTenantInfo>((options, tc) =>
             {
                 if (GetPropertyWithValidValue(tc, "ChallengeScheme") is string challengeScheme)
                     options.DefaultChallengeScheme = challengeScheme;

@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Finbuckle.MultiTenant;
 using Juice.AspNetCore;
 using Juice.MultiTenant;
 using Juice.MultiTenant.AspNetCore;
@@ -57,7 +58,7 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
         options.Schema = "App";
     }, builder.Environment.EnvironmentName)
     .WithBasePathStrategy(options => options.RebaseAspNetCorePathBase = true)
-    .WithPerTenantOptions<OpenIdConnectOptions>((options, tc) =>
+    .ConfigureAllPerTenant<OpenIdConnectOptions, Juice.MultiTenant.TenantInfo>((options, tc) =>
     {
         options.Authority = tenantAuthority?.Replace(Constants.TenantToken, tc.Identifier);
     })
@@ -70,7 +71,6 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     .WithRemoteAuthenticationCallbackStrategy()
     .WithRouteStrategy()
     ;
-
 }
 
 

@@ -217,7 +217,7 @@ namespace Juice.MultiTenant.Tests
 
             scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlers<Tenant>();
 
-            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default, default);
+            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default);
 
             var stopwatch = new Stopwatch();
 
@@ -242,7 +242,7 @@ namespace Juice.MultiTenant.Tests
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default, default);
+            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default);
 
             var stopwatch = new Stopwatch();
 
@@ -268,7 +268,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
 
-            var updateCommand = new UpdateTenantCommand("xunittest", "test1", "Changed name", default);
+            var updateCommand = new UpdateTenantCommand("xunittest", "test1", "Changed name");
 
             var stopwatch = new Stopwatch();
 
@@ -290,7 +290,7 @@ namespace Juice.MultiTenant.Tests
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            var updateNotExistsCommand = new UpdateTenantCommand("testnotexist", "test1", "Changed name", default);
+            var updateNotExistsCommand = new UpdateTenantCommand("testnotexist", "test1", "Changed name");
 
             var stopwatch = new Stopwatch();
 

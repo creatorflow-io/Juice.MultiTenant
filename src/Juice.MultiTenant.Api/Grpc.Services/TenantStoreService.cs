@@ -32,7 +32,6 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                                 Id = ti.Id,
                                 Name = ti.Name,
                                 Identifier = ti.Identifier,
-                                ConnectionString = ti.ConnectionString,
                                 Disabled = ti.Disabled,
                                 Status = ti.Status.StringValue(),
                                 SerializedProperties = ti.SerializedProperties
@@ -88,7 +87,6 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                     Id = ti.Id,
                     Name = ti.Name,
                     Identifier = ti.Identifier,
-                    ConnectionString = ti.ConnectionString,
                     Disabled = ti.Disabled,
                     Status = ti.Status.StringValue(),
                     SerializedProperties = ti.SerializedProperties
@@ -110,7 +108,6 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                                 Id = ti.Id,
                                 Name = ti.Name,
                                 Identifier = ti.Identifier,
-                                ConnectionString = ti.ConnectionString,
                                 Disabled = ti.Disabled,
                                 SerializedProperties = ti.SerializedProperties
                             })
@@ -124,8 +121,8 @@ namespace Juice.MultiTenant.Api.Grpc.Services
             {
                 var properties = string.IsNullOrEmpty(request.SerializedProperties)
                     ? new Dictionary<string, string>()
-                    : JsonConvert.DeserializeObject<Dictionary<string, string>>(request.SerializedProperties);
-                var command = new CreateTenantCommand(request.Id, request.Identifier, request.Name, request.ConnectionString, properties);
+                    : (JsonConvert.DeserializeObject<Dictionary<string, string>>(request.SerializedProperties) ?? new Dictionary<string, string>());
+                var command = new CreateTenantCommand(request.Id, request.Identifier, request.Name, properties!);
 
                 var result = await _mediator.Send(command);
 
@@ -150,7 +147,7 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new UpdateTenantCommand(request.Id, request.Identifier, request.Name, request.ConnectionString);
+                var command = new UpdateTenantCommand(request.Id, request.Identifier, request.Name);
 
                 var result = await _mediator.Send(command);
 

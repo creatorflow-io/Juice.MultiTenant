@@ -1,18 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
-using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.Domain;
 using Juice.MultiTenant.Domain.Events;
 using Juice.MultiTenant.Shared.Enums;
-using MediatR;
 
 namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 {
-    public class Tenant : DynamicEntity<string>, IAggregateRoot<INotification>, IValidatable,
+    public class Tenant : DynamicAuditEntity<string>, IAggregateRoot<INotification>, IValidatable,
         ITenant, ITenantInfo
     {
         public string? Identifier { get; set; }
-        public string? ConnectionString { get; set; }
 
         public TenantStatus Status { get; private set; }
 
@@ -30,14 +28,12 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 
         #region methods
 
-        public virtual void Update(string name, string identifier, string? connectionString)
+        public virtual void Update(string name, string identifier)
         {
             this.NotExceededLength(name, LengthConstants.NameLength);
             this.NotExceededLength(identifier, Constants.TenantIdentifierMaxLength);
-            this.NotExceededLength(connectionString, Constants.ConfigurationValueMaxLength);
             Name = name;
             Identifier = identifier;
-            ConnectionString = connectionString;
             FirePropertiesChanged();
         }
 

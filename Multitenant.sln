@@ -39,7 +39,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.MultiTenant.Tests.Shared", "test\Juice.MultiTenant.Tests.Shared\Juice.MultiTenant.Tests.Shared.csproj", "{9B67239E-5674-467F-96D0-8A8E7BEAA10C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Juice.MultiTenant.AspNetCore.SwaggerGen", "src\Juice.MultiTenant.AspNetCore.SwaggerGen\Juice.MultiTenant.AspNetCore.SwaggerGen.csproj", "{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.MultiTenant.AspNetCore.SwaggerGen", "src\Juice.MultiTenant.AspNetCore.SwaggerGen\Juice.MultiTenant.AspNetCore.SwaggerGen.csproj", "{52CCC84D-6727-40ED-B86F-4CD03A9BB67B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CDDB15BE-7DE7-4B04-B5A1-F47D0C960FA7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\alpha.yml = .github\workflows\alpha.yml
+		.github\workflows\beta.yml = .github\workflows\beta.yml
+		.github\workflows\build-test.yml = .github\workflows\build-test.yml
+		.github\workflows\nuget-release.yml = .github\workflows\nuget-release.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -122,6 +130,7 @@ Global
 		{3E98C072-699A-4A5C-B20C-F41BA6F544D1} = {6C7DB128-32D1-47A2-8A1D-48CB2095A253}
 		{9B67239E-5674-467F-96D0-8A8E7BEAA10C} = {6C7DB128-32D1-47A2-8A1D-48CB2095A253}
 		{52CCC84D-6727-40ED-B86F-4CD03A9BB67B} = {154FC320-0196-4266-992A-6DEA77499C33}
+		{CDDB15BE-7DE7-4B04-B5A1-F47D0C960FA7} = {7CF9E3CD-EA9C-4030-9589-2C0AF1F797C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B46EA2A-77F3-47BC-8194-8ED3ECD30038}

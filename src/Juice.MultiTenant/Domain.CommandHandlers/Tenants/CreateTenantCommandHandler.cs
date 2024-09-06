@@ -33,7 +33,6 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
                 var tenant = new Tenant
                 {
                     Id = request.Id ?? request.Identifier,
-                    ConnectionString = request.ConnectionString,
                     Identifier = request.Identifier,
                     Name = request.Name
                 };
@@ -75,16 +74,16 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
 
     // Use for Idempotency in Command process
     public class CreateTenantIdentifiedCommandHandler
-        : IdentifiedCommandHandler<CreateTenantCommand>
+        : IdentifiedCommandHandler<CreateTenantCommand, IOperationResult>
     {
         public CreateTenantIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<CreateTenantIdentifiedCommandHandler> logger)
             : base(mediator, requestManager, logger)
         {
         }
 
-        protected override Task<IOperationResult?> CreateResultForDuplicateRequestAsync(IdentifiedCommand<CreateTenantCommand> mesage)
-            => Task.FromResult((IOperationResult)OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractInfo(CreateTenantCommand command)
+        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(CreateTenantCommand mesage)
+            => Task.FromResult(OperationResult.Success);
+        protected override (string IdProperty, string CommandId) ExtractDebugInfo(CreateTenantCommand command)
             => (nameof(command.Identifier), command.Identifier);
     }
 }

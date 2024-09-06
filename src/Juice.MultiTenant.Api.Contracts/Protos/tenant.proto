@@ -40,10 +40,9 @@ message TenantInfo
     string id = 1;
     string identifier = 2;
     string name = 3;
-    google.protobuf.StringValue connectionString = 4;
-    string serializedProperties = 5;
-    bool disabled = 6;
-    string status = 7;
+    string serializedProperties = 4;
+    bool disabled = 5;
+    string status = 6;
 }
 
 message TenantOperationResult{

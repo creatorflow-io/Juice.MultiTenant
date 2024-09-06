@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
 using Microsoft.EntityFrameworkCore;
 

@@ -24,7 +24,7 @@
 
     <ItemGroup>
         <PackageReference Include="Juice.AspNetCore" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="6.*" />
+        <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="7.*" />
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="*" />
     </ItemGroup>
 </Project>

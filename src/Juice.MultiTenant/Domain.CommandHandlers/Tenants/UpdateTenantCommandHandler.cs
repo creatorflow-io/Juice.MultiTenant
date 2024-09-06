@@ -23,7 +23,7 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
                 {
                     return OperationResult.Failed("Tenant not found");
                 }
-                tenant.Update(request.Name, request.Identifier, request.ConnectionString);
+                tenant.Update(request.Name, request.Identifier);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return OperationResult.Success;
             }
@@ -37,16 +37,16 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
     }
 
     public class UpdateTenantIdentifiedCommandHandler
-        : IdentifiedCommandHandler<UpdateTenantCommand>
+        : IdentifiedCommandHandler<UpdateTenantCommand, IOperationResult>
     {
         public UpdateTenantIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<UpdateTenantIdentifiedCommandHandler> logger)
             : base(mediator, requestManager, logger)
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicateRequestAsync(IdentifiedCommand<UpdateTenantCommand> mesage)
-            => Task.FromResult((IOperationResult)OperationResult.Success);
+        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(UpdateTenantCommand mesage)
+            => Task.FromResult(OperationResult.Success);
 
-        protected override (string IdProperty, string CommandId) ExtractInfo(UpdateTenantCommand command) => (nameof(command.Id), command.Id);
+        protected override (string IdProperty, string CommandId) ExtractDebugInfo(UpdateTenantCommand command) => (nameof(command.Id), command.Id);
     }
 }

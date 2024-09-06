@@ -56,7 +56,7 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
 
 
     public class ApprovalProcessIdentifiedCommandHandler
-        : IdentifiedCommandHandler<ApprovalProcessCommand>
+        : IdentifiedCommandHandler<ApprovalProcessCommand, IOperationResult>
     {
         public ApprovalProcessIdentifiedCommandHandler(IMediator mediator,
             IRequestManager requestManager, ILogger<ApprovalProcessIdentifiedCommandHandler> logger)
@@ -64,9 +64,9 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicateRequestAsync(IdentifiedCommand<ApprovalProcessCommand> mesage)
-            => Task.FromResult((IOperationResult)OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractInfo(ApprovalProcessCommand command)
+        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(ApprovalProcessCommand mesage)
+            => Task.FromResult(OperationResult.Success);
+        protected override (string IdProperty, string CommandId) ExtractDebugInfo(ApprovalProcessCommand command)
             => (nameof(command.Id), command.Id);
     }
 }

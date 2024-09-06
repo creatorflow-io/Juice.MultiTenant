@@ -61,7 +61,7 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
 
 
     public class TransferOwnershipIdentifiedCommandHandler
-        : IdentifiedCommandHandler<TransferOwnershipCommand>
+        : IdentifiedCommandHandler<TransferOwnershipCommand, IOperationResult>
     {
         public TransferOwnershipIdentifiedCommandHandler(IMediator mediator,
             IRequestManager requestManager, ILogger<TransferOwnershipIdentifiedCommandHandler> logger)
@@ -69,9 +69,9 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicateRequestAsync(IdentifiedCommand<TransferOwnershipCommand> mesage)
-            => Task.FromResult((IOperationResult)OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractInfo(TransferOwnershipCommand command)
+        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(TransferOwnershipCommand mesage)
+            => Task.FromResult(OperationResult.Success);
+        protected override (string IdProperty, string CommandId) ExtractDebugInfo(TransferOwnershipCommand command)
             => (nameof(command.Id), command.Id);
     }
 }

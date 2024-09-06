@@ -1,4 +1,4 @@
-﻿using Finbuckle.MultiTenant;
+﻿using Finbuckle.MultiTenant.Abstractions;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Xunit;
 

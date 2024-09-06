@@ -1,5 +1,6 @@
 ﻿using Finbuckle.MultiTenant;
-using Finbuckle.MultiTenant.Stores;
+using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +14,7 @@ namespace Juice.MultiTenant.AspNetCore
         /// <typeparam name="TTenantInfo"></typeparam>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> ShouldUpdateCacheStore<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder)
+        public static MultiTenantBuilder<TTenantInfo> ShouldUpdateCacheStore<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
 

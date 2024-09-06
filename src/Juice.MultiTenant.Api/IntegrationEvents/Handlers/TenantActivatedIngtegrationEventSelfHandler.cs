@@ -1,5 +1,5 @@
-﻿using Finbuckle.MultiTenant;
-using Finbuckle.MultiTenant.Stores;
+﻿using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
 using Juice.EventBus;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 
@@ -30,7 +30,7 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
             if (_cacheStore != null)
             {
                 var tenant = await _context.TenantInfo.Where(t => t.Identifier == @event.TenantIdentifier)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.ConnectionString, ti.OwnerUser, ti.TenantClass))
+                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.SerializedProperties, ti.OwnerUser, ti.TenantClass))
                     .FirstOrDefaultAsync();
                 if (tenant is TTenantInfo tenantInfo)
                 {

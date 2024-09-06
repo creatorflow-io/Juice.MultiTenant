@@ -23,7 +23,8 @@ namespace Juice.MultiTenant.Tests
     [TestCaseOrderer("Juice.XUnit.PriorityOrderer", "Juice.XUnit")]
     public class GrpcTest
     {
-        ITestOutputHelper _output;
+        private ITestOutputHelper _output;
+        private string _grpcPath = "https://localhost:7079";
         public GrpcTest(ITestOutputHelper testOutput)
         {
             _output = testOutput;
@@ -37,7 +38,7 @@ namespace Juice.MultiTenant.Tests
 
             var channel =
                 //CreateChannel();
-                GrpcChannel.ForAddress(new Uri("https://localhost:7045"));
+                GrpcChannel.ForAddress(new Uri(_grpcPath));
 
             var client = new TenantStore.TenantStoreClient(channel);
 
@@ -75,7 +76,7 @@ namespace Juice.MultiTenant.Tests
             {
                 timer.Reset();
                 timer.Start();
-                var reply = await client.GetStringAsync(new Uri("https://localhost:7045/tenant"));
+                var reply = await client.GetStringAsync(new Uri($"{_grpcPath}/tenant"));
                 _output.WriteLine("Request take {0} milliseconds",
                     timer.ElapsedMilliseconds);
                 timer.Stop();
@@ -93,7 +94,7 @@ namespace Juice.MultiTenant.Tests
 
             var channel =
                 //CreateChannel();
-                GrpcChannel.ForAddress(new Uri("https://localhost:7045"));
+                GrpcChannel.ForAddress(new Uri(_grpcPath));
 
             var client = new TenantSettingsStore.TenantSettingsStoreClient(channel);
 
@@ -125,7 +126,7 @@ namespace Juice.MultiTenant.Tests
 
             var channel =
                 //CreateChannel();
-                GrpcChannel.ForAddress(new Uri("https://localhost:7045"));
+                GrpcChannel.ForAddress(new Uri(_grpcPath));
 
             var client = new TenantSettingsStore.TenantSettingsStoreClient(channel);
 
@@ -177,7 +178,7 @@ namespace Juice.MultiTenant.Tests
                     services.AddMemoryCache();
                     services
                         .AddMultiTenant()
-                        .WithGprcStore("https://localhost:7045");
+                        .WithGprcStore(_grpcPath);
 
                 }).Build();
 

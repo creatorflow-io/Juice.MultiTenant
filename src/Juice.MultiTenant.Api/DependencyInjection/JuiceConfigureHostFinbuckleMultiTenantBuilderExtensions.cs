@@ -1,4 +1,5 @@
 ﻿using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF;
 using Juice.Integrations.MediatR;
 using Juice.MultiTenant.Api.Behaviors.DependencyInjection;
@@ -19,7 +20,7 @@ namespace Juice.MultiTenant.Api
         /// <para></para>Configure MediatR, add Integration event service (NOTE: Required an event bus)
         /// </summary>
         /// <returns></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> ConfigureTenantHost<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder,
+        public static MultiTenantBuilder<TTenantInfo> ConfigureTenantHost<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder,
             IConfiguration configuration,
             Action<DbOptions> configureTenantDb)
             where TTenantInfo : class, ITenant, ITenantInfo, new()

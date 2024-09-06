@@ -1,8 +1,7 @@
-﻿using Finbuckle.MultiTenant.EntityFrameworkCore;
+﻿using Finbuckle.MultiTenant;
 using Juice.EF.Extensions;
 using Juice.Extensions.Configuration;
 using Juice.Extensions.DependencyInjection;
-using Juice.MultiTenant.EF;
 using Juice.MultiTenant.Tests.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Juice.MultiTenant.Tests.Infrastructure
 {
-    public class TenantContentDbContext : MultiTenantDbContext
+    public class TenantContentDbContext : EF.MultiTenantDbContext
     {
         public DbSet<TenantContent> TenantContents { get; set; }
 
@@ -55,7 +54,7 @@ namespace Juice.MultiTenant.Tests.Infrastructure
                     _ => throw new NotSupportedException($"Unsupported provider: {provider}")
                 }
                 ;
-            var connectionString = TenantInfo?.ConnectionString ??
+            var connectionString =
                 _configuration.GetConnectionString(connectionName);
             switch (provider)
             {

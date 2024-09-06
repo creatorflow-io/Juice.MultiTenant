@@ -1,4 +1,4 @@
-﻿using Finbuckle.MultiTenant;
+﻿using Finbuckle.MultiTenant.Abstractions;
 using Juice.MultiTenant.Shared.Enums;
 
 namespace Juice.MultiTenant

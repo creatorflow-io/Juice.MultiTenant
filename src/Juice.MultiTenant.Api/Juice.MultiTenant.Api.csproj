@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="6.*" />
+        <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="$(FinbuckleVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     </ItemGroup>
 

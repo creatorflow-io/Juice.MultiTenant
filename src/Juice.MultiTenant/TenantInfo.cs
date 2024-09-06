@@ -1,4 +1,4 @@
-﻿using Finbuckle.MultiTenant;
+﻿using Finbuckle.MultiTenant.Abstractions;
 using Juice.Domain;
 
 namespace Juice.MultiTenant
@@ -11,20 +11,17 @@ namespace Juice.MultiTenant
             string? identifier,
             string name,
             string? serializedProperties,
-            string? connectionString,
             string? ownerUser,
             string? tenantClass)
         {
             Id = id;
             Identifier = identifier;
             Name = name;
-            ConnectionString = connectionString;
             SerializedProperties = serializedProperties ?? "{}";
             OwnerUser = ownerUser;
             TenantClass = tenantClass;
         }
         public string? Identifier { get; set; }
-        public string? ConnectionString { get; set; }
 
         public string? OwnerUser { get; private set; }
         public string? TenantClass { get; private set; }

@@ -1,4 +1,5 @@
-﻿using Juice.Domain;
+﻿using System.Runtime.CompilerServices;
+using Juice.Domain;
 
 namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
 {
@@ -46,9 +47,9 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicateRequestAsync(IdentifiedCommand<AbandonTenantCommand, IOperationResult> mesage)
-            => Task.FromResult((IOperationResult)OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractInfo(AbandonTenantCommand command)
+        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(AbandonTenantCommand message) 
+            => Task.FromResult(OperationResult.Success);
+        protected override (string? IdProperty, string? CommandId) ExtractDebugInfo(AbandonTenantCommand command) 
             => (nameof(command.Id), command.Id);
     }
 }
