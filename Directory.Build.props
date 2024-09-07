@@ -25,7 +25,7 @@
     <RedisVersion>2.6.122</RedisVersion>
     <FinbuckleVersion>7.0.*</FinbuckleVersion>
     <SwashbuckleVersion>6.7.*</SwashbuckleVersion>
-    <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == ''">-alpha.*</JuiceRefSuffix>
+    <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == '' And '$(CI)' == '' ">-alpha.*</JuiceRefSuffix>
     <JuiceVersion>7.0.4$(JuiceRefSuffix)</JuiceVersion>
   </PropertyGroup>
 
