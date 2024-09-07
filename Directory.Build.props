@@ -26,7 +26,7 @@
     <FinbuckleVersion>7.0.*</FinbuckleVersion>
     <SwashbuckleVersion>6.7.*</SwashbuckleVersion>
     <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == '' And '$(CI)' == '' ">-alpha.*</JuiceRefSuffix>
-    <JuiceVersion>7.0.4$(JuiceRefSuffix)</JuiceVersion>
+    <JuiceVersion>7.0.*$(JuiceRefSuffix)</JuiceVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Versioning" Condition="'$(TargetFramework)' == 'net6.0'">
