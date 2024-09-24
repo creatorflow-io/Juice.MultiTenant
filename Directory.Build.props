@@ -18,8 +18,8 @@
     <LibraryTargetFramework>netstandard2.1</LibraryTargetFramework>
     <AppTargetFramework>net8.0</AppTargetFramework>
     <SignalRVersion>8.0.*</SignalRVersion>
-    <GrpcVersion>2.57.0</GrpcVersion>
-    <ProtobufVersion>3.24.3</ProtobufVersion>
+    <GrpcVersion>2.66.*</GrpcVersion>
+    <ProtobufVersion>3.28.*</ProtobufVersion>
     <MediatRVersion>12.4.*</MediatRVersion>
     <RedisVersion>2.6.122</RedisVersion>
     <FinbuckleVersion>7.0.*</FinbuckleVersion>
