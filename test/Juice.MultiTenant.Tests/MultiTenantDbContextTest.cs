@@ -123,7 +123,7 @@ namespace Juice.MultiTenant.Tests
 
 
                     addedContent.Should().NotBeNull();
-                    addedContent.TenantId.Should().Be(tenant.Id);
+                    addedContent!.TenantId.Should().Be(tenant.Id);
                     addedContent["DynamicProperty1"] = "Time: " + time;
 
                     var modifiedTimeOriginal = addedContent.ModifiedDate;
@@ -133,7 +133,7 @@ namespace Juice.MultiTenant.Tests
                     await context.SaveChangesAsync();
 
                     var modifiedContent = await context.TenantContents.Where(c => c.Code == code).FirstOrDefaultAsync();
-                    var modifiedTime = modifiedContent.ModifiedDate;
+                    var modifiedTime = modifiedContent?.ModifiedDate;
 
                     modifiedTime.Should().NotBeNull();
                     modifiedTime.Should().BeAfter(addedContent.CreatedDate);

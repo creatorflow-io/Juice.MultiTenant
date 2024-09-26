@@ -155,7 +155,7 @@ namespace Juice.MultiTenant.Api.Controllers
             )
         {
             var command = new UpdateTenantPropertiesCommand(id,
-                model.Properties ?? new Dictionary<string, string>());
+                model.Properties?.ToDictionary(k => k.Key, k => (string?)k.Value) ?? []);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -437,7 +437,7 @@ namespace Juice.MultiTenant.Api.Controllers
                 Value = setting.Value,
                 Inherited = tenant != null && (string.IsNullOrEmpty(setting.TenantId)
                     || !setting.TenantId.Equals(tenant.Id, StringComparison.OrdinalIgnoreCase)),
-                Overridden = tenant != null && setting.TenantId.Equals(tenant.Id, StringComparison.OrdinalIgnoreCase)
+                Overridden = tenant != null && (setting.TenantId?.Equals(tenant.Id, StringComparison.OrdinalIgnoreCase) ?? false)
                   && rootSettings.Any(s => s.Key == setting.Key)
             }).OrderBy(s => s.Key).ToArray();
             return Ok(models);

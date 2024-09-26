@@ -54,8 +54,11 @@ namespace Juice.MultiTenant.Api.Controllers.V2
                         || EFCore.Functions.Like(ti.Name, request.FilterText));
                         break;
                     default:
-                        query = query.Where(ti => ti.Identifier.Contains(request.Query)
-                        || ti.Name.Contains(request.Query));
+                        if (!string.IsNullOrEmpty(request.Query))
+                        {
+                            query = query.Where(ti => ti.Identifier.Contains(request.Query)
+                            || ti.Name.Contains(request.Query));
+                        }
                         break;
                 }
             }

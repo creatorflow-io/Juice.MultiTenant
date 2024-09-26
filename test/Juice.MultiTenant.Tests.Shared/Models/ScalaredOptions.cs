@@ -4,6 +4,6 @@ namespace Juice.MultiTenant.Tests.Models
 {
     public class ScalaredOptions
     {
-        public IDictionary<string, object> Dict { get; set; }
+        public required IDictionary<string, object> Dict { get; set; }
     }
 }

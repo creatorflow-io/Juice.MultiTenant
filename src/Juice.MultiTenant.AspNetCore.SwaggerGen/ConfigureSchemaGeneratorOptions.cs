@@ -45,8 +45,25 @@ namespace Juice.MultiTenant.AspNetCore.SwaggerGen
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            return (TFilter)ActivatorUtilities
-                .CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+            try
+            {
+                if (filterDescriptor.Arguments == null)
+                {
+                    return (TFilter)ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type);
+                }
+                else
+                {
+                    return (TFilter)ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+                }
+            }
+            catch (Exception)
+            {
+                if(filterDescriptor.FilterInstance is TFilter filter)
+                {
+                    return filter;
+                }
+                throw;
+            }
         }
     }
 

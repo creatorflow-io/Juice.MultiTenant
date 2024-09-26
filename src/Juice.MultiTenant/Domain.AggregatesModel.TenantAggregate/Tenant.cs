@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.Domain;
@@ -7,12 +8,40 @@ using Juice.MultiTenant.Shared.Enums;
 
 namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 {
-    public class Tenant : DynamicAuditEntity<string>, IAggregateRoot<INotification>, IValidatable,
-        ITenant, ITenantInfo
+    public class Tenant : DynamicEntity, IAggregateRoot<INotification>, IValidatable,
+        ITenant, ITenantInfo, ICreationInfo, IModificationInfo
     {
-        public string? Identifier { get; set; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        public Tenant()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        {
+           
+        }
+        public Tenant(string id, string identifier, string name, string? serializedProperties, string? ownerUser, string? tenantClass)
+        {
+            Id = id;
+            Name = name;
+            Identifier = identifier;
+            SerializedProperties = serializedProperties ?? "{}";
+            OwnerUser = ownerUser;
+            TenantClass = tenantClass;
+        }
+        [Key]
+        public virtual string Id { get; set; }
+        public string Name { get; set; }
+        public string Identifier { get; set; }
 
         public TenantStatus Status { get; private set; }
+        public bool Disabled { get; protected set; }
+
+        #region Auditable
+
+        public string? CreatedUser { get; protected set; }
+        public string? ModifiedUser { get; protected set; }
+        public DateTimeOffset CreatedDate { get; protected set; }
+        public DateTimeOffset? ModifiedDate { get; protected set; }
+
+        #endregion
 
         [NotMapped]
         public IList<INotification> DomainEvents { get; } = new List<INotification>();
@@ -25,6 +54,25 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         public string? OwnerUser { get; private set; }
 
         public string? TenantClass { get; private set; }
+
+        // Explicitly implement ITenantInfo to handle nullability issues
+        string? ITenantInfo.Id
+        {
+            get => Id;
+            set => Id = value ?? string.Empty;
+        }
+
+        string? ITenantInfo.Name
+        {
+            get => Name;
+            set => Name = value ?? string.Empty;
+        }
+
+        string? ITenantInfo.Identifier
+        {
+            get => Identifier;
+            set => Identifier = value ?? string.Empty;
+        }
 
         #region methods
 
