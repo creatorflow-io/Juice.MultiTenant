@@ -8,7 +8,7 @@ namespace Juice.MultiTenant.Tests.Migrations.TenantContentPostgreSQL
 {
     public partial class InitTenantContent : Migration
     {
-        private string? _schema;
+        private string _schema;
 
         public InitTenantContent() { }
 

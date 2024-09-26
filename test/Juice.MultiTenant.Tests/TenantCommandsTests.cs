@@ -111,7 +111,7 @@ namespace Juice.MultiTenant.Tests
             }
         }
 
-        static IServiceProvider BuildServiceProvider(ITestOutputHelper output, string provider, bool migrate = false)
+        private static IServiceProvider BuildServiceProvider(ITestOutputHelper output, string provider, bool migrate = false)
         {
             var resolver = new DependencyResolver
             {
@@ -202,6 +202,7 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task EventLogDb_should_create_Async(string provider)
         {
+            await Task.Yield();
             using var scope = BuildServiceProvider(_output, provider, true).
                 CreateScope();
         }

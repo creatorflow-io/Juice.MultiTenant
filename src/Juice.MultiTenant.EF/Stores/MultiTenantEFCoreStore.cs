@@ -89,7 +89,7 @@ namespace Juice.MultiTenant.EF.Stores
             }
             if (entity.Identifier != tenant.Identifier)
             {
-                entity.Identifier = tenant.Identifier;
+                entity.Identifier = tenant.Identifier ?? string.Empty;
             }
             if (entity.Name != tenant.Name)
             {

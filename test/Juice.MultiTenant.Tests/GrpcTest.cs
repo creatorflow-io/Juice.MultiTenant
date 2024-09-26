@@ -188,6 +188,7 @@ namespace Juice.MultiTenant.Tests
 
                 await store.ForeachAsync(async tenant =>
                 {
+                    await Task.Yield();
                     _output.WriteLine("Tenant identifier: {0}, tenant name: {1}", tenant.Identifier ?? "", tenant.Name ?? "");
                 }, "a", default, default);
             }

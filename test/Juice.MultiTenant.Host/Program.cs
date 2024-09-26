@@ -84,6 +84,10 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     builder.Services.ConfigureAllPerTenant<JwtBearerOptions, Juice.MultiTenant.TenantInfo>((options, tc) =>
     {
         var authority = builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>();
+        if(authority == null)
+        {
+            throw new InvalidOperationException("OpenIdConnect:Authority is required in appsettings.json");
+        }
         options.Authority = GetAuthority(authority, tc);
     });
 
@@ -237,8 +241,12 @@ static void UseTenantSwagger(WebApplication app)
         c.OAuthUsePkce();
     });
 }
-static string GetAuthority(string configuredAuthority, ITenant? tenant)
+static string GetAuthority(string? configuredAuthority, ITenant? tenant)
 {
+    if (string.IsNullOrEmpty(configuredAuthority))
+    {
+        throw new InvalidOperationException("OpenIdConnect:Authority is required in appsettings.json");
+    }
     return configuredAuthority
         .Replace('/' + Juice.MultiTenant.Constants.TenantToken, !string.IsNullOrEmpty(tenant?.Identifier) ? '/' + tenant.Identifier : "");
 }

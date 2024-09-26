@@ -70,6 +70,10 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromBody] TenantBasicUpdateModel model,
             [FromServices] ITenant tenant)
         {
+            if(string.IsNullOrWhiteSpace(tenant.Id))
+            {
+                return BadRequest("Tenant not resolved");
+            }
 
             var command = new UpdateTenantCommand(tenant.Id, model.Identifier,
                 model.Name);
@@ -98,7 +102,10 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromServices] ITenant tenant)
         {
-
+            if (string.IsNullOrWhiteSpace(tenant.Id))
+            {
+                return BadRequest("Tenant not resolved");
+            }
             var command = new DeleteTenantCommand(tenant.Id);
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -125,6 +132,10 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
            [FromServices] ITenant tenant)
         {
+            if (string.IsNullOrWhiteSpace(tenant.Id))
+            {
+                return BadRequest("Tenant not resolved");
+            }
             var command = new AbandonTenantCommand(tenant.Id);
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -150,6 +161,10 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromServices] ITenant tenant)
         {
+            if (string.IsNullOrWhiteSpace(tenant.Id))
+            {
+                return BadRequest("Tenant not resolved");
+            }
             var command = new OperationStatusCommand(tenant.Id, TenantStatus.Suspended);
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -176,6 +191,10 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromServices] ITenant tenant)
         {
+            if (string.IsNullOrWhiteSpace(tenant.Id))
+            {
+                return BadRequest("Tenant not resolved");
+            }
             var command = new OperationStatusCommand(tenant.Id, TenantStatus.Active);
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -203,6 +222,10 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromBody] TenantOwnerTransferModel model,
             [FromServices] ITenant tenant)
         {
+            if (string.IsNullOrWhiteSpace(tenant.Id))
+            {
+                return BadRequest("Tenant not resolved");
+            }
             var command = new TransferOwnershipCommand(tenant.Id, model.NewOwner);
             var result = await mediator.Send(command);
             if (result.Succeeded)

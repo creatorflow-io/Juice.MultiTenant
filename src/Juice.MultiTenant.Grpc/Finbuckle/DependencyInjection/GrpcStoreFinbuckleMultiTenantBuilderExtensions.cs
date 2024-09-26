@@ -44,6 +44,12 @@ namespace Juice.MultiTenant.Grpc
                 .GetSection("Finbuckle:MultiTenant:Stores:Grpc:Endpoint")
                 .Get<string>();
 
+
+            if (string.IsNullOrWhiteSpace(tenantGrpcEndpoint))
+            {
+                throw new ArgumentNullException("Tenant gRPC endpoint is required");
+            }
+
             builder.JuiceIntegration()
                     .WithGprcStore(tenantGrpcEndpoint)
                     .WithDistributedCacheStore();

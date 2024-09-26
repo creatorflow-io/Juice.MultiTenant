@@ -3,9 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
-#if NETSTANDARD2_0
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -32,16 +29,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Create and add any filters that were specified through the FilterDescriptor lists ...
 
             _swaggerGenOptions.ParameterFilterDescriptors.ForEach(
-                filterDescriptor => options.ParameterFilters.Add(CreateFilter<IParameterFilter>(filterDescriptor)));
+                filterDescriptor => {
+                    if(options.ParameterFilters.Any(f => f.GetType() == filterDescriptor.Type))
+                    {
+                        return;
+                    }
+                    options.ParameterFilters.Add(CreateFilter<IParameterFilter>(filterDescriptor));
+                });
 
             _swaggerGenOptions.RequestBodyFilterDescriptors.ForEach(
-                filterDescriptor => options.RequestBodyFilters.Add(CreateFilter<IRequestBodyFilter>(filterDescriptor)));
+                filterDescriptor => {
+                    if (options.RequestBodyFilters.Any(f => f.GetType() == filterDescriptor.Type))
+                    {
+                        return;
+                    }
+                    options.RequestBodyFilters.Add(CreateFilter<IRequestBodyFilter>(filterDescriptor));
+                });
 
             _swaggerGenOptions.OperationFilterDescriptors.ForEach(
-                filterDescriptor => options.OperationFilters.Add(CreateFilter<IOperationFilter>(filterDescriptor)));
+                filterDescriptor => {
+                    if (options.OperationFilters.Any(f => f.GetType() == filterDescriptor.Type))
+                    {
+                        return;
+                    }
+                    options.OperationFilters.Add(CreateFilter<IOperationFilter>(filterDescriptor));
+                });
 
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
-                filterDescriptor => options.DocumentFilters.Add(CreateFilter<IDocumentFilter>(filterDescriptor)));
+                filterDescriptor => {
+                    if (options.DocumentFilters.Any(f => f.GetType() == filterDescriptor.Type))
+                    {
+                        return;
+                    }
+                    options.DocumentFilters.Add(CreateFilter<IDocumentFilter>(filterDescriptor));
+                });
 
             if (!options.SwaggerDocs.Any())
             {
@@ -70,8 +91,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            return (TFilter)ActivatorUtilities
-                .CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+            try
+            {
+                if (filterDescriptor.Arguments == null)
+                {
+                    return (TFilter)ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type);
+                }
+                else
+                {
+                    return (TFilter)ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+                }
+            }
+            catch (Exception)
+            {
+                if(filterDescriptor.FilterInstance is TFilter filter)
+                {
+                    return filter;
+                }
+                throw;
+            }
         }
     }
 }

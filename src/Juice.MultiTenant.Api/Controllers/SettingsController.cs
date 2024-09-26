@@ -47,7 +47,7 @@ namespace Juice.MultiTenant.Api.Controllers
                 Value = setting.Value,
                 Inherited = tenant != null && (string.IsNullOrEmpty(setting.TenantId)
                     || !setting.TenantId.Equals(tenant.Id, StringComparison.OrdinalIgnoreCase)),
-                Overridden = tenant != null && setting.TenantId.Equals(tenant.Id, StringComparison.OrdinalIgnoreCase)
+                Overridden = tenant != null && (setting.TenantId?.Equals(tenant.Id, StringComparison.OrdinalIgnoreCase)??false)
                   && rootSettings.Any(s => s.Key == setting.Key)
             }).OrderBy(s => s.Key).ToArray();
             return Ok(models);

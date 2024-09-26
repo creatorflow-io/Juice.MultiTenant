@@ -223,10 +223,7 @@ namespace Juice.MultiTenant.Api.Grpc.Services
 
             try
             {
-                var properties = string.IsNullOrEmpty(request.SerializedProperties)
-                    ? new Dictionary<string, string>()
-                    : JsonConvert.DeserializeObject<Dictionary<string, string>>(request.SerializedProperties)
-                    ?? new Dictionary<string, string>();
+                var properties = JsonConvert.DeserializeObject<Dictionary<string, string?>>(request.SerializedProperties)??[];
                 if (!properties.Any())
                 {
                     return new TenantOperationResult

@@ -22,27 +22,24 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register custom configurators that takes values from SwaggerGenOptions (i.e. high level config)
             // and applies them to SwaggerGeneratorOptions and SchemaGeneratorOptoins (i.e. lower-level config)
+
             services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
             // Register generator and it's dependencies
             services.TryAddTransient<ISwaggerProvider, SwaggerGenerator>();
             services.TryAddTransient<IAsyncSwaggerProvider, SwaggerGenerator>();
-            services.TryAddTransient(s => s.GetRequiredService<IOptionsSnapshot<SwaggerGeneratorOptions>>().Value);
             services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
-            services.TryAddTransient(s => s.GetRequiredService<IOptionsSnapshot<SchemaGeneratorOptions>>().Value);
+            
             services.TryAddTransient<ISerializerDataContractResolver>(s =>
             {
-#if (!NETSTANDARD2_0)
                 var serializerOptions = s.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions
                     ?? new JsonSerializerOptions();
-#else
-                var serializerOptions = new JsonSerializerOptions();
-#endif
 
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
-
+            services.TryAddTransient(s => s.GetRequiredService<IOptionsSnapshot<SwaggerGeneratorOptions>>().Value);
+            services.TryAddTransient(s => s.GetRequiredService<IOptionsSnapshot<SchemaGeneratorOptions>>().Value);
             // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
             services.TryAddScoped<IDocumentProvider, DocumentProvider>();
 

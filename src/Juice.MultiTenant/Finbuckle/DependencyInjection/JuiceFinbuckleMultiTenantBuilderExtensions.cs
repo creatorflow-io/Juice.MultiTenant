@@ -12,7 +12,7 @@ namespace Juice.MultiTenant
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
             builder.Services.TryAddScoped<ITenant>(sp
-                => sp.GetRequiredService<IMultiTenantContextAccessor<TTenantInfo>>().MultiTenantContext.TenantInfo);
+                => sp.GetRequiredService<IMultiTenantContextAccessor<TTenantInfo>>().MultiTenantContext.TenantInfo ?? new());
 
             return builder;
         }

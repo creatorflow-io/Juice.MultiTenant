@@ -3,9 +3,9 @@
     public class UpdateTenantPropertiesCommand : IRequest<IOperationResult>, ITenantCommand
     {
         public string Id { get; private set; }
-        public Dictionary<string, string> Properties { get; private set; } = new Dictionary<string, string>();
+        public Dictionary<string, string?> Properties { get; private set; } = [];
 
-        public UpdateTenantPropertiesCommand(string id, Dictionary<string, string> properties)
+        public UpdateTenantPropertiesCommand(string id, Dictionary<string, string?> properties)
         {
             Id = id;
             Properties = properties;
