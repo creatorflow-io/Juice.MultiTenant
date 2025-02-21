@@ -25,18 +25,18 @@ namespace Juice.MultiTenant.Api.Grpc.Services
             try
             {
                 timer.Start();
-                return await _dbContext.TenantInfo
+                var t = await _dbContext.TenantInfo
                             .Where(ti => ti.Identifier == request.Identifier)
-                            .Select(ti => new MultiTenant.Grpc.TenantInfo()
-                            {
-                                Id = ti.Id,
-                                Name = ti.Name,
-                                Identifier = ti.Identifier,
-                                Disabled = ti.Disabled,
-                                Status = ti.Status.StringValue(),
-                                SerializedProperties = ti.SerializedProperties
-                            })
                             .SingleOrDefaultAsync();
+                return t == null ? null : new MultiTenant.Grpc.TenantInfo
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Identifier = t.Identifier,
+                    Disabled = t.Disabled,
+                    Status = t.Status.StringValue(),
+                    SerializedProperties = JsonConvert.SerializeObject(t.Properties)
+                };
             }
             finally
             {
@@ -82,36 +82,35 @@ namespace Juice.MultiTenant.Api.Grpc.Services
 
             var tenants = await query
                 .Skip(request.Skip).Take(take)
-                .Select(ti => new MultiTenant.Grpc.TenantInfo
-                {
-                    Id = ti.Id,
-                    Name = ti.Name,
-                    Identifier = ti.Identifier,
-                    Disabled = ti.Disabled,
-                    Status = ti.Status.StringValue(),
-                    SerializedProperties = ti.SerializedProperties
-                })
                 .ToListAsync();
             var result = new TenantQueryResult
             {
             };
-            result.Tenants.AddRange(tenants);
+            result.Tenants.AddRange(tenants.Select(ti => new MultiTenant.Grpc.TenantInfo
+            {
+                Id = ti.Id,
+                Name = ti.Name,
+                Identifier = ti.Identifier,
+                Disabled = ti.Disabled,
+                Status = ti.Status.StringValue(),
+                SerializedProperties = JsonConvert.SerializeObject(ti.Properties)
+            }));
             return result;
         }
 
         public override async Task<MultiTenant.Grpc.TenantInfo?> TryGet(TenantIdenfier request, ServerCallContext context)
         {
-            return await _dbContext.TenantInfo
+            var ti = await _dbContext.TenantInfo
                             .Where(ti => ti.Id == request.Id)
-                            .Select(ti => new MultiTenant.Grpc.TenantInfo
-                            {
-                                Id = ti.Id,
-                                Name = ti.Name,
-                                Identifier = ti.Identifier,
-                                Disabled = ti.Disabled,
-                                SerializedProperties = ti.SerializedProperties
-                            })
                             .SingleOrDefaultAsync();
+            return ti == null ? null : new MultiTenant.Grpc.TenantInfo
+            {
+                Id = ti.Id,
+                Name = ti.Name,
+                Identifier = ti.Identifier,
+                Disabled = ti.Disabled,
+                SerializedProperties = JsonConvert.SerializeObject(ti.Properties)
+            };
         }
 
         [Authorize(Policies.TenantCreatePolicy)]

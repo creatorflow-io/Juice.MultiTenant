@@ -8,6 +8,7 @@ using Juice.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Juice.MultiTenant.Api.Controllers
 {
@@ -47,7 +48,7 @@ namespace Juice.MultiTenant.Api.Controllers
                 .Select(ti => new TenantModel(
                     ti.Id, ti.Name, ti.Identifier, ti.Status,
                     ti.OwnerUser,
-                    ti.SerializedProperties
+                    JsonConvert.SerializeObject(ti.Properties)
                 ))
                 .FirstOrDefaultAsync();
             if (model == null)

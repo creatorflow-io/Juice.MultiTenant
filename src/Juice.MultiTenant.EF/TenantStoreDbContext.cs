@@ -22,7 +22,7 @@ namespace Juice.MultiTenant.EF
             {
                 entity.ToTable(nameof(Tenant), Schema);
 
-                entity.IsDynamicExpandable(this);
+                entity.IsExpandable(this);
 
                 entity.IsAuditable();
 

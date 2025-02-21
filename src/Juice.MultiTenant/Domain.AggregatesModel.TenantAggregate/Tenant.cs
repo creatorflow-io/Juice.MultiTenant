@@ -5,6 +5,8 @@ using Finbuckle.MultiTenant.Abstractions;
 using Juice.Domain;
 using Juice.MultiTenant.Domain.Events;
 using Juice.MultiTenant.Shared.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 {
@@ -15,16 +17,16 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         public Tenant()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
-           
+
         }
         public Tenant(string id, string identifier, string name, string? serializedProperties, string? ownerUser, string? tenantClass)
         {
             Id = id;
             Name = name;
             Identifier = identifier;
-            SerializedProperties = serializedProperties ?? "{}";
             OwnerUser = ownerUser;
             TenantClass = tenantClass;
+            Properties = JsonConvert.DeserializeObject<JObject>(serializedProperties ?? "{}") ?? new JObject();
         }
         [Key]
         public virtual string Id { get; set; }
@@ -247,7 +249,9 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         public virtual void FirePropertiesChanged()
         {
             if (DomainEvents.Any(x => x is TenantPropertiesChangedDomainEvent))
+            {
                 DomainEvents.Add(new TenantPropertiesChangedDomainEvent(Id, Identifier));
+            }
         }
 
         public virtual void SetOwner(string owner)
@@ -286,7 +290,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             this.AddDomainEvent(new TenantClassChangedDomainEvent(Id, Identifier, tenantClass));
         }
 
-        public override void SetProperty(object? value, [CallerMemberName] string? name = null)
+        public override void SetProperty<T>(T? value, [CallerMemberName] string? name = null) where T : default
         {
             base.SetProperty(value, name);
             FirePropertiesChanged();

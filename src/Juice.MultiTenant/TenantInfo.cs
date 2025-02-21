@@ -1,5 +1,7 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
 using Juice.Domain;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Juice.MultiTenant
 {
@@ -10,17 +12,17 @@ namespace Juice.MultiTenant
 			string id,
 			string? identifier,
 			string name,
-			string? serializedProperties,
+            JObject? properties,
 			string? ownerUser,
 			string? tenantClass)
 		{
             Id = id;
             Name = name;
             Identifier = identifier;
-			SerializedProperties = serializedProperties ?? "{}";
 			OwnerUser = ownerUser;
 			TenantClass = tenantClass;
-		}
+            Properties = properties ?? [];
+        }
 
 		public string? Identifier { get; set; }
 
