@@ -1,88 +1,79 @@
 ﻿using Juice.MultiTenant.Shared.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Web;
 
 namespace Juice.MultiTenant.Api
 {
-    public static class TenantAuthorizationServiceCollectionExtensions
+    public class TenantAuthorizationOptions
     {
-        public static IServiceCollection AddTenantAuthorizationDefault(this IServiceCollection services)
+        public string AdminRole { get; set; } = "admin"; // system admin role
+        public string TenantAdminRole { get; set; } = "tenant_admin"; // tenant admin role
+    }
+        public static class TenantAuthorizationServiceCollectionExtensions
+    {
+        public static IServiceCollection AddTenantAuthorizationDefault(this IServiceCollection services, TenantAuthorizationOptions? options = default)
         {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Policies.TenantAdminPolicy, policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                    policy.RequireRole("admin", "tenant_admin");
-                });
+            options ??= new TenantAuthorizationOptions();
 
-                options.AddPolicy(Policies.TenantDeletePolicy, policy =>
+            services.AddAuthorizationBuilder()
+                .AddPolicy(Policies.TenantAdminPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireRole("admin");
-                });
-
-                options.AddPolicy(Policies.TenantSettingsPolicy, policy =>
+                    policy.RequireRole(options.AdminRole, options.TenantAdminRole);
+                })
+                .AddPolicy(Policies.TenantDeletePolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireRole("admin");
-                    //policy.RequireScope("tenants-api");
-                });
-
-                options.AddPolicy(Policies.TenantCreatePolicy, policy =>
+                    policy.RequireRole(options.AdminRole);
+                })
+                .AddPolicy(Policies.TenantSettingsPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                });
-
-                options.AddPolicy(Policies.TenantOwnerPolicy, policy =>
+                    policy.RequireRole(options.AdminRole);
+                })
+                .AddPolicy(Policies.TenantCreatePolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireRole("admin", "tenant_admin");
-                });
-
-                options.AddPolicy(Policies.TenantOperationPolicy, policy =>
+                })
+                .AddPolicy(Policies.TenantOwnerPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireRole("admin", "tenant_admin");
+                    policy.RequireRole(options.AdminRole, options.TenantAdminRole);
+                })
+                .AddPolicy(Policies.TenantOperationPolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(options.AdminRole, options.TenantAdminRole);
                 });
-            });
             return services;
         }
 
         public static IServiceCollection AddTenantAuthorizationTest(this IServiceCollection services)
         {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Policies.TenantAdminPolicy, policy =>
+            services.AddAuthorizationBuilder()
+                .AddPolicy(Policies.TenantAdminPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                })
+                .AddPolicy(Policies.TenantDeletePolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                })
+                .AddPolicy(Policies.TenantCreatePolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                })
+                .AddPolicy(Policies.TenantSettingsPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                })
+                .AddPolicy(Policies.TenantOperationPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                })
+                .AddPolicy(Policies.TenantOwnerPolicy, policy =>
                 {
                     policy.RequireAssertion(context => true);
                 });
-
-                options.AddPolicy(Policies.TenantDeletePolicy, policy =>
-                {
-                    policy.RequireAssertion(context => true);
-                });
-
-                options.AddPolicy(Policies.TenantCreatePolicy, policy =>
-                {
-                    policy.RequireAssertion(context => true);
-                });
-
-                options.AddPolicy(Policies.TenantSettingsPolicy, policy =>
-                {
-                    policy.RequireAssertion(context => true);
-                });
-
-                options.AddPolicy(Policies.TenantOperationPolicy, policy =>
-                {
-                    policy.RequireAssertion(context => true);
-                });
-
-                options.AddPolicy(Policies.TenantOwnerPolicy, policy =>
-                {
-                    policy.RequireAssertion(context => true);
-                });
-            });
             return services;
         }
     }
