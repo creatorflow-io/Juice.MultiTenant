@@ -1,4 +1,5 @@
-﻿using Finbuckle.MultiTenant;
+﻿using Asp.Versioning;
+using Finbuckle.MultiTenant;
 using Juice.AspNetCore.Mvc.Formatters;
 using Juice.Extensions.Swagger;
 using Juice.MultiTenant;
@@ -161,12 +162,16 @@ static void ConfigureSwagger(WebApplicationBuilder builder)
         setup.DefaultApiVersion = new ApiVersion(2, 0);
         setup.AssumeDefaultVersionWhenUnspecified = true;
         setup.ReportApiVersions = true;
-    });
-
-    builder.Services.AddVersionedApiExplorer(setup =>
+    }).AddMvc()
+    .AddApiExplorer(options =>
     {
-        setup.GroupNameFormat = "'v'VVV";
-        setup.SubstituteApiVersionInUrl = true;
+        // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+        // note: the specified format code will format the version as "'v'major[.minor][-status]"
+        options.GroupNameFormat = "'v'VVV";
+
+        // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+        // can also be used to control the format of the API version in route templates
+        options.SubstituteApiVersionInUrl = true;
     });
 
     builder.Services.AddPerTenantSwaggerGen<ITenant>((c, tc) =>

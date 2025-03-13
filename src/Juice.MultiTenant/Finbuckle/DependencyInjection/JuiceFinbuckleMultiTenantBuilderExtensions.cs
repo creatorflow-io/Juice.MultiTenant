@@ -11,8 +11,9 @@ namespace Juice.MultiTenant
         public static MultiTenantBuilder<TTenantInfo> JuiceIntegration<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
+            // ITenant service is nullable, it will affect to the RequireTenantAttribute, RootTenantAttribute and the API that use theses attributes
             builder.Services.TryAddScoped<ITenant>(sp
-                => sp.GetRequiredService<IMultiTenantContextAccessor<TTenantInfo>>().MultiTenantContext.TenantInfo ?? new());
+                => sp.GetRequiredService<IMultiTenantContextAccessor<TTenantInfo>>().MultiTenantContext.TenantInfo);
 
             return builder;
         }

@@ -1,4 +1,5 @@
-﻿using Juice.AspNetCore.Mvc.Filters;
+﻿using Asp.Versioning;
+using Juice.AspNetCore.Mvc.Filters;
 using Juice.MultiTenant.Shared.Authorization;
 using Juice.MultiTenant.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Juice.MultiTenant.Api.Controllers
     /// <summary>
     /// Manage tenants
     /// </summary>
-    [ApiVersion("1.0")]
+    [ApiVersion(1.0)]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [IgnoreAntiforgeryToken]

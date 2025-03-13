@@ -1,4 +1,5 @@
-﻿using Juice.AspNetCore.Models;
+﻿using Asp.Versioning;
+using Juice.AspNetCore.Models;
 using Juice.AspNetCore.Mvc.Filters;
 using Juice.Extensions;
 using Juice.MultiTenant.Shared.Authorization;
@@ -14,7 +15,7 @@ namespace Juice.MultiTenant.Api.Controllers.V2
     /// Manage tenants
     /// </summary>
 
-    [ApiVersion("2.0")]
+    [ApiVersion(2.0)]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [IgnoreAntiforgeryToken]

@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using Asp.Versioning;
 using Juice.MultiTenant.Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,8 +12,8 @@ namespace Juice.MultiTenant.Api.Controllers
     /// <summary>
     /// Manage tenant settings
     /// </summary>
-    [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
+    [ApiVersion(1.0)]
+    [ApiVersion(2.0)]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [IgnoreAntiforgeryToken]

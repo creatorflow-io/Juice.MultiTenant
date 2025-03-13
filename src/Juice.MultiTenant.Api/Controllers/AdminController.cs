@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using Asp.Versioning;
 using Juice.AspNetCore.Mvc.Filters;
 using Juice.MultiTenant.Api.Mvc.Filters;
 using Juice.MultiTenant.Identity;
@@ -16,8 +17,8 @@ namespace Juice.MultiTenant.Api.Controllers
     /// <summary>
     /// Manage tenants
     /// </summary>
-    [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
+    [ApiVersion(1.0)]
+    [ApiVersion(2.0)]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [IgnoreAntiforgeryToken]
