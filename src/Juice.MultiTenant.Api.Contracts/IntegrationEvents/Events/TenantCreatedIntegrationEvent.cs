@@ -2,5 +2,16 @@
 
 namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
 {
-    public record TenantCreatedIntegrationEvent(string TenantIdentifier) : IntegrationEvent;
+    /// <summary>
+    /// Tenant created integration event
+    /// </summary>
+    /// <param name="TenantIdentifier"></param>
+    /// <param name="CreateAdminUser"></param>
+    /// <param name="CreateAdminPassword"></param>
+    /// <param name="CreateAdminEmail"></param>
+    public record TenantCreatedIntegrationEvent(string TenantIdentifier,
+        string? CreateAdminUser,
+        string? CreateAdminPassword,
+        string? CreateAdminEmail
+        ) : IntegrationEvent;
 }

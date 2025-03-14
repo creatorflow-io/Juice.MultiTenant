@@ -1,7 +1,6 @@
 ﻿using Juice.Integrations.EventBus;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 using Juice.MultiTenant.Domain.Events;
-using Juice.MultiTenant.EF;
 
 namespace Juice.MultiTenant.Api.Domain.EventHandlers
 {
@@ -20,7 +19,8 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully created",
                 notification.TenantIdentifier);
 
-            var integrationEvent = new TenantCreatedIntegrationEvent(notification.TenantIdentifier);
+            var integrationEvent = new TenantCreatedIntegrationEvent(notification.TenantIdentifier,
+                notification.CreateAdminUser, notification.CreateAdminPassword, notification.CreateAdminEmail);
             await _integrationService.AddAndSaveEventAsync(integrationEvent);
         }
     }

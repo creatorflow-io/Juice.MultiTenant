@@ -37,10 +37,18 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
                     Name = request.Name
                 };
 
-                tenant.AddDomainEvent(new TenantCreatedDomainEvent(tenant.Id, tenant.Identifier));
+                var adminUser = request.Properties.GetValueOrDefault("AdminUser");
+                var adminEmail = request.Properties.GetValueOrDefault("AdminEmail");
+                var adminPassword = request.Properties.GetValueOrDefault("AdminPassword");
+
+                request.Properties.Remove("AdminUser");
+                request.Properties.Remove("AdminEmail");
+                request.Properties.Remove("AdminPassword");
+
                 tenant.UpdateProperties(request.Properties);
 
-                var adminUser = tenant.GetProperty<string?>(() => default, "AdminUser");
+                tenant.AddDomainEvent(new TenantCreatedDomainEvent(tenant.Id, tenant.Identifier, adminUser, adminPassword, adminEmail));
+
                 // try to set the owner info from current user
                 if (string.IsNullOrEmpty(adminUser)
                     && (_httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false))

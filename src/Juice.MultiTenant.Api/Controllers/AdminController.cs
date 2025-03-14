@@ -89,9 +89,15 @@ namespace Juice.MultiTenant.Api.Controllers
 
             var id = idGenerator.GenerateUniqueId();
 
-            var properties = model.Properties ?? new Dictionary<string, string?>();
-            properties["AdminUser"] = model.AdminUser;
-            properties["AdminEmail"] = model.AdminEmail;
+            var properties = model.Properties ?? [];
+            if (!string.IsNullOrEmpty(model.AdminUser))
+            {
+                properties["AdminUser"] = model.AdminUser;
+            }
+            if (!string.IsNullOrEmpty(model.AdminEmail))
+            {
+                properties["AdminEmail"] = model.AdminEmail;
+            }
 
             var command = new CreateTenantCommand(id, model.Identifier, model.Name, properties);
 

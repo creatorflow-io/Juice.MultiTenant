@@ -2,6 +2,9 @@
 
 namespace Juice.MultiTenant.Api.Contracts.Models
 {
+    /// <summary>
+    /// Tenant create model
+    /// </summary>
     public class TenantCreateModel
     {
         /// <summary>
