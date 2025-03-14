@@ -22,12 +22,10 @@ export class TenantUpdateComponent{
 
   identifierFormControl = new FormControl(this.model.identifier, [Validators.required]);
   nameFormControl = new FormControl(this.model.name, [Validators.required]);
-  coneectionFormControl = new FormControl(this.model.connectionString, []);
 
   updateForm = new FormGroup({
     identifier: this.identifierFormControl,
     name: this.nameFormControl,
-    connectionString: this.coneectionFormControl
   });
 
   matcher = new CustomErrorStateMatcher();
@@ -51,7 +49,6 @@ export class TenantUpdateComponent{
     var value = this.updateForm.value;
     this.model.identifier = value.identifier?? '';
     this.model.name = value.name??'';
-    this.model.connectionString = value.connectionString??'';
   }
 
   // for modal control

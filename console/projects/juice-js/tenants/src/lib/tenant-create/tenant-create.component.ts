@@ -18,6 +18,7 @@ import { CustomErrorStateMatcher } from '../shared/custom-error-state-matcher';
 export class TenantCreateComponent implements OnInit{
   model: TenantCreate = new TenantCreate();
 
+  userFormControl = new FormControl('', [Validators.pattern(/^[a-zA-Z0-9@]+$/)]);
   emailFormControl = new FormControl('', [Validators.email]);
   identifierFormControl = new FormControl('', [Validators.required]);
   nameFormControl = new FormControl('', [Validators.required]);
@@ -25,6 +26,7 @@ export class TenantCreateComponent implements OnInit{
   createForm = new FormGroup({
     identifier: this.identifierFormControl,
     name: this.nameFormControl,
+    user: this.userFormControl,
     email: this.emailFormControl
   });
 
@@ -42,6 +44,7 @@ export class TenantCreateComponent implements OnInit{
     var value = this.createForm.value;
     this.model.identifier = value.identifier?? '';
     this.model.name = value.name??'';
+    this.model.adminUser = value.user??'';
     this.model.adminEmail = value.email??'';
   }
 

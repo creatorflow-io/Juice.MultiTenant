@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { DictBuilderComponent, KeyValue, ModelType } from '@juice-js/dict-builder';
 
 @Component({

@@ -73,7 +73,9 @@
                     <button mat-button (click)="edit(row.id)">
                         <mat-icon>edit</mat-icon>{{'Edit' | translate}}
                     </button>
-                    
+                    <button mat-button (click)="properties(row.id)">
+                        <mat-icon>data_object</mat-icon>{{'Properties' | translate}}
+                    </button>
                     <button mat-icon-button [matMenuTriggerFor]="appMenu" [matMenuTriggerData]="{id: row.id, status: row.status}">
                         <mat-icon>more_vert</mat-icon>
                     </button>

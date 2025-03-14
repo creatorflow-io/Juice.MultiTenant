@@ -17,11 +17,7 @@
             {{ 'Please enter a name' | translate }}
         </mat-error>
     </mat-form-field>
-
-    <mat-form-field>
-        <mat-label>{{ 'DB connection' | translate }}</mat-label>
-        <input matInput [formControl]="coneectionFormControl">
-    </mat-form-field>
+    <juice-dict-builder #dict></juice-dict-builder>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

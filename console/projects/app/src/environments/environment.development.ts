@@ -6,7 +6,7 @@ export const environment = {
         appName: "testapp",
     },
     auth: {
-        issuer: 'https://host.docker.internal:44316',
+        issuer: 'https://auth-mam.hdstation.net',
         redirectUri: 'https://localhost:4200/auth/login-completed',
         postLogoutRedirectUri: 'https://localhost:4200/auth/logout-completed',
         clientId: 'tenants_admin',
@@ -20,7 +20,7 @@ export const environment = {
         userImageUrl: "https://i.pravatar.cc/64"
     },
     tenantOptions:{
-        apiEndpoint: 'https://localhost:44314',
+        apiEndpoint: 'https://tenants-api.hdstation.net',
         apiVersion: '2'
     }
 };

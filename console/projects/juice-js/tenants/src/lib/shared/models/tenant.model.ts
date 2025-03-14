@@ -8,7 +8,6 @@ export interface TenantBasic {
 }
 
 export interface Tenant extends TenantBasic {
-    connectionString: string;
     ownerUser: string;
     ownerName: string;
     serializedProperties: string;

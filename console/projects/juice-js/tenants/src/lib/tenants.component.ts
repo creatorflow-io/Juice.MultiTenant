@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { TenantAdminService } from './shared/services/tenant-admin.service';
 import { MatMultiSort, MatMultiSortTableDataSource, TableData  } from 'ngx-mat-multi-sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { TenantBasic } from './shared/models/tenant.model';
+import { Tenant, TenantBasic } from './shared/models/tenant.model';
 import { ActivatedRoute, Router, UrlSerializer } from '@angular/router';
 import { Location } from '@angular/common';
 import { TenantStatus, TenantStatusHelper } from './shared/models/tenant.status';
@@ -30,7 +30,7 @@ export class TenantsComponent implements AfterViewInit{
   tenantStatus = TenantStatus;
   statusHelper = TenantStatusHelper;
   statusOptions = Object.values(TenantStatus).filter(value => typeof value === 'string')
-  .map(value => value as TenantStatus);
+  .map(value => this.tenantStatus[value as keyof typeof TenantStatus]);
 
   get statuses(){
     return this.form.get("statuses");
@@ -480,6 +480,51 @@ export class TenantsComponent implements AfterViewInit{
     });
     instance.cancelled.subscribe(() => {
       this.openSnackBar("Root setting was cancelled!");
+      dialogRef.close();
+    });
+  }
+
+  
+  properties(id: string){
+    const dialogRef = this.dialog.open(TenantSettingsComponent, {
+      width: this.options.dialogWidth,
+      maxHeight: this.options.dialogMaxHeight,
+    });
+    
+    let instance = dialogRef.componentInstance;
+    instance.title = "Tenant properties";
+    instance.loading = true;
+    instance.type = ModelType.Configuration;
+
+    this.tenantService.getTenant(id).subscribe({
+      next: (tenant: Tenant) => {
+        let props = JSON.parse(tenant.serializedProperties);
+        instance.loading = false;
+        instance.setModel(Object.keys(props).map(s => new KeyValue(s, props[s], false, false)));
+      }, error: (error: any) => {
+        this.openSnackBar("Error getting tenant properties!");
+        console.debug(error);
+      }
+    });
+
+    instance.saved.subscribe((model: any) => {
+      var props = instance.getModel().reduce((acc: any, m: KeyValue) => {
+        acc[m.key] = m.value;
+        return acc;
+      }, {});
+      
+      this.tenantService.updateTenantProperties(id, props).subscribe({
+        next: () => {
+          this.openSnackBar("Tenant properties was updated!");
+          dialogRef.close();
+        }, error: (error: any) => {
+          this.openSnackBar("Error updating tenant properties!");
+          console.debug(error);
+        }
+      });
+    });
+    instance.cancelled.subscribe(() => {
+      this.openSnackBar("Tenant property modification was cancelled!");
       dialogRef.close();
     });
   }

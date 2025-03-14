@@ -99,6 +99,10 @@ export class TenantAdminService {
     return this.http.put(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/admin/${id}/settings`, settings);
   }
 
+  public updateTenantProperties(id: string, properties: any) {
+    return this.http.put(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/admin/${id}/properties`, {properties});
+  }
+
   public getRootSettings() {
     return this.http.get<TenantSetting[]>(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/settings`);
   }
