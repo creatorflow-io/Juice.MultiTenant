@@ -9,12 +9,12 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Juice.MultiTenant.Api.Contracts\Juice.MultiTenant.Api.Contracts.csproj" />
-        <ProjectReference Include="..\Juice.MultiTenant\Juice.MultiTenant.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Juice" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.MultiTenant" Version="$(JuiceVersion)" />
         <PackageReference Include="Finbuckle.MultiTenant" Version="$(FinbuckleVersion)" />
         <PackageReference Include="Grpc.Net.ClientFactory" Version="$(GrpcVersion)" />
     </ItemGroup>

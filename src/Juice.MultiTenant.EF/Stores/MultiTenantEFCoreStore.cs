@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.Extensions.MultiTenant;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
@@ -7,9 +8,10 @@ using Juice.MultiTenant.Shared.Enums;
 using Juice.Services;
 using Microsoft.EntityFrameworkCore;
 
+[assembly: InternalsVisibleTo("Juice.MultiTenant.Tests")]
 namespace Juice.MultiTenant.EF.Stores
 {
-    public class MultiTenantEFCoreStore<TTenantInfo> : IForeachableTenantStore<TTenantInfo>
+    internal class MultiTenantEFCoreStore<TTenantInfo> : IForeachableTenantStore<TTenantInfo>
         where TTenantInfo : class, ITenant, ITenantInfo, new()
     {
         internal readonly TenantStoreDbContext dbContext;
