@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
+using TenantInfo = Juice.Extensions.MultiTenant.TenantInfo;
 
 namespace Juice.MultiTenant.Tests
 {

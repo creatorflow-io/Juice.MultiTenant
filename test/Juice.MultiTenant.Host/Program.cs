@@ -7,7 +7,6 @@ using Juice.MultiTenant.Api;
 using Juice.MultiTenant.Api.Grpc.Services;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
@@ -57,8 +56,9 @@ app.MapGet("/", () => "Support gRPC only!");
 // For unit test
 app.MapGet("/tenant", async (context) =>
 {
+    var a = context.RequestServices.GetService<ITenantAccessor>();
     var s = context.RequestServices.GetService<ITenant>();
-    if (s == null)
+    if (a == null || s == null)
     {
         context.Response.StatusCode = StatusCodes.Status404NotFound;
         return;
@@ -80,9 +80,10 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     }).WithBasePathStrategy(options => options.RebaseAspNetCorePathBase = true)
     .WithHeaderStrategy()
     .WithRouteStrategy()
+    .WithDistributedCacheStore().ShouldUpdateCacheStore()
     ;
 
-    builder.Services.ConfigureAllPerTenant<JwtBearerOptions, Juice.MultiTenant.TenantInfo>((options, tc) =>
+    builder.Services.ConfigureAllPerTenant<JwtBearerOptions, Juice.Extensions.MultiTenant.TenantInfo>((options, tc) =>
     {
         var authority = builder.Configuration.GetSection("OpenIdConnect:Authority").Get<string>();
         if(authority == null)

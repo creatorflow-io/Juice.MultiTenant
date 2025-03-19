@@ -1,7 +1,6 @@
 ﻿using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF;
-using Juice.Extensions.Configuration;
 using Juice.MultiTenant.EF.Stores;
 using Juice.Services;
 using Microsoft.Extensions.Configuration;

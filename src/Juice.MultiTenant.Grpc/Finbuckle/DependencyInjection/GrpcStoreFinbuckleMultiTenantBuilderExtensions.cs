@@ -1,6 +1,5 @@
 ﻿using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
-using Juice.Extensions.Configuration;
 using Juice.MultiTenant.Grpc.Finbuckle;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +49,7 @@ namespace Juice.MultiTenant.Grpc
                 throw new ArgumentNullException("Tenant gRPC endpoint is required");
             }
 
-            builder.JuiceIntegration()
+            builder.AddTenantAccessor()
                     .WithGprcStore(tenantGrpcEndpoint)
                     .WithDistributedCacheStore();
 

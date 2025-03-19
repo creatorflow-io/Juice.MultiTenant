@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Juice.MultiTenant.AspNetCore.SwaggerGen;
+namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen;
 
 /// <summary>
 /// This service will be looked up by name from the service collection when using

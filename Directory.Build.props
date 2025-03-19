@@ -10,7 +10,7 @@
     <PackageIconUrl>https://avatars.githubusercontent.com/u/107674950</PackageIconUrl>
     <RepositoryUrl>https://github.com/creatorflow-io/Juice.MultiTenant</RepositoryUrl>
 
-    <VersionPrefix>8.1.1</VersionPrefix>
+    <VersionPrefix>8.2.1</VersionPrefix>
     <VersionSuffix>local.$([System.DateTime]::Now.ToString(`yyyyMMdd`)).1</VersionSuffix>
   </PropertyGroup>
 
@@ -25,7 +25,7 @@
     <FinbuckleVersion>7.0.*</FinbuckleVersion>
     <SwashbuckleVersion>6.8.*</SwashbuckleVersion>
     <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == '' And '$(CI)' == '' ">-alpha.*</JuiceRefSuffix>
-    <JuiceVersion>8.1.*$(JuiceRefSuffix)</JuiceVersion>
+    <JuiceVersion>8.2.*$(JuiceRefSuffix)</JuiceVersion>
     <XUnitVersion>2.9.*</XUnitVersion>
     <TestSdk>17.11.*</TestSdk>
   </PropertyGroup>

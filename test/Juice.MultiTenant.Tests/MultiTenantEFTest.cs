@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF.Extensions;
 using Juice.Extensions.DependencyInjection;
+using Juice.Extensions.MultiTenant;
 using Juice.Extensions.Options;
 using Juice.Extensions.Options.Stores;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;

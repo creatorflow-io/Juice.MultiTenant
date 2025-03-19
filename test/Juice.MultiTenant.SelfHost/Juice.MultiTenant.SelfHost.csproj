@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Juice.MultiTenant.AspNetCore\Juice.MultiTenant.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\src\Juice.Extensions.MultiTenant.AspNetCore\Juice.Extensions.MultiTenant.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Juice.MultiTenant.EF\Juice.MultiTenant.EF.csproj" />
         <ProjectReference Include="..\Juice.MultiTenant.Tests.Shared\Juice.MultiTenant.Tests.Shared.csproj" />
     </ItemGroup>

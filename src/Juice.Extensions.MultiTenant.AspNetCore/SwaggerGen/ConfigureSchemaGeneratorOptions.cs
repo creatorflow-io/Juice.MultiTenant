@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Juice.MultiTenant.AspNetCore.SwaggerGen
+namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
 {
     internal class ConfigureSchemaGeneratorOptions : IConfigureOptions<SchemaGeneratorOptions>
     {

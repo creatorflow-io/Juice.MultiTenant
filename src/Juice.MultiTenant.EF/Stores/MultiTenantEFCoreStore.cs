@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Finbuckle.MultiTenant.Abstractions;
+using Juice.Extensions.MultiTenant;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Juice.MultiTenant.Shared.Enums;
 using Juice.Services;

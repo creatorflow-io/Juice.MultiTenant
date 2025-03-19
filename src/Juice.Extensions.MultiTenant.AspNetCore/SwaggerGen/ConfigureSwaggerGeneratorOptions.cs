@@ -2,9 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
 {
     internal class ConfigureSwaggerGeneratorOptions : IConfigureOptions<SwaggerGeneratorOptions>
     {

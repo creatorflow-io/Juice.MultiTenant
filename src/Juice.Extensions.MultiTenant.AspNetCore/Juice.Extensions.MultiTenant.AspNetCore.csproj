@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(AppTargetFramework)</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Description>Default builder's extensions for AspNetCore</Description>
+        <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Juice" Version="$(JuiceVersion)"/>
+        <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="$(FinbuckleVersion)" />
+    </ItemGroup>
+    <ItemGroup Label="Swagger">
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
+    </ItemGroup>
+</Project>

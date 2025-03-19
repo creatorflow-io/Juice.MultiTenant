@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Juice.EF.Extensions;
 using Juice.Extensions.DependencyInjection;
+using Juice.Extensions.MultiTenant;
 using Juice.MultiTenant.Tests.Domain;
 using Juice.MultiTenant.Tests.Infrastructure;
 using Juice.Services;

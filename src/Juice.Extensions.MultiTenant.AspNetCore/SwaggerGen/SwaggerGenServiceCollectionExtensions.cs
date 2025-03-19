@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
+using Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen;
 using Juice.MultiTenant;
-using Juice.MultiTenant.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;

@@ -1,10 +1,10 @@
-﻿using Finbuckle.MultiTenant;
-using Finbuckle.MultiTenant.Abstractions;
+﻿using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
+using Juice.MultiTenant;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Juice.MultiTenant.AspNetCore
+namespace Finbuckle.MultiTenant
 {
     public static class ConfigureUpdateCacheStoresExtensions
     {

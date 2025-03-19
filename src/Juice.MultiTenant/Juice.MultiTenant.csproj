@@ -9,6 +9,7 @@
 
     <ItemGroup Label="Refs">
         <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.MultiTenant" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.MediatR" Version="$(JuiceVersion)" />
     </ItemGroup>
 
