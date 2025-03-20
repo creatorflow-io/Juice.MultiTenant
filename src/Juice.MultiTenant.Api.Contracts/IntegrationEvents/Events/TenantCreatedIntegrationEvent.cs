@@ -13,5 +13,9 @@ namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
         string? CreateAdminUser,
         string? CreateAdminPassword,
         string? CreateAdminEmail
-        ) : IntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, TenantIdentifier);
+        ) : IntegrationEvent(Guid.NewGuid(), DateTime.UtcNow), IMultiTenantIntegrationEvent
+    {
+        /// <inheritdoc/>
+        public string? TenantId => TenantIdentifier;
+    }
 }
