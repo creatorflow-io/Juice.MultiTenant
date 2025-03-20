@@ -49,7 +49,7 @@ namespace Juice.MultiTenant.Grpc
                 throw new ArgumentNullException("Tenant gRPC endpoint is required");
             }
 
-            builder.AddTenantAccessor()
+            builder.AddTenantServices()
                     .WithGprcStore(tenantGrpcEndpoint)
                     .WithDistributedCacheStore();
 

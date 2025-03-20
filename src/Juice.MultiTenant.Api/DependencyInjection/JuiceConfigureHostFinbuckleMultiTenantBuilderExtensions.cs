@@ -25,7 +25,7 @@ namespace Juice.MultiTenant.Api
             Action<DbOptions> configureTenantDb)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
-            builder.AddTenantAccessor()
+            builder.AddTenantServices()
                     .WithHeaderStrategy() // for grpc incoming request
                     .WithEFStore(configuration, configureTenantDb)
                     ;
