@@ -21,7 +21,6 @@
     <ItemGroup Label="Refs">
         <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.Integrations" Version="$(JuiceVersion)" />
-        <PackageReference Include="Juice.MediatR.RequestManager.EF" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>
