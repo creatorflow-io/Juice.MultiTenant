@@ -20,7 +20,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully deleted",
                 notification.TenantIdentifier);
 
-            var integrationEvent = new TenantDeletedIntegrationEvent(notification.TenantIdentifier, notification.TenantName);
+            var integrationEvent = new TenantDeletedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantName);
             await _integrationService.AddAndSaveEventAsync(integrationEvent);
         }
     }

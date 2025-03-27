@@ -22,6 +22,7 @@ namespace Juice.MultiTenant.Api
             eventBus.Subscribe<TenantActivatedIntegrationEvent, TenantActivatedIngtegrationEventSelfHandler<TTenantInfo>>();
             eventBus.Subscribe<TenantDeactivatedIntegrationEvent, TenantDeactivatedIngtegrationEventSelfHandler<TTenantInfo>>();
             eventBus.Subscribe<TenantSuspendedIntegrationEvent, TenantSuspendedIngtegrationEventSelfHandler<TTenantInfo>>();
+            eventBus.Subscribe<TenantInitializationChangedIntegrationEvent, TenantInitializingIntegrationEventSelfHandler>();
         }
     }
 }

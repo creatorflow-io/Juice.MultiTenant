@@ -19,8 +19,8 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             .LogTrace("Tenant with Identifier: {Identifier} has been changed the owner",
                 notification.TenantIdentifier);
 
-            var integrationEvent = new TenantOwnerChangedIntegrationEvent(
-                notification.TenantIdentifier ?? notification.TenantId,
+            var integrationEvent = new TenantOwnerChangedIntegrationEvent(notification.TenantId,
+                notification.TenantIdentifier,
                 notification.FromUser, notification.ToUser);
 
             await _integrationService.AddAndSaveEventAsync(integrationEvent);

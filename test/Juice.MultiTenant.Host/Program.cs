@@ -7,6 +7,7 @@ using Juice.MultiTenant.Api;
 using Juice.MultiTenant.Api.Grpc.Services;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
@@ -96,6 +97,14 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
     builder.Services.AddTenantIntegrationEventSelfHandlers<Tenant>();
 
     builder.Services.AddTenantOwnerResolverDefault();
+
+    builder.Services.AddEFMediatorRequestManager(builder.Configuration, options =>
+    {
+        options.DatabaseProvider = "PostgreSQL";
+        options.ConnectionName = "PostgreConnection";
+        options.Schema = "App";
+    });
+
 }
 
 static void ConfigureGRPC(IServiceCollection services)

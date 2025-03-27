@@ -10,7 +10,9 @@ namespace Juice.MultiTenant.Api
     public static class JuiceSelfTenantEventHandlersServiceCollectionExtensions
     {
         /// <summary>
-        /// Self handle tenant integration events to update tenant DistributedCacheStore. Required DistributedCache.
+        /// Self handle tenant integration events to update tenant DistributedCacheStore.
+        /// <para></para>Required DistributedCache.
+        /// <para></para>Required ITenantInfo.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -26,6 +28,7 @@ namespace Juice.MultiTenant.Api
             services.AddScoped<TenantActivatedIngtegrationEventSelfHandler<TTenantInfo>>();
             services.AddScoped<TenantDeactivatedIngtegrationEventSelfHandler<TTenantInfo>>();
             services.AddScoped<TenantSuspendedIngtegrationEventSelfHandler<TTenantInfo>>();
+            services.AddScoped<TenantInitializingIntegrationEventSelfHandler>();
             return services;
         }
     }

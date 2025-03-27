@@ -17,7 +17,7 @@ namespace Juice.MultiTenant.Api
         /// <para></para>WithHeaderStrategy for grpc services
         /// <para></para>WithEFStore for Tenant EF store
         /// <para></para>TenantSettings
-        /// <para></para>Configure MediatR, add Integration event service (NOTE: Required an event bus)
+        /// <para></para>Configure MediatR, add Integration event service (NOTE: Required an event bus, client request manager)
         /// </summary>
         /// <returns></returns>
         public static MultiTenantBuilder<TTenantInfo> ConfigureTenantHost<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder,
@@ -59,7 +59,8 @@ namespace Juice.MultiTenant.Api
 
             builder.Services.AddTenantSettingsDbContext(configuration, configureTenantDb);
 
-            builder.Services.AddEFMediatorRequestManager(configuration, configureTenantDb);
+            // Use EFMediatorRequestManager or RedisMediatorRequestManager manually
+            //builder.Services.AddEFMediatorRequestManager(configuration, configureTenantDb);
 
             builder.Services.AddHttpContextAccessor();
 

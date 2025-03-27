@@ -24,16 +24,16 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             IntegrationEvent? integrationEvent =
                 notification.TenantStatus switch
                 {
-                    TenantStatus.Initializing => new TenantInitializationChangedIntegrationEvent(notification.TenantIdentifier, notification.TenantStatus),
-                    TenantStatus.Initialized => new TenantInitializationChangedIntegrationEvent(notification.TenantIdentifier, notification.TenantStatus),
-                    TenantStatus.Approved => new TenantApprovalChangedIntegrationEvent(notification.TenantIdentifier, notification.TenantStatus),
-                    TenantStatus.PendingApproval => new TenantApprovalChangedIntegrationEvent(notification.TenantIdentifier, notification.TenantStatus),
-                    TenantStatus.Rejected => new TenantApprovalChangedIntegrationEvent(notification.TenantIdentifier, notification.TenantStatus),
-                    TenantStatus.Active => new TenantActivatedIntegrationEvent(notification.TenantIdentifier),
-                    TenantStatus.Inactive => new TenantDeactivatedIntegrationEvent(notification.TenantIdentifier),
-                    TenantStatus.PendingToActive => new TenantRequestActiveIntegrationEvent(notification.TenantIdentifier),
-                    TenantStatus.Suspended => new TenantSuspendedIntegrationEvent(notification.TenantIdentifier),
-                    TenantStatus.Abandoned => new TenantAbandonedIntegrationEvent(notification.TenantIdentifier),
+                    TenantStatus.Initializing => new TenantInitializationChangedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantStatus),
+                    TenantStatus.Initialized => new TenantInitializationChangedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantStatus),
+                    TenantStatus.Approved => new TenantApprovalChangedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantStatus),
+                    TenantStatus.PendingApproval => new TenantApprovalChangedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantStatus),
+                    TenantStatus.Rejected => new TenantApprovalChangedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantStatus),
+                    TenantStatus.Active => new TenantActivatedIntegrationEvent(notification.TenantId, notification.TenantIdentifier),
+                    TenantStatus.Inactive => new TenantDeactivatedIntegrationEvent(notification.TenantId, notification.TenantIdentifier),
+                    TenantStatus.PendingToActive => new TenantRequestActiveIntegrationEvent(notification.TenantId, notification.TenantIdentifier),
+                    TenantStatus.Suspended => new TenantSuspendedIntegrationEvent(notification.TenantId, notification.TenantIdentifier),
+                    TenantStatus.Abandoned => new TenantAbandonedIntegrationEvent(notification.TenantId, notification.TenantIdentifier),
                     _ => default
                 };
             if (integrationEvent != null)

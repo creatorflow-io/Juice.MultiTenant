@@ -19,7 +19,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully changed class",
                 notification.TenantIdentifier);
 
-            var integrationEvent = new TenantClassChangedIntegrationEvent(notification.TenantIdentifier, notification.TenantClass);
+            var integrationEvent = new TenantClassChangedIntegrationEvent(notification.TenantId, notification.TenantIdentifier, notification.TenantClass);
             await _integrationService.AddAndSaveEventAsync(integrationEvent);
 
         }

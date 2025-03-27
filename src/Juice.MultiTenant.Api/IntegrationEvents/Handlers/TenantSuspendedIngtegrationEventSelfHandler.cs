@@ -8,7 +8,7 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
     /// <summary>
     /// Self handle TenantDeactivatedIntegrationEvent to update distributed cache store if exists.
     /// </summary>
-    public class TenantSuspendedIngtegrationEventSelfHandler<TTenantInfo> : IIntegrationEventHandler<TenantSuspendedIntegrationEvent>
+    internal class TenantSuspendedIngtegrationEventSelfHandler<TTenantInfo> : IIntegrationEventHandler<TenantSuspendedIntegrationEvent>
         where TTenantInfo : class, ITenantInfo, new()
     {
         private readonly DistributedCacheStore<TTenantInfo>? _cacheStore;

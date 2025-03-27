@@ -19,7 +19,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully created",
                 notification.TenantIdentifier);
 
-            var integrationEvent = new TenantCreatedIntegrationEvent(notification.TenantIdentifier,
+            var integrationEvent = new TenantCreatedIntegrationEvent(notification.TenantId, notification.TenantIdentifier,
                 notification.CreateAdminUser, notification.CreateAdminPassword, notification.CreateAdminEmail);
             await _integrationService.AddAndSaveEventAsync(integrationEvent);
         }

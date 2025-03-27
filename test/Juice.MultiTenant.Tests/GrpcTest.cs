@@ -8,16 +8,10 @@ using FluentAssertions;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Juice.MultiTenant.Grpc;
-using Juice.MultiTenant.Grpc.Finbuckle;
 using Juice.MultiTenant.Settings.Grpc;
 using Juice.XUnit;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
-using TenantInfo = Juice.Extensions.MultiTenant.TenantInfo;
 
 namespace Juice.MultiTenant.Tests
 {
