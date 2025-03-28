@@ -17,7 +17,7 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
 
         public async Task HandleAsync(TenantInitializationChangedIntegrationEvent @event)
         {
-            var command = new InitializationProcessCommand(@event.TenantIdentifier, @event.Status);
+            var command = new InitializationProcessCommand(@event.TenantId, @event.Status);
 
             var identifiedCommand = new IdentifiedCommand<InitializationProcessCommand, IOperationResult>(command, @event.Id);
             var rs = await _mediator.Send(identifiedCommand);
