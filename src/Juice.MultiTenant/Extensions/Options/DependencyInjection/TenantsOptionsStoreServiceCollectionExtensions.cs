@@ -12,9 +12,9 @@ namespace Juice.MultiTenant
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantSettingsOptionsMutableStore(this IServiceCollection services)
+        public static IServiceCollection UseTenantOptionsMutableEFStore(this IServiceCollection services)
         {
-            services.TryAddScoped<ITenantsOptionsMutableStore, TenantSettingsOptionsMutableStore>();
+            services.TryAddSingleton<IOptionsMutableStore, TenantSettingsOptionsMutableStore>();
 
             return services;
         }

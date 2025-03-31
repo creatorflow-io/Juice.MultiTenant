@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Grpc.Core;
 using Grpc.Net.Client;
+using Juice.Extensions.Options;
+using Juice.Extensions.Options.Stores;
 using Juice.MultiTenant.Grpc;
 using Juice.MultiTenant.Settings.Grpc;
+using Juice.Services;
 using Juice.XUnit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -105,6 +113,13 @@ namespace Juice.MultiTenant.Tests
 
                 _output.WriteLine("Request take {0} milliseconds",
                     timer.ElapsedMilliseconds);
+
+                var dict = reply.Settings.ToDictionary();
+
+                foreach (var (key, value) in dict)
+                {
+                    _output.WriteLine($"{key} : {value}");
+                }
                 timer.Stop();
             }
 
@@ -146,6 +161,67 @@ namespace Juice.MultiTenant.Tests
 
                 reply.Succeeded.Should().BeTrue();
             }
+        }
+
+        [IgnoreOnCIFact(DisplayName = "Read/write tenants configuration via gRPC"), TestPriority(1)]
+        public async Task Read_write_tenants_settings_Async()
+        {
+            using var host = Host.CreateDefaultBuilder()
+                 .ConfigureAppConfiguration((hostContext, configApp) =>
+                 {
+                     configApp.Sources.Clear();
+                     configApp.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                     configApp.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
+                 })
+                .ConfigureServices((context, services) =>
+                {
+                    var configuration = context.Configuration;
+
+                    // Register DbContext class
+
+                    services.AddDefaultStringIdGenerator();
+
+                    services.AddSingleton(provider => _output);
+
+                    services.AddLogging(builder =>
+                    {
+                        builder.ClearProviders()
+                        .AddTestOutputLogger()
+                        .AddConfiguration(configuration.GetSection("Logging"));
+                    });
+
+                    // Do not registering tenant domain events and its handlers.
+                    services.AddMediatR(options => { options.RegisterServicesFromAssemblyContaining<MultiTenantEFTest>(); });
+
+                    services
+                        .AddTestTenantStatic<Juice.Extensions.MultiTenant.TenantInfo>("acme");
+
+                    services
+                        .AddTenantGrpcConfiguration(_grpcPath)
+                        .AddTenantOptionsMutableGrpcStore();
+
+                    services.AddTenantOptionsMutableEF();
+
+                    services.ConfigureMutablePerTenant<Models.Options>("Options");
+
+                }).Build();
+
+            {
+                using var scope = host.Services.CreateScope();
+                var store = scope.ServiceProvider.GetRequiredService<IOptionsMutableStore>();
+            }
+
+          
+                await host.Services.TenantInvokeAsync(async (context) =>
+                {
+                    var options = context.RequestServices
+                        .GetRequiredService<IOptionsMutable<Models.Options>>();
+                    var time = DateTimeOffset.Now.ToString();
+                    _output.WriteLine(options.Value.Name + ": " + time);
+                    Assert.True(await options.UpdateAsync(o => o.Time = time));
+                    Assert.Equal(time, options.Value.Time);
+                });
+
         }
 
         public static readonly string SocketPath = Path.Combine(Path.GetTempPath(), "socket.tmp");

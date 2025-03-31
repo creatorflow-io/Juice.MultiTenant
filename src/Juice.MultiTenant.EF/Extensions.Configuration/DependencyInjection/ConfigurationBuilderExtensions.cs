@@ -1,12 +1,12 @@
-﻿using Juice.Extensions.Configuration;
+﻿using Juice.MultiTenant;
 using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
+using Juice.MultiTenant.EF;
 using Juice.MultiTenant.EF.Extensions.Configuration;
 using Juice.MultiTenant.EF.Repositories;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Juice.MultiTenant.EF
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ConfigurationBuilderExtensions
     {
@@ -15,13 +15,13 @@ namespace Juice.MultiTenant.EF
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantsEntityConfiguration(this IServiceCollection services, IConfiguration configuration, Action<Juice.EF.DbOptions> configureOptions)
+        public static IServiceCollection AddTenantEFConfiguration(this IServiceCollection services, IConfiguration configuration, Action<Juice.EF.DbOptions> configureOptions)
         {
             services.AddTenantSettingsDbContext(configuration, configureOptions);
 
             services.TryAddScoped<ITenantSettingsRepository, TenantSettingsRepository>();
 
-            return services.AddScoped<ITenantsConfigurationSource, EntityConfigurationSource>();
+            return services.AddSingleton<IConfigurationSource, EntityConfigurationSource>();
         }
 
         /// <summary>
@@ -29,9 +29,9 @@ namespace Juice.MultiTenant.EF
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantsOptionsMutableEF(this IServiceCollection services)
+        public static IServiceCollection AddTenantOptionsMutableEF(this IServiceCollection services)
         {
-            services.AddTenantSettingsOptionsMutableStore();
+            services.UseTenantOptionsMutableEFStore();
 
             services.TryAddScoped<ITenantSettingsRepository, TenantSettingsRepository>();
             return services;

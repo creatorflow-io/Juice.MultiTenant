@@ -55,7 +55,7 @@ namespace Juice.MultiTenant.Api
             //add service manually with distributed cache together
             //builder.Services.AddTenantIntegrationEventSelfHandlers<TTenantInfo>();
 
-            builder.Services.AddTenantsOptionsMutableEF();
+            builder.Services.AddTenantOptionsMutableEF();
 
             builder.Services.AddTenantSettingsDbContext(configuration, configureTenantDb);
 

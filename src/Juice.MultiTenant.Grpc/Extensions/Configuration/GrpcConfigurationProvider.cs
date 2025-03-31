@@ -8,28 +8,28 @@ namespace Juice.MultiTenant.Grpc.Extensions.Configuration
     internal class GrpcConfigurationProvider : ConfigurationProvider
     {
         private readonly TenantSettingsStore.TenantSettingsStoreClient _client;
-        private ITenant? _tenant;
+        private ITenantAccessor _tenantAccessor;
         private ILogger? _logger;
 
         public GrpcConfigurationProvider(TenantSettingsStore.TenantSettingsStoreClient client,
-            ITenant? tenant, ILogger? logger)
+            ITenantAccessor tenantAccessor, ILogger? logger)
         {
             _client = client;
-            _tenant = tenant;
+            _tenantAccessor = tenantAccessor;
             _logger = logger;
         }
 
 
         public override void Load()
         {
-            if (string.IsNullOrEmpty(_tenant?.Identifier))
+            if (string.IsNullOrEmpty(_tenantAccessor.Tenant?.Identifier))
             {
                 return;
             }
             var start = DateTime.Now;
             var reply = _client.GetAll(
                 new TenantSettingQuery(),
-                new Metadata { new Metadata.Entry("__tenant__", _tenant.Identifier) });
+                new Metadata { new Metadata.Entry("__tenant__", _tenantAccessor.Tenant.Identifier) });
 
             if (reply?.Settings != null)
             {

@@ -1,13 +1,12 @@
-﻿using Juice.EF.Extensions;
-using Juice.EF.Migrations;
+﻿using Juice.EF.Migrations;
 using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
+using Juice.MultiTenant.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Juice.MultiTenant.EF
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class JuiceTenantDbServiceCollectionExtensions
     {

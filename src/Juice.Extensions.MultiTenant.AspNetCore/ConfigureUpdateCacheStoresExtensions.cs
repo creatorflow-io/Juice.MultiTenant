@@ -18,20 +18,20 @@ namespace Finbuckle.MultiTenant
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
 
-            builder.Services.Configure<MultiTenantOptions>(options =>
+            builder.Services.Configure<MultiTenantOptions<TTenantInfo>>(options =>
             {
-                var originEvent = options.Events.OnTenantResolved;
+                var originEvent = options.Events.OnTenantResolveCompleted;
 
-                options.Events.OnTenantResolved = async context =>
+                options.Events.OnTenantResolveCompleted = async context =>
                 {
                     if (originEvent != null)
                     {
                         await originEvent(context);
                     }
 
-                    if (context.Context is HttpContext httpContext && context.TenantInfo is TTenantInfo tenantInfo)
+                    if (context.Context is HttpContext httpContext && context.MultiTenantContext.TenantInfo is TTenantInfo tenantInfo)
                     {
-                        if (!(context.StoreType?.IsAssignableTo(typeof(DistributedCacheStore<TTenantInfo>)) ?? false))
+                        if (!(context.MultiTenantContext.StoreInfo?.StoreType?.IsAssignableTo(typeof(DistributedCacheStore<TTenantInfo>)) ?? false))
                         {
                             var cacheStore = httpContext.RequestServices.GetService<DistributedCacheStore<TTenantInfo>>();
                             if (cacheStore != null)

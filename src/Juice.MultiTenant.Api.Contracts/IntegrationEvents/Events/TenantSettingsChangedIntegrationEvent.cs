@@ -5,6 +5,7 @@ namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
     /// <summary>
     /// Tenant Settings Changed Integration Event
     /// </summary>
+    /// <param name="TenantId"></param>
     /// <param name="TenantIdentifier"></param>
-    public record TenantSettingsChangedIntegrationEvent(string TenantIdentifier) : IntegrationEvent;
+    public record TenantSettingsChangedIntegrationEvent(string TenantId, string TenantIdentifier) : IntegrationEvent, IMultiTenantIntegrationEvent;
 }

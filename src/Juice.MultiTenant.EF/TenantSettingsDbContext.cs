@@ -26,12 +26,12 @@ namespace Juice.MultiTenant.EF
         public TenantSettingsDbContext(
             DbOptions<TenantSettingsDbContext> dbOptions,
             DbContextOptions<TenantSettingsDbContext> options,
-            ITenantInfo? tenantInfo = null,
+            IMultiTenantContextAccessor tenantContextAccessor,
             IMediator? mediator = null
             ) : base(options)
         {
             Schema ??= dbOptions?.Schema ?? "App";
-            TenantInfo = tenantInfo ?? new TenantInfo { Id = "" };
+            TenantInfo = tenantContextAccessor.MultiTenantContext.TenantInfo ?? new TenantInfo();
             _mediator = mediator;
         }
 

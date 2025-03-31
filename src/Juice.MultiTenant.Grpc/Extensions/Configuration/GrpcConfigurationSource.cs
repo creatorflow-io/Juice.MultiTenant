@@ -5,23 +5,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Juice.MultiTenant.Grpc.Extensions.Configuration
 {
-    internal class GrpcConfigurationSource : IConfigurationSource, ITenantsConfigurationSource
+    internal class GrpcConfigurationSource : IConfigurationSource
     {
         private readonly TenantSettingsStore.TenantSettingsStoreClient _client;
-        private ITenant? _tenant;
+        private ITenantAccessor _tenantAccessor;
         private ILoggerFactory? _logger;
 
         public GrpcConfigurationSource(TenantSettingsStore.TenantSettingsStoreClient client,
-            ITenant? tenant, ILoggerFactory? logger)
+            ITenantAccessor tenantAccessor, ILoggerFactory? logger)
         {
-            _tenant = tenant;
+            _tenantAccessor = tenantAccessor;
             _client = client;
             _logger = logger;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new GrpcConfigurationProvider(_client, _tenant, _logger?.CreateLogger<GrpcConfigurationProvider>());
+            return new GrpcConfigurationProvider(_client, _tenantAccessor, _logger?.CreateLogger<GrpcConfigurationProvider>());
         }
     }
 }

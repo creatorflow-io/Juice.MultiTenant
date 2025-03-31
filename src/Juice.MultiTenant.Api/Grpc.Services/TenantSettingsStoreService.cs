@@ -15,9 +15,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
 
         public TenantSettingsStoreService(
             ILogger<TenantSettingsStoreService> logger,
-            ITenantInfo? tenantInfo = null)
+            IMultiTenantContextAccessor tenantContextAccessor)
         {
-            _tenantInfo = tenantInfo;
+            _tenantInfo = tenantContextAccessor.MultiTenantContext.TenantInfo;
             _logger = logger;
         }
 

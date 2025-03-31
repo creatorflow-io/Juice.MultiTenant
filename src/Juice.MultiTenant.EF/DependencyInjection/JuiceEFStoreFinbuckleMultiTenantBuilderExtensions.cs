@@ -1,12 +1,14 @@
 ﻿using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF;
+using Juice.Extensions.Configuration;
+using Juice.MultiTenant;
+using Juice.MultiTenant.EF;
 using Juice.MultiTenant.EF.Stores;
 using Juice.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Juice.MultiTenant.EF
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// Provides builder methods for Finbuckle.MultiTenant services and configuration.
@@ -40,9 +42,9 @@ namespace Juice.MultiTenant.EF
 
             builder.WithEFStore(configuration, configureTenantDb);
 
-            builder.Services.AddTenantsConfiguration()
-                .AddTenantsJsonFile($"appsettings.{environment}.json")
-                .AddTenantsEntityConfiguration(configuration, configureTenantDb);
+            builder.Services
+                .AddTenantJsonFile($"appsettings.{environment}.json")
+                .AddTenantEFConfiguration(configuration, configureTenantDb);
 
             return builder;
         }

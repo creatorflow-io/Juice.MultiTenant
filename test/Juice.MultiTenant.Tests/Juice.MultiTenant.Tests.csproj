@@ -31,6 +31,7 @@
         <PackageReference Include="Juice.MediatR.RequestManager.EF.SqlServer" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.XUnit" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.MultiTenant.TestHelper" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.MultiTenant" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

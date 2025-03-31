@@ -1,23 +1,27 @@
 ﻿using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Juice.MultiTenant.EF.Extensions.Configuration
 {
     internal class EntityConfigurationProvider : ConfigurationProvider
     {
-        private readonly ITenantSettingsRepository _repository;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public EntityConfigurationProvider(ITenantSettingsRepository repository)
+        public EntityConfigurationProvider(IServiceScopeFactory scopeFactory)
         {
-            _repository = repository;
+            _scopeFactory = scopeFactory;
         }
 
 
         public override void Load()
         {
+            using var scope = _scopeFactory.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ITenantSettingsRepository>();
+
             Data =
-                _repository.GetAllAsync(default).ConfigureAwait(false)
-                .GetAwaiter().GetResult()
+                repo.GetAllAsync(default).GetAwaiter().GetResult()
                 .ToDictionary<TenantSettings, string, string?>(c => c.Key, c => c.Value, StringComparer.OrdinalIgnoreCase);
         }
 

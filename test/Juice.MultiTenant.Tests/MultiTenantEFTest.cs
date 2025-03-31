@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant;
 using Juice.EF.Extensions;
+using Juice.Extensions.Configuration;
 using Juice.Extensions.DependencyInjection;
-using Juice.Extensions.MultiTenant;
 using Juice.Extensions.Options;
 using Juice.Extensions.Options.Stores;
-using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Juice.MultiTenant.EF;
 using Juice.MultiTenant.EF.Migrations;
 using Juice.MultiTenant.EF.Stores;
@@ -136,54 +135,43 @@ namespace Juice.MultiTenant.Tests
                         .AddConfiguration(configuration.GetSection("Logging"));
                     });
 
-                    services.AddScoped(sp =>
-                    {
-                        var id = DateTime.Now.Millisecond % 2 == 0 ? "TenantA" : "TenantB";
-                        return new Tenant { Identifier = id, Id = id };
-                    });
-
-                    services.AddScoped<ITenant>(sp => sp.GetRequiredService<Tenant>());
-
-                    services.AddScoped<ITenantInfo>(sp => sp.GetRequiredService<Tenant>());
-
                     // Do not registering tenant domain events and its handlers.
                     services.AddMediatR(options => { options.RegisterServicesFromAssemblyContaining<MultiTenantEFTest>(); });
 
-                    services.AddTenantsConfiguration()
-                        .AddTenantsJsonFile("appsettings.Development.json")
-                        .AddTenantsEntityConfiguration(configuration, options =>
+                    services
+                        .AddTestTenantRandom<Juice.Extensions.MultiTenant.TenantInfo>();
+
+                    services
+                        .AddTenantJsonFile("appsettings.Development.json")
+                        .AddTenantEFConfiguration(configuration, options =>
                         {
                             options.DatabaseProvider = provider;
                             options.Schema = "App";
                         });
 
-                    services.AddTenantSettingsDbContext(configuration, options =>
-                    {
-                        options.DatabaseProvider = provider;
-                        options.Schema = "App";
-                    });
+                    services.AddTenantOptionsMutableEF();
 
-                    services.AddTenantsOptionsMutableEF();
-
-                    services.ConfigureTenantsOptionsMutable<Models.Options>("Options");
+                    services.ConfigureMutablePerTenant<Models.Options>("Options");
 
                 }).Build();
 
             {
                 using var scope = host.Services.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<TenantSettingsDbContext>();
-                var store = scope.ServiceProvider.GetRequiredService<ITenantsOptionsMutableStore>();
+                var store = scope.ServiceProvider.GetRequiredService<IOptionsMutableStore>();
             }
 
             for (var i = 0; i < 10; i++)
             {
-                using var scope = host.Services.CreateScope();
-                var options = scope.ServiceProvider
-                    .GetRequiredService<ITenantsOptionsMutable<Models.Options>>();
-                var time = DateTimeOffset.Now.ToString();
-                _output.WriteLine(options.Value.Name + ": " + time);
-                Assert.True(await options.UpdateAsync(o => o.Time = time));
-                Assert.Equal(time, options.Value.Time);
+                await host.Services.TenantInvokeAsync(async (context) =>
+                {
+                    var options = context.RequestServices
+                        .GetRequiredService<IOptionsMutable<Models.Options>>();
+                    var time = DateTimeOffset.Now.ToString();
+                    _output.WriteLine(options.Value.Name + ": " + time);
+                    Assert.True(await options.UpdateAsync(o => o.Time = time));
+                    Assert.Equal(time, options.Value.Time);
+                });
             }
 
         }
@@ -225,7 +213,7 @@ namespace Juice.MultiTenant.Tests
 
             {
                 using var scope = host.Services.CreateScope();
-                var store = scope.ServiceProvider.GetRequiredService<MultiTenantEFCoreStore<TenantInfo>>();
+                var store = scope.ServiceProvider.GetRequiredService<MultiTenantEFCoreStore<Juice.Extensions.MultiTenant.TenantInfo>>();
 
                 await store.ForeachAsync(async tenant =>
                 {

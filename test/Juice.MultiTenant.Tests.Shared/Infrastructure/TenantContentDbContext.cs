@@ -33,13 +33,13 @@ namespace Juice.MultiTenant.Tests.Infrastructure
 
     public class HybridTenantContentDbContext : TenantContentDbContext
     {
-        private ITenantsConfiguration _configuration;
+        private ITenantConfiguration _configuration;
 
         public HybridTenantContentDbContext(IServiceProvider serviceProvider,
                        DbContextOptions<HybridTenantContentDbContext> options)
             : base(serviceProvider, options)
         {
-            _configuration = serviceProvider.GetRequiredService<ITenantsConfiguration>();
+            _configuration = serviceProvider.GetRequiredService<ITenantConfiguration>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

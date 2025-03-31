@@ -1,6 +1,6 @@
-﻿using Juice.Extensions.Configuration;
-using Juice.MultiTenant.Grpc.Extensions.Configuration;
+﻿using Juice.MultiTenant.Grpc.Extensions.Configuration;
 using Juice.MultiTenant.Settings.Grpc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -13,19 +13,19 @@ namespace Juice.MultiTenant.Grpc
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantsGrpcConfiguration(this IServiceCollection services, string endpoint)
+        public static IServiceCollection AddTenantGrpcConfiguration(this IServiceCollection services, string endpoint)
         {
             services.AddGrpcClient<TenantSettingsStore.TenantSettingsStoreClient>(o =>
             {
                 o.Address = new Uri(endpoint);
             });
-            return services.AddScoped<ITenantsConfigurationSource>(sp =>
+            return services.AddSingleton<IConfigurationSource>(sp =>
             {
-                var tenant = sp.GetService<ITenant>();
+                var tenantAccessor = sp.GetRequiredService<ITenantAccessor>();
                 var client = sp.GetRequiredService<TenantSettingsStore.TenantSettingsStoreClient>();
                 var logger = sp.GetService<ILoggerFactory>();
 
-                return new GrpcConfigurationSource(client, tenant, logger);
+                return new GrpcConfigurationSource(client, tenantAccessor, logger);
             });
         }
 

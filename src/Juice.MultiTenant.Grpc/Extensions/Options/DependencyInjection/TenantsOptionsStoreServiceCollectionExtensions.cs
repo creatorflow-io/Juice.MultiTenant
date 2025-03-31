@@ -14,9 +14,9 @@ namespace Juice.MultiTenant.Grpc
         /// <param name="services"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantSettingsOptionsMutableGrpcStore(this IServiceCollection services)
+        public static IServiceCollection AddTenantOptionsMutableGrpcStore(this IServiceCollection services)
         {
-            services.TryAddScoped<ITenantsOptionsMutableStore, TenantSettingsOptionsMutableGrpcStore>();
+            services.TryAddSingleton<IOptionsMutableStore, TenantSettingsOptionsMutableGrpcStore>();
             return services;
         }
     }

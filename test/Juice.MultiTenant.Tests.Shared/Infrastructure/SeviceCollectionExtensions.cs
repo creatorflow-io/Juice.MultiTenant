@@ -55,7 +55,7 @@ namespace Juice.MultiTenant.Tests.Infrastructure
         {
             services.AddScoped(sp =>
             {
-                var configuration = sp.GetRequiredService<ITenantsConfiguration>();
+                var configuration = sp.GetRequiredService<ITenantConfiguration>();
                 var options =
                 new Juice.EF.DbOptions<HybridTenantContentDbContext> { Schema = schema };
                 configuration.GetSection("Contents").Bind(options);

@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using Finbuckle.MultiTenant.Abstractions;
-using Juice.MultiTenant.Shared.Enums;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Juice.MultiTenant.Grpc.Finbuckle

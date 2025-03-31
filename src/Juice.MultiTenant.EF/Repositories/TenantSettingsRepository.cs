@@ -11,15 +11,15 @@ namespace Juice.MultiTenant.EF.Repositories
         private ITenantInfo? _tenant;
 
         public TenantSettingsRepository(TenantSettingsDbContext dbContext,
-            ITenantInfo? tenant = null)
+            IMultiTenantContextAccessor tenantAccessor)
         {
             _dbContext = dbContext;
-            _tenant = tenant;
+            _tenant = tenantAccessor.MultiTenantContext.TenantInfo;
         }
 
         private IQueryable<TenantSettings> TenantSettings => _dbContext.TenantSettings
-            .Where(s => (_tenant != null
-                && Microsoft.EntityFrameworkCore.EF.Property<string>(s, "TenantId") == _tenant!.Id)
+            .Where(s => (_tenant != null && !string.IsNullOrEmpty(_tenant.Id)
+                && Microsoft.EntityFrameworkCore.EF.Property<string>(s, "TenantId") == _tenant.Id)
             || (_tenant == null
                 && string.IsNullOrEmpty(Microsoft.EntityFrameworkCore.EF.Property<string>(s, "TenantId"))));
 
