@@ -42,7 +42,8 @@ namespace Juice.MultiTenant.Api.Grpc.Services
             {
                 timer.Stop();
                 var requestId = context?.GetHttpContext()?.Request?.Headers["x-requestid"];
-                Console.WriteLine("Find tenant by identifier take {0} milliseconds." + requestId ?? "",
+                Console.WriteLine("Find tenant by identifier {0} take {1} milliseconds." + (requestId ?? ""),
+                    request.Identifier,
                     timer.ElapsedMilliseconds);
             }
         }

@@ -37,7 +37,7 @@ namespace Juice.MultiTenant.Grpc.Extensions.Configuration
             }
             if (_logger?.IsEnabled(LogLevel.Debug) ?? false)
             {
-                _logger.LogDebug("Load take {time} milliseconds", (DateTime.Now - start).TotalMilliseconds);
+                _logger.LogDebug("Load take {time} milliseconds, tenant {id}", (DateTime.Now - start).TotalMilliseconds, _tenantAccessor.Tenant.Identifier);
             }
         }
 

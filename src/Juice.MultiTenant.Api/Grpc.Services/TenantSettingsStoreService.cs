@@ -10,22 +10,23 @@ namespace Juice.MultiTenant.Api.Grpc.Services
     public class TenantSettingsStoreService
         : TenantSettingsStore.TenantSettingsStoreBase
     {
-        private readonly ITenantInfo? _tenantInfo;
+        private readonly IMultiTenantContextAccessor _tenantContextAccessor;
         private readonly ILogger _logger;
 
         public TenantSettingsStoreService(
             ILogger<TenantSettingsStoreService> logger,
             IMultiTenantContextAccessor tenantContextAccessor)
         {
-            _tenantInfo = tenantContextAccessor.MultiTenantContext.TenantInfo;
+            _tenantContextAccessor = tenantContextAccessor;
             _logger = logger;
         }
 
         public override async Task<TenantSettingsResult> GetAll(TenantSettingQuery request, ServerCallContext context)
         {
-            _logger.LogInformation("Tenant Identifier: " + _tenantInfo?.Identifier ?? "Unk");
+            var tenantInfo = _tenantContextAccessor.MultiTenantContext?.TenantInfo;
+            _logger.LogInformation("Tenant Identifier: " + (tenantInfo?.Identifier ?? "Unk"));
 
-            if (string.IsNullOrEmpty(_tenantInfo?.Identifier))
+            if (string.IsNullOrEmpty(tenantInfo?.Identifier))
             {
                 return new TenantSettingsResult
                 {
