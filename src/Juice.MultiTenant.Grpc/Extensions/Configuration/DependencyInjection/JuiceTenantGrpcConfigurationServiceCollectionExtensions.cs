@@ -9,16 +9,12 @@ namespace Juice.MultiTenant.Grpc
     public static class JuiceTenantGrpcConfigurationServiceCollectionExtensions
     {
         /// <summary>
-        /// Read tenant settings from TenantDbContext
+        /// Read tenant settings from tenant grpc service
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantGrpcConfiguration(this IServiceCollection services, string endpoint)
+        public static IServiceCollection AddTenantGrpcConfiguration(this IServiceCollection services)
         {
-            services.AddGrpcClient<TenantSettingsStore.TenantSettingsStoreClient>(o =>
-            {
-                o.Address = new Uri(endpoint);
-            });
             return services.AddSingleton<IConfigurationSource>(sp =>
             {
                 var tenantAccessor = sp.GetRequiredService<ITenantAccessor>();

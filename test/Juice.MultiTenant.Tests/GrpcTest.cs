@@ -196,8 +196,12 @@ namespace Juice.MultiTenant.Tests
                     services
                         .AddTestTenantStatic<Juice.Extensions.MultiTenant.TenantInfo>("acme");
 
+                    services.AddTenantConfigurationGrpcClient(o =>
+                    {
+                        o.Address = new Uri(_grpcPath);
+                    });
                     services
-                        .AddTenantGrpcConfiguration(_grpcPath)
+                        .AddTenantGrpcConfiguration()
                         .AddTenantOptionsMutableGrpcStore();
 
                     services.AddTenantOptionsMutableEF();

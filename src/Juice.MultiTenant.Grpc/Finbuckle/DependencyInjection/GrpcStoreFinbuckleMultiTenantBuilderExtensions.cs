@@ -2,6 +2,7 @@
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.Extensions.Configuration;
 using Juice.MultiTenant.Grpc.Finbuckle;
+using Juice.MultiTenant.Settings.Grpc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -56,7 +57,7 @@ namespace Juice.MultiTenant.Grpc
 
             builder.Services
                 .AddTenantJsonFile($"appsettings.{environment}.json")
-                .AddTenantGrpcConfiguration(tenantGrpcEndpoint);
+                .AddTenantGrpcConfiguration();
 
             builder.Services.AddTenantOptionsMutableGrpcStore();
 
