@@ -73,7 +73,7 @@ namespace Juice.MultiTenant.Grpc
                     });
                 });
 
-            builder.Services.AddTenantOptionsMutableGrpcStore();
+            builder.Services.AddTenantOptionsMutableGrpcStore(default);
 
             return builder;
         }
