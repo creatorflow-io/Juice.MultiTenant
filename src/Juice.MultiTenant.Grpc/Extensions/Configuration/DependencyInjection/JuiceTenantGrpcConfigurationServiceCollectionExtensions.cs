@@ -10,11 +10,18 @@ namespace Juice.MultiTenant.Grpc
     {
         /// <summary>
         /// Read tenant settings from tenant grpc service
+        /// <para>Leave <c>configureGrpcClient</c> null to bypass add grpc client</para>
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="configureGrpcClient"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTenantGrpcConfiguration(this IServiceCollection services)
+        public static IServiceCollection AddTenantGrpcConfiguration(this IServiceCollection services, Action<IHttpClientBuilder>? configureGrpcClient)
         {
+            if (configureGrpcClient != null)
+            {
+                var grpcBuilder = services.AddGrpcClient<TenantSettingsStore.TenantSettingsStoreClient>();
+                configureGrpcClient(grpcBuilder);
+            }
             return services.AddSingleton<IConfigurationSource>(sp =>
             {
                 var tenantAccessor = sp.GetRequiredService<ITenantAccessor>();

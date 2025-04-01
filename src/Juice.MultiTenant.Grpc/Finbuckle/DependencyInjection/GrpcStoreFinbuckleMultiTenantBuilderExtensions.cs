@@ -2,7 +2,6 @@
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.Extensions.Configuration;
 using Juice.MultiTenant.Grpc.Finbuckle;
-using Juice.MultiTenant.Settings.Grpc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,18 +12,21 @@ namespace Juice.MultiTenant.Grpc
 
         /// <summary>
         /// Use grpc client to resolve tenant info
+        /// <para>Leave <c>configureGrpcClient</c> null to bypass add grpc client</para>
         /// </summary>
         /// <typeparam name="TTenantInfo"></typeparam>
         /// <param name="builder"></param>
         /// <param name="grpcEndpoint"></param>
         /// <returns></returns>
-        public static MultiTenantBuilder<TTenantInfo> WithGprcStore<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder, string grpcEndpoint)
+        public static MultiTenantBuilder<TTenantInfo> WithGprcStore<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder, Action<IHttpClientBuilder>? configureGrpcClient)
            where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
-            builder.Services.AddGrpcClient<TenantStore.TenantStoreClient>(o =>
+            if (configureGrpcClient != null)
             {
-                o.Address = new Uri(grpcEndpoint);
-            });
+                var grpcBuilder = builder.Services.AddGrpcClient<TenantStore.TenantStoreClient>();
+                configureGrpcClient(grpcBuilder);
+            }
+
             builder.Services.AddScoped<MultiTenantGprcStore<TTenantInfo>>();
             return builder.WithStore<MultiTenantGprcStore<TTenantInfo>>(ServiceLifetime.Scoped);
         }
@@ -52,12 +54,24 @@ namespace Juice.MultiTenant.Grpc
             }
 
             builder.AddTenantServices()
-                    .WithGprcStore(tenantGrpcEndpoint)
+                    .WithGprcStore(options =>
+                    {
+                        options.ConfigureHttpClient(options =>
+                        {
+                            options.BaseAddress = new Uri(tenantGrpcEndpoint);
+                        });
+                    })
                     .WithDistributedCacheStore();
 
             builder.Services
                 .AddTenantJsonFile($"appsettings.{environment}.json")
-                .AddTenantGrpcConfiguration();
+                .AddTenantGrpcConfiguration(options =>
+                {
+                    options.ConfigureHttpClient(options =>
+                    {
+                        options.BaseAddress = new Uri(tenantGrpcEndpoint);
+                    });
+                });
 
             builder.Services.AddTenantOptionsMutableGrpcStore();
 
