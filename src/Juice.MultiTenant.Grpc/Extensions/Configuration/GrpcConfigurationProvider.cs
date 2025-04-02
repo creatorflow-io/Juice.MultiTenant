@@ -35,6 +35,11 @@ namespace Juice.MultiTenant.Grpc.Extensions.Configuration
             {
                 Data = reply.Settings.ToDictionary(s => s.Key, s => (string?)s.Value, StringComparer.OrdinalIgnoreCase);
             }
+            if(reply?.Succeeded == false)
+            {
+                _logger?.LogError("Failed to load settings for tenant \"{id}\", message: {message}",
+                    _tenantAccessor.Tenant.Identifier, reply.Message);
+            }
             if (_logger?.IsEnabled(LogLevel.Debug) ?? false)
             {
                 _logger.LogDebug("Load {count} items take {time} milliseconds, tenant \"{id}\"",

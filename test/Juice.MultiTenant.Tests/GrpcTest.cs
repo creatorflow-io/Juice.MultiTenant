@@ -245,6 +245,7 @@ namespace Juice.MultiTenant.Tests
                      configApp.Sources.Clear();
                      configApp.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                      configApp.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
+                     configApp.AddUserSecrets(typeof(MultiTenantEFTest).Assembly);
                  })
                 .ConfigureServices((context, services) =>
                 {
@@ -272,12 +273,14 @@ namespace Juice.MultiTenant.Tests
                         .WithGprcStore(default)
                         .WithStaticStrategy("master");
 
+                    var grpcPath = configuration.GetSection("Finbuckle:MultiTenant:Stores:Grpc:Endpoint").Get<string>() ?? _grpcPath;
+
 
                     var handler = new HttpClientHandler();
                     handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 
                     var httpClient = new HttpClient(handler);
-                    var channel = GrpcChannel.ForAddress(_grpcPath, new GrpcChannelOptions { HttpClient = httpClient });
+                    var channel = GrpcChannel.ForAddress(grpcPath, new GrpcChannelOptions { HttpClient = httpClient });
 
                     services.AddTransient(sp => new TenantSettingsStore.TenantSettingsStoreClient(channel));
                     services.AddTransient(sp => new TenantStore.TenantStoreClient(channel));

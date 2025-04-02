@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(AppTargetFramework)</TargetFrameworks>
         <Nullable>enable</Nullable>
-
+        <UserSecretsId>juice.multitenant.tests</UserSecretsId>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 

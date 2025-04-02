@@ -24,7 +24,7 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         public override async Task<TenantSettingsResult> GetAll(TenantSettingQuery request, ServerCallContext context)
         {
             var tenantInfo = _tenantContextAccessor.MultiTenantContext?.TenantInfo;
-            _logger.LogInformation("Tenant Identifier: " + (tenantInfo?.Identifier ?? "Unk"));
+            _logger.LogInformation("Tenant Identifier: " + (tenantInfo?.Identifier ?? ""));
 
             if (string.IsNullOrEmpty(tenantInfo?.Identifier))
             {
@@ -42,7 +42,7 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                 return new TenantSettingsResult
                 {
                     Succeeded = false,
-                    Message = "Required service was not registerd."
+                    Message = "Required service was not registerd. " + nameof(ITenantSettingsRepository)
                 };
             }
 
