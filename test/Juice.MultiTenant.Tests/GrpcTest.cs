@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,7 +29,7 @@ namespace Juice.MultiTenant.Tests
     public class GrpcTest
     {
         private ITestOutputHelper _output;
-        private string _grpcPath = "https://localhost:7079";
+        private string _grpcPath = "https://iis-net6.hdstation.lan:8443";
         public GrpcTest(ITestOutputHelper testOutput)
         {
             _output = testOutput;
@@ -284,26 +285,16 @@ namespace Juice.MultiTenant.Tests
                         .AddTenantGrpcConfiguration(default)
                         .AddTenantOptionsMutableGrpcStore(default);
 
-                    services.AddTenantOptionsMutableEF();
-
-                    services.ConfigureMutablePerTenant<Models.Options>("Options");
+                    services.ConfigurePerTenant<Models.Options>("Options");
 
                 }).Build();
-
-            {
-                using var scope = host.Services.CreateScope();
-                var store = scope.ServiceProvider.GetRequiredService<IOptionsMutableStore>();
-            }
-
 
             await host.Services.TenantInvokeAsync(async (context) =>
             {
                 var options = context.RequestServices
-                    .GetRequiredService<IOptionsMutable<Models.Options>>();
+                    .GetRequiredService<IOptionsSnapshot<Models.Options>>();
                 var time = DateTimeOffset.Now.ToString();
                 _output.WriteLine(options.Value.Name + ": " + time);
-                //Assert.True(await options.UpdateAsync(o => o.Time = time));
-                //Assert.Equal(time, options.Value.Time);
             });
 
         }

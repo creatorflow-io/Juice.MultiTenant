@@ -17,7 +17,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
 
         public async Task<IEnumerable<TTenantInfo>> GetAllAsync()
         {
-            var tenantResult = await _client.GetAllAsync(new TenantQuery { }, deadline: DateTime.UtcNow.AddSeconds(3));
+            var tenantResult = await _client.GetAllAsync(new TenantQuery { }, deadline: DateTime.UtcNow.AddSeconds(10));
             if (tenantResult?.Tenants?.Any() ?? false)
             {
                 return JsonSerializer.Deserialize<IEnumerable<TTenantInfo>>(
@@ -34,12 +34,12 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
                 Id = tenant.Id,
                 Identifier = tenant.Identifier,
                 Name = tenant.Name,
-            }, deadline: DateTime.UtcNow.AddSeconds(3));
+            });
             return result.Succeeded;
         }
         public async Task<TTenantInfo?> TryGetAsync(string id)
         {
-            var tenantInfo = await _client.TryGetAsync(new TenantIdenfier { Id = id }, deadline: DateTime.UtcNow.AddSeconds(3));
+            var tenantInfo = await _client.TryGetAsync(new TenantIdenfier { Id = id });
             return tenantInfo == null ? default
                 : JsonSerializer.Deserialize<TTenantInfo>(
                         JsonSerializer.Serialize(tenantInfo));
@@ -50,7 +50,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
             {
                 return cachedTenant;
             }
-            var tenantInfo = await _client.TryGetByIdentifierAsync(new TenantIdenfier { Identifier = identifier }, deadline: DateTime.UtcNow.AddMilliseconds(500));
+            var tenantInfo = await _client.TryGetByIdentifierAsync(new TenantIdenfier { Identifier = identifier });
             var resolvedTenant = tenantInfo == null ? default
                 : JsonSerializer.Deserialize<TTenantInfo>(
                         JsonSerializer.Serialize(tenantInfo));
@@ -74,7 +74,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
                 Id = tenant.Id,
                 Identifier = tenant.Identifier,
                 Name = tenant.Name
-            }, deadline: DateTime.UtcNow.AddSeconds(3));
+            });
             return result.Succeeded;
         }
     }
