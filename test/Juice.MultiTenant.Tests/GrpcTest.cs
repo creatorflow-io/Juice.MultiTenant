@@ -29,7 +29,7 @@ namespace Juice.MultiTenant.Tests
     public class GrpcTest
     {
         private ITestOutputHelper _output;
-        private string _grpcPath = "https://iis-net6.hdstation.lan:8443";
+        private string _grpcPath = "https://localhost:7079";
         public GrpcTest(ITestOutputHelper testOutput)
         {
             _output = testOutput;
@@ -293,8 +293,7 @@ namespace Juice.MultiTenant.Tests
             {
                 var options = context.RequestServices
                     .GetRequiredService<IOptionsSnapshot<Models.Options>>();
-                var time = DateTimeOffset.Now.ToString();
-                _output.WriteLine(options.Value.Name + ": " + time);
+                _output.WriteLine(options.Value.Name + ": " + options.Value.Time);
             });
 
         }

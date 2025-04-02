@@ -17,7 +17,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
 
         public async Task<IEnumerable<TTenantInfo>> GetAllAsync()
         {
-            var tenantResult = await _client.GetAllAsync(new TenantQuery { }, deadline: DateTime.UtcNow.AddSeconds(10));
+            var tenantResult = await _client.GetAllAsync(new TenantQuery { });
             if (tenantResult?.Tenants?.Any() ?? false)
             {
                 return JsonSerializer.Deserialize<IEnumerable<TTenantInfo>>(
@@ -39,7 +39,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<TTenantInfo?> TryGetAsync(string id)
         {
-            var tenantInfo = await _client.TryGetAsync(new TenantIdenfier { Id = id });
+            var tenantInfo = await _client.TryGetAsync(new TenantIdenfier { Id = id }, deadline: DateTime.UtcNow.AddSeconds(10));
             return tenantInfo == null ? default
                 : JsonSerializer.Deserialize<TTenantInfo>(
                         JsonSerializer.Serialize(tenantInfo));
@@ -50,7 +50,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
             {
                 return cachedTenant;
             }
-            var tenantInfo = await _client.TryGetByIdentifierAsync(new TenantIdenfier { Identifier = identifier });
+            var tenantInfo = await _client.TryGetByIdentifierAsync(new TenantIdenfier { Identifier = identifier }, deadline: DateTime.UtcNow.AddSeconds(10));
             var resolvedTenant = tenantInfo == null ? default
                 : JsonSerializer.Deserialize<TTenantInfo>(
                         JsonSerializer.Serialize(tenantInfo));
@@ -62,8 +62,7 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<bool> TryRemoveAsync(string identifier)
         {
-            var result = await _client.TryRemoveAsync(new TenantIdenfier { Identifier = identifier }
-                , deadline: DateTime.UtcNow.AddSeconds(3));
+            var result = await _client.TryRemoveAsync(new TenantIdenfier { Identifier = identifier });
             return result.Succeeded;
         }
         public async Task<bool> TryUpdateAsync(TTenantInfo tenantInfo)
