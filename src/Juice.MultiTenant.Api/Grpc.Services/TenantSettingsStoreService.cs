@@ -23,18 +23,6 @@ namespace Juice.MultiTenant.Api.Grpc.Services
 
         public override async Task<TenantSettingsResult> GetAll(TenantSettingQuery request, ServerCallContext context)
         {
-            var tenantInfo = _tenantContextAccessor.MultiTenantContext?.TenantInfo;
-            _logger.LogInformation("Tenant Identifier: " + (tenantInfo?.Identifier ?? ""));
-
-            if (string.IsNullOrEmpty(tenantInfo?.Identifier))
-            {
-                return new TenantSettingsResult
-                {
-                    Succeeded = false,
-                    Message = "Tenant info is missing or could not be resolved."
-                };
-            }
-
             var repository = context.GetHttpContext().RequestServices.GetService<ITenantSettingsRepository>();
             if (repository == null)
             {
@@ -53,6 +41,15 @@ namespace Juice.MultiTenant.Api.Grpc.Services
             var data = (await repository!.GetAllAsync(context.CancellationToken))
                 .ToDictionary<TenantSettings, string, string?>(c => c.Key, c => c.Value);
 
+            if(_logger.IsEnabled(LogLevel.Debug))
+            {
+                var tenantId = _tenantContextAccessor.MultiTenantContext?.TenantInfo?.Identifier;
+                _logger.LogDebug("Tenant {id} settings count: {count}", tenantId, data.Count);
+                foreach (var kvp in data)
+                {
+                    _logger.LogDebug("Tenant {id} settings: {key} = {value}", tenantId, kvp.Key, kvp.Value);
+                }
+            }
             result.Settings.Add(data);
 
             return result;

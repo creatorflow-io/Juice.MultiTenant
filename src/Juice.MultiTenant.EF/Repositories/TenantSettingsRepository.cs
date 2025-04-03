@@ -2,6 +2,7 @@
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Juice.MultiTenant.EF.Repositories
 {
@@ -9,12 +10,15 @@ namespace Juice.MultiTenant.EF.Repositories
     {
         private readonly TenantSettingsDbContext _dbContext;
         private ITenantInfo? _tenant;
+        private readonly ILogger _logger;
 
         public TenantSettingsRepository(TenantSettingsDbContext dbContext,
+            ILogger<TenantSettingsRepository> logger,
             IMultiTenantContextAccessor tenantAccessor)
         {
             _dbContext = dbContext;
             _tenant = tenantAccessor.MultiTenantContext.TenantInfo;
+            _logger = logger;
         }
 
         private IQueryable<TenantSettings> TenantSettings => _dbContext.TenantSettings
@@ -127,6 +131,10 @@ namespace Juice.MultiTenant.EF.Repositories
                 .AsNoTracking()
                 .ToListAsync(token);
 
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("Found {count} settings", settings.Count);
+            }
             var keys = new HashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
 
             var models = new List<TenantSettings>();

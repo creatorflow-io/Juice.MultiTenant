@@ -271,7 +271,8 @@ namespace Juice.MultiTenant.Tests
 
                     services.AddMultiTenant()
                         .WithGprcStore(default)
-                        .WithStaticStrategy("master");
+                        .WithStaticStrategy("master")
+                        ;
 
                     var grpcPath = configuration.GetSection("Finbuckle:MultiTenant:Stores:Grpc:Endpoint").Get<string>() ?? _grpcPath;
 

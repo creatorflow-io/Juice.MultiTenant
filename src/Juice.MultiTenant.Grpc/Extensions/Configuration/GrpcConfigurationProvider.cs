@@ -22,14 +22,13 @@ namespace Juice.MultiTenant.Grpc.Extensions.Configuration
 
         public override void Load()
         {
-            if (string.IsNullOrEmpty(_tenantAccessor.Tenant?.Identifier))
-            {
-                return;
-            }
+            var metadata = string.IsNullOrEmpty(_tenantAccessor.Tenant?.Identifier)
+                ? new Metadata()
+                : [new Metadata.Entry("__tenant__", _tenantAccessor.Tenant.Identifier)];
             var start = DateTime.Now;
             var reply = _client.GetAll(
                 new TenantSettingQuery(),
-                new Metadata { new Metadata.Entry("__tenant__", _tenantAccessor.Tenant.Identifier) });
+                metadata);
 
             if (reply?.Settings != null)
             {
@@ -38,13 +37,13 @@ namespace Juice.MultiTenant.Grpc.Extensions.Configuration
             if(reply?.Succeeded == false)
             {
                 _logger?.LogError("Failed to load settings for tenant \"{id}\", message: {message}",
-                    _tenantAccessor.Tenant.Identifier, reply.Message);
+                    _tenantAccessor.Tenant?.Identifier, reply.Message);
             }
             if (_logger?.IsEnabled(LogLevel.Debug) ?? false)
             {
                 _logger.LogDebug("Load {count} items take {time} milliseconds, tenant \"{id}\"",
                     reply?.Settings?.Count ?? 0,
-                    (DateTime.Now - start).TotalMilliseconds, _tenantAccessor.Tenant.Identifier);
+                    (DateTime.Now - start).TotalMilliseconds, _tenantAccessor.Tenant?.Identifier);
             }
         }
 
