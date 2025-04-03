@@ -10,12 +10,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
+import { NewKeyModalComponent } from './new-key-modal/new-key-modal.component';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 
 
 @NgModule({
   declarations: [
-    DictBuilderComponent
+    DictBuilderComponent,
+    NewKeyModalComponent
   ],
   imports: [
     MatButtonModule,
@@ -25,6 +28,7 @@ import { MatInputModule } from '@angular/material/input';
     MatIconModule,
     MatTooltipModule,
     MatInputModule,
+    MatDialogModule,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
@@ -32,6 +36,9 @@ import { MatInputModule } from '@angular/material/input';
   ],
   exports: [
     DictBuilderComponent
+  ],
+  providers: [
+    { provide: MatDialogRef, useValue: {} }
   ]
 })
 export class DictBuilderModule { }

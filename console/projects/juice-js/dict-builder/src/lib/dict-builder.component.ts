@@ -1,4 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit , SimpleChange} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { NewKeyModalComponent } from './new-key-modal/new-key-modal.component';
+import { first, lastValueFrom, Observable } from 'rxjs';
 
 export class KeyValue {
   key: string;
@@ -104,6 +107,8 @@ export class DictBuilderComponent implements OnInit{
 
   loading: boolean = false;
 
+  constructor(private dialog: MatDialog) {}
+
   ngOnInit(): void {
     this.models = this.objectToKeyValueArray(this.model, this.parent);
   }
@@ -131,12 +136,27 @@ export class DictBuilderComponent implements OnInit{
     return this.models.findIndex(m => m.key == key) > -1;
   }
 
-  getNewKey() {
-    var i = 1;
-    while (this.keyExists("newkey" + i)) {
-      i++;
-    }
-    return "newkey" + i;
+  getNewKey() : Observable<string>{
+    // use modal to get new key from user
+
+    const dialogRef = this.dialog.open(NewKeyModalComponent, {
+      width: '400px',
+    });
+
+    return dialogRef.afterClosed().pipe(
+      first(),
+      // if the user pressed cancel, return null
+      (key: any) => {
+          var newKey = key ? key : "newKey";
+          var i = 0;
+          while (this.keyExists(newKey)) {
+            newKey = (key ? key : "newKey") + i;
+            i++;
+          }
+          return newKey;
+      }
+    );
+    
   }
 
   standardizePropertyKey(key: string) {
@@ -157,8 +177,12 @@ export class DictBuilderComponent implements OnInit{
   }
 
   add(){
-    var newKey = this.getNewKey();
-    this.models.push(new KeyValue(newKey, ""));
+    this.getNewKey().subscribe((key: string) => {
+      var validKey = this.type == ModelType.Configuration
+          ? this.standardizeConfigurationKey(key)
+          : this.standardizePropertyKey(key);
+      this.models.push(new KeyValue(validKey, ""));
+    });
   }
   updateValue(key: string){
     var index = this.models.findIndex(m => m.key == key);
@@ -185,7 +209,7 @@ export class DictBuilderComponent implements OnInit{
 
     var validKey = this.type == ModelType.Configuration
       ? this.standardizeConfigurationKey(key)
-      : this.standardizePropertyKey(key) ;
+      : this.standardizePropertyKey(key);
 
     if(this.keyDuplicated(validKey) || (validKey != key && this.keyExists(validKey))){
       return;

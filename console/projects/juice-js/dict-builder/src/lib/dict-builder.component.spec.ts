@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 describe('DictBuilderComponent', () => {
   let component: DictBuilderComponent;
@@ -25,6 +26,7 @@ describe('DictBuilderComponent', () => {
         MatIconModule,
         MatTooltipModule,
         MatInputModule,
+        MatDialogModule
       ],
       declarations: [ DictBuilderComponent ]
     })
@@ -46,6 +48,7 @@ describe('DictBuilderComponent', () => {
     expect(component.standardizeConfigurationKey(":abc::0def:")).toBe('abc:def');
     expect(component.standardizeConfigurationKey(":0abc::0def:")).toBe('abc:def');
     expect(component.standardizeConfigurationKey("0abc::0def:")).toBe('abc:def');
+    expect(component.standardizeConfigurationKey("abc:def")).toBe('abc:def');
   });
 
   it('property key should be standardizing', () => {
@@ -55,5 +58,6 @@ describe('DictBuilderComponent', () => {
     expect(component.standardizePropertyKey(":abc::0def:")).toBe('abc0def');
     expect(component.standardizePropertyKey(":0abc::0def:")).toBe('abc0def');
     expect(component.standardizePropertyKey("0abc::0def:")).toBe('abc0def');
+    expect(component.standardizePropertyKey("abc:def")).toBe('abcdef');
   });
 });

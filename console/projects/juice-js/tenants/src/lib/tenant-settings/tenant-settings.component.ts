@@ -17,6 +17,7 @@ export class TenantSettingsComponent{
   @ViewChild('dict') dictBuilder!: DictBuilderComponent;
 
   setModel(model: KeyValue[]) {
+    this.dictBuilder.type = this.type;
     this.dictBuilder.models = model;
   }
   getModel():KeyValue[] {

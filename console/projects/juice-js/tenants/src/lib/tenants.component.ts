@@ -494,7 +494,7 @@ export class TenantsComponent implements AfterViewInit{
     let instance = dialogRef.componentInstance;
     instance.title = "Tenant properties";
     instance.loading = true;
-    instance.type = ModelType.Configuration;
+    instance.type = ModelType.StandardObject;
 
     this.tenantService.getTenant(id).subscribe({
       next: (tenant: Tenant) => {
