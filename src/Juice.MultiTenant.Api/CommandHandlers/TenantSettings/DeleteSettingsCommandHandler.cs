@@ -7,7 +7,7 @@
         {
             _repository = repository;
         }
-        public async Task<IOperationResult> Handle(DeleteSettingsCommand request, CancellationToken cancellationToken)
+        public async ValueTask<IOperationResult> Handle(DeleteSettingsCommand request, CancellationToken cancellationToken)
         {
             try
             {

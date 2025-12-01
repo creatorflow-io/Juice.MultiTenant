@@ -14,7 +14,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             _logger = logger;
             _integrationService = integrationService;
         }
-        public async Task Handle(TenantDeletedDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(TenantDeletedDomainEvent notification, CancellationToken cancellationToken)
         {
             _logger.CreateLogger<TenantDeletedDomainEventHandler>()
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully deleted",

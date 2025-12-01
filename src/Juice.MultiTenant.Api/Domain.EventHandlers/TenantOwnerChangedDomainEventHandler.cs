@@ -13,7 +13,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             _logger = logger;
             _integrationService = integrationService;
         }
-        public async Task Handle(TenantOwnerChangedDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(TenantOwnerChangedDomainEvent notification, CancellationToken cancellationToken)
         {
             _logger.CreateLogger<TenantStatusChangedDomainEventHandler>()
             .LogTrace("Tenant with Identifier: {Identifier} has been changed the owner",

@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Juice.EF.Extensions;
 using Juice.EventBus.IntegrationEventLog.EF;
-using Juice.EventBus.RabbitMQ;
 using Juice.Extensions.DependencyInjection;
-using Juice.Integrations;
 using Juice.Integrations.MediatR;
 using Juice.MediatR.RequestManager.EF;
 using Juice.MultiTenant.Api;
@@ -18,7 +16,6 @@ using Juice.MultiTenant.EF;
 using Juice.MultiTenant.EF.Migrations;
 using Juice.Services;
 using Juice.XUnit;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -216,7 +213,7 @@ namespace Juice.MultiTenant.Tests
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlers<Tenant>();
+            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
 
             var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default);
 
@@ -249,13 +246,10 @@ namespace Juice.MultiTenant.Tests
 
             stopwatch.Start();
 
-            var duplicatedCreateResult = await mediator.Send(createCommand);
-
-            _output.WriteLine(createCommand.GetType().Name + " take {0} milliseconds.", stopwatch.ElapsedMilliseconds);
-
-            duplicatedCreateResult.Succeeded.Should().BeFalse();
-            duplicatedCreateResult.Message.Should().StartWith($"Failed to handle command {createCommand.GetType().Name}");
-            _output.WriteLine(duplicatedCreateResult.Message);
+            await Assert.ThrowsAsync<DbUpdateException>(async () =>
+            {
+                var createResult = await mediator.Send(createCommand);
+            });
 
         }
 
@@ -421,7 +415,7 @@ namespace Juice.MultiTenant.Tests
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlers<Tenant>();
+            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
 
             var command = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Inactive);
 
@@ -472,7 +466,7 @@ namespace Juice.MultiTenant.Tests
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlers<Tenant>();
+            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
 
             var command = new AbandonTenantCommand("xunittest");
 
@@ -497,7 +491,7 @@ namespace Juice.MultiTenant.Tests
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlers<Tenant>();
+            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
 
             var command = new DeleteTenantCommand("xunittest");
 

@@ -22,7 +22,7 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
             _httpContextAccessor = httpContextAccessor;
             _ownerResolver = ownerResolver;
         }
-        public async Task<IOperationResult> Handle(TransferOwnershipCommand request, CancellationToken cancellationToken)
+        public async ValueTask<IOperationResult> Handle(TransferOwnershipCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -69,8 +69,8 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(TransferOwnershipCommand mesage)
-            => Task.FromResult(OperationResult.Success);
+        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(TransferOwnershipCommand mesage)
+            => ValueTask.FromResult(OperationResult.Success);
         protected override (string IdProperty, string CommandId) ExtractDebugInfo(TransferOwnershipCommand command)
             => (nameof(command.Id), command.Id);
     }

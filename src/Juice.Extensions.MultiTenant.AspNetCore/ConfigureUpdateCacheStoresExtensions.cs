@@ -17,7 +17,7 @@ namespace Finbuckle.MultiTenant
         public static MultiTenantBuilder<TTenantInfo> ShouldUpdateCacheStore<TTenantInfo>(this MultiTenantBuilder<TTenantInfo> builder)
             where TTenantInfo : class, ITenant, ITenantInfo, new()
         {
-
+#if NET8_0_OR_GREATER
             builder.Services.Configure<MultiTenantOptions<TTenantInfo>>(options =>
             {
                 var originEvent = options.Events.OnTenantResolveCompleted;
@@ -44,6 +44,30 @@ namespace Finbuckle.MultiTenant
                 };
 
             });
+#else
+            builder.Services.Configure<MultiTenantOptions>(options =>
+            {
+                var originEvent = options.Events.OnTenantResolved;
+                options.Events.OnTenantResolved = async context =>
+                {
+                    if (originEvent != null)
+                    {
+                        await originEvent(context);
+                    }
+                    if (context.Context is HttpContext httpContext && context.TenantInfo is TTenantInfo tenantInfo)
+                    {
+                        if (!(context.StoreType?.IsAssignableFrom(typeof(DistributedCacheStore<TTenantInfo>)) ?? false))
+                        {
+                            var cacheStore = httpContext.RequestServices.GetService<DistributedCacheStore<TTenantInfo>>();
+                            if (cacheStore != null)
+                            {
+                                await cacheStore.TryAddAsync(tenantInfo);
+                            }
+                        }
+                    }
+                };
+            });
+#endif
             return builder;
         }
 

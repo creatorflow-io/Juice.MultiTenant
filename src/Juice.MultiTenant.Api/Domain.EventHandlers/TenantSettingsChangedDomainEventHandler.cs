@@ -1,7 +1,6 @@
 ﻿using Juice.Integrations.EventBus;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 using Juice.MultiTenant.Domain.Events;
-using Juice.MultiTenant.EF;
 
 namespace Juice.MultiTenant.Api.Domain.EventHandlers
 {
@@ -16,7 +15,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             _logger = logger;
         }
 
-        public async Task Handle(TenantSettingsChangedDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(TenantSettingsChangedDomainEvent notification, CancellationToken cancellationToken)
         {
             _logger.CreateLogger<TenantSettingsChangedDomainEventHandler>()
             .LogTrace("Tenant settings with Identifier: {Identifier} has been successfully updated.",

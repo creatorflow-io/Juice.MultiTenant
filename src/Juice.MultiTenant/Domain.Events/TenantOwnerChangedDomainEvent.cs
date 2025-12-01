@@ -1,5 +1,4 @@
-﻿using MediatR;
-
+﻿
 namespace Juice.MultiTenant.Domain.Events
 {
     public class TenantOwnerChangedDomainEvent : INotification

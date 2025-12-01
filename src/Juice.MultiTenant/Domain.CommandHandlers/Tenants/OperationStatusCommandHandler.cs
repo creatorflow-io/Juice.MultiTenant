@@ -16,7 +16,7 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
-        public async Task<IOperationResult> Handle(OperationStatusCommand request, CancellationToken cancellationToken)
+        public async ValueTask<IOperationResult> Handle(OperationStatusCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -63,8 +63,8 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(OperationStatusCommand mesage)
-            => Task.FromResult(OperationResult.Success);
+        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(OperationStatusCommand mesage)
+            => ValueTask.FromResult(OperationResult.Success);
         protected override (string IdProperty, string CommandId) ExtractDebugInfo(OperationStatusCommand command)
             => (nameof(command.Id), command.Id);
     }

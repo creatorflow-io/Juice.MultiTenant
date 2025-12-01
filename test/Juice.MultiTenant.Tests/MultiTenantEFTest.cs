@@ -65,6 +65,14 @@ namespace Juice.MultiTenant.Tests
                 {
                     options.RegisterServicesFromAssemblyContaining(GetType());
                 });
+
+                services.AddMultiTenant()
+                    .WithEFStore(configuration, options =>
+                    {
+                        options.DatabaseProvider = provider;
+                        options.Schema = "App";
+                    });
+
                 services.AddTenantDbContext(configuration, options =>
                 {
                     options.Schema = "App";
@@ -79,15 +87,13 @@ namespace Juice.MultiTenant.Tests
                 });
             });
 
-            var context = resolver.ServiceProvider.
-                CreateScope().ServiceProvider.GetRequiredService<TenantStoreDbContext>();
+            var context = resolver.CreateScope().ServiceProvider.GetRequiredService<TenantStoreDbContext>();
 
             await context.MigrateAsync();
             await context.SeedAsync(resolver.ServiceProvider.GetRequiredService<IConfigurationService>()
                 .GetConfiguration());
 
-            var context1 = resolver.ServiceProvider.
-                CreateScope().ServiceProvider.GetRequiredService<TenantSettingsDbContext>();
+            var context1 = resolver.CreateScope().ServiceProvider.GetRequiredService<TenantSettingsDbContext>();
             await context1.MigrateAsync();
 
             var stopwatch = new Stopwatch();

@@ -46,7 +46,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapTenantGrpcServices();
-app.RegisterTenantIntegrationEventSelfHandlers();
+app.RegisterTenantIntegrationEventSelfHandlersAsync();
 
 UseTenantSwagger(app);
 

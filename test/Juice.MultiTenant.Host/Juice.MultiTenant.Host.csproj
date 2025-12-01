@@ -28,6 +28,7 @@
   <ItemGroup>
     <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="$(FinbuckleVersion)" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="*" />
-    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.*" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.*" Condition="'$(TargetFramework)' != 'net6.0'"/>
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.4.*" Condition="'$(TargetFramework)' == 'net6.0'"/>
   </ItemGroup>
 </Project>

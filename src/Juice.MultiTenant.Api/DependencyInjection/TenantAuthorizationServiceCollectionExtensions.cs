@@ -14,6 +14,7 @@ namespace Juice.MultiTenant.Api
         {
             options ??= new TenantAuthorizationOptions();
 
+#if NET8_0_OR_GREATER
             services.AddAuthorizationBuilder()
                 .AddPolicy(Policies.TenantAdminPolicy, policy =>
                 {
@@ -44,11 +45,46 @@ namespace Juice.MultiTenant.Api
                     policy.RequireAuthenticatedUser();
                     policy.RequireRole(options.AdminRole, options.TenantAdminRole);
                 });
+#else
+            services.AddAuthorization(builder =>
+            {
+                builder.AddPolicy(Policies.TenantAdminPolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(options.AdminRole, options.TenantAdminRole);
+                });
+                builder.AddPolicy(Policies.TenantDeletePolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(options.AdminRole);
+                });
+                builder.AddPolicy(Policies.TenantSettingsPolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(options.AdminRole);
+                });
+                builder.AddPolicy(Policies.TenantCreatePolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                });
+                builder.AddPolicy(Policies.TenantOwnerPolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(options.AdminRole, options.TenantAdminRole);
+                });
+                builder.AddPolicy(Policies.TenantOperationPolicy, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(options.AdminRole, options.TenantAdminRole);
+                });
+            });
+#endif
             return services;
         }
 
         public static IServiceCollection AddTenantAuthorizationTest(this IServiceCollection services)
         {
+#if NET8_0_OR_GREATER
             services.AddAuthorizationBuilder()
                 .AddPolicy(Policies.TenantAdminPolicy, policy =>
                 {
@@ -74,6 +110,35 @@ namespace Juice.MultiTenant.Api
                 {
                     policy.RequireAssertion(context => true);
                 });
+#else
+            services.AddAuthorization(builder =>
+            {
+                builder.AddPolicy(Policies.TenantAdminPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                });
+                builder.AddPolicy(Policies.TenantDeletePolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                });
+                builder.AddPolicy(Policies.TenantCreatePolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                });
+                builder.AddPolicy(Policies.TenantSettingsPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                });
+                builder.AddPolicy(Policies.TenantOperationPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                });
+                builder.AddPolicy(Policies.TenantOwnerPolicy, policy =>
+                {
+                    policy.RequireAssertion(context => true);
+                });
+            });
+#endif
             return services;
         }
     }

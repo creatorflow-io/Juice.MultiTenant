@@ -58,7 +58,7 @@ namespace Juice.MultiTenant.Tests
                 timer.Reset();
                 timer.Start();
                 var reply = await client.TryGetByIdentifierAsync(
-                new TenantIdenfier { Identifier = "master" }, new Metadata { new Metadata.Entry("__tenant__", "master") });
+                new TenantIdenfier { Identifier = "acme" }, new Metadata { new Metadata.Entry("__tenant__", "acme") });
 
                 _output.WriteLine("Request take {0} milliseconds, found {1}",
                     timer.ElapsedMilliseconds, reply?.Identifier);
@@ -119,7 +119,7 @@ namespace Juice.MultiTenant.Tests
                 _output.WriteLine("Request take {0} milliseconds",
                     timer.ElapsedMilliseconds);
 
-                var dict = reply.Settings.ToDictionary();
+                var dict = reply.Settings.ToDictionary(s => s.Key, s => s.Value);
 
                 foreach (var (key, value) in dict)
                 {
@@ -223,16 +223,16 @@ namespace Juice.MultiTenant.Tests
                 var store = scope.ServiceProvider.GetRequiredService<IOptionsMutableStore>();
             }
 
-          
-                await host.Services.TenantInvokeAsync(async (context) =>
-                {
-                    var options = context.RequestServices
-                        .GetRequiredService<IOptionsMutable<Models.Options>>();
-                    var time = DateTimeOffset.Now.ToString();
-                    _output.WriteLine(options.Value.Name + ": " + time);
-                    //Assert.True(await options.UpdateAsync(o => o.Time = time));
-                    //Assert.Equal(time, options.Value.Time);
-                });
+
+            await host.Services.TenantInvokeAsync(async (context) =>
+            {
+                var options = context.RequestServices
+                    .GetRequiredService<IOptionsMutable<Models.Options>>();
+                var time = DateTimeOffset.Now.ToString();
+                _output.WriteLine(options.Value.Name + ": " + time);
+                //Assert.True(await options.UpdateAsync(o => o.Time = time));
+                //Assert.Equal(time, options.Value.Time);
+            });
 
         }
 

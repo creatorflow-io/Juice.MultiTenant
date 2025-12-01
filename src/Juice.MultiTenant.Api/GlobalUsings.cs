@@ -6,6 +6,6 @@ global using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 global using Juice.MultiTenant.Domain.Commands;
 global using Juice.MultiTenant.Domain.Commands.Tenants;
 global using Juice.MultiTenant.EF;
-global using MediatR;
+global using Juice.MediatR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;

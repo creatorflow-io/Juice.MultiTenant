@@ -9,20 +9,20 @@ namespace Juice.MultiTenant.Api
 {
     public static class JuiceSelfTenantEventHandlersApplicationExtensions
     {
-        public static void RegisterTenantIntegrationEventSelfHandlers(this WebApplication app)
+        public static Task RegisterTenantIntegrationEventSelfHandlersAsync(this WebApplication app)
         {
-            app.Services.RegisterTenantIntegrationEventSelfHandlers<Tenant>();
+            return app.Services.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
         }
 
-        public static void RegisterTenantIntegrationEventSelfHandlers<TTenantInfo>(this IServiceProvider sp)
+        public static async Task RegisterTenantIntegrationEventSelfHandlersAsync<TTenantInfo>(this IServiceProvider sp)
             where TTenantInfo : class, ITenantInfo, new()
         {
             var eventBus = sp.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<TenantActivatedIntegrationEvent, TenantActivatedIngtegrationEventSelfHandler<TTenantInfo>>();
-            eventBus.Subscribe<TenantDeactivatedIntegrationEvent, TenantDeactivatedIngtegrationEventSelfHandler<TTenantInfo>>();
-            eventBus.Subscribe<TenantSuspendedIntegrationEvent, TenantSuspendedIngtegrationEventSelfHandler<TTenantInfo>>();
-            eventBus.Subscribe<TenantInitializationChangedIntegrationEvent, TenantInitializingIntegrationEventSelfHandler>();
+            await eventBus.SubscribeAsync<TenantActivatedIntegrationEvent, TenantActivatedIngtegrationEventSelfHandler<TTenantInfo>>();
+            await eventBus.SubscribeAsync<TenantDeactivatedIntegrationEvent, TenantDeactivatedIngtegrationEventSelfHandler<TTenantInfo>>();
+            await eventBus.SubscribeAsync<TenantSuspendedIntegrationEvent, TenantSuspendedIngtegrationEventSelfHandler<TTenantInfo>>();
+            await eventBus.SubscribeAsync<TenantInitializationChangedIntegrationEvent, TenantInitializingIntegrationEventSelfHandler>();
         }
     }
 }

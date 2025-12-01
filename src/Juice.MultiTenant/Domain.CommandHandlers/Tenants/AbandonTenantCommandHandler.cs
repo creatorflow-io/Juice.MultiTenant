@@ -16,7 +16,7 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
-        public async Task<IOperationResult> Handle(AbandonTenantCommand request, CancellationToken cancellationToken)
+        public async ValueTask<IOperationResult> Handle(AbandonTenantCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
         {
         }
 
-        protected override Task<IOperationResult> CreateResultForDuplicatedRequestAsync(AbandonTenantCommand message) 
-            => Task.FromResult(OperationResult.Success);
+        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(AbandonTenantCommand message) 
+            => ValueTask.FromResult(OperationResult.Success);
         protected override (string? IdProperty, string? CommandId) ExtractDebugInfo(AbandonTenantCommand command) 
             => (nameof(command.Id), command.Id);
     }

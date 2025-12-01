@@ -13,7 +13,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             _logger = logger;
             _integrationService = integrationService;
         }
-        public async Task Handle(TenantClassChangedDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(TenantClassChangedDomainEvent notification, CancellationToken cancellationToken)
         {
             _logger.CreateLogger<TenantClassChangedDomainEventHandler>()
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully changed class",

@@ -1,5 +1,4 @@
 ﻿using Juice.MultiTenant.Shared.Enums;
-using MediatR;
 
 namespace Juice.MultiTenant.Domain.Events
 {

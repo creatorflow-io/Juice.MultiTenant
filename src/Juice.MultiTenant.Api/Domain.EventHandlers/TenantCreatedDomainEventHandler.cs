@@ -13,10 +13,10 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             _logger = logger;
             _integrationService = integrationService;
         }
-        public async Task Handle(TenantCreatedDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(TenantCreatedDomainEvent notification, CancellationToken cancellationToken)
         {
             _logger.CreateLogger<TenantCreatedDomainEventHandler>()
-            .LogTrace("Tenant with Identifier: {Identifier} has been successfully created",
+                .LogTrace("Tenant with Identifier: {Identifier} has been successfully created",
                 notification.TenantIdentifier);
 
             var integrationEvent = new TenantCreatedIntegrationEvent(notification.TenantId, notification.TenantIdentifier,

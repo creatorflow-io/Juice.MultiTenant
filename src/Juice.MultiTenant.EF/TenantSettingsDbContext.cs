@@ -2,10 +2,10 @@
 using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Juice.EF;
+using Juice.MediatR;
 using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
 using Juice.MultiTenant.Domain.Events;
 using Juice.MultiTenant.EF.Extensions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Juice.MultiTenant.EF

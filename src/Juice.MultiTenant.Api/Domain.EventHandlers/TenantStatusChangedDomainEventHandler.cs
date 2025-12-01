@@ -15,7 +15,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             _logger = logger;
             _integrationService = integrationService;
         }
-        public async Task Handle(TenantStatusChangedDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(TenantStatusChangedDomainEvent notification, CancellationToken cancellationToken)
         {
             _logger.CreateLogger<TenantStatusChangedDomainEventHandler>()
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully updated status",
