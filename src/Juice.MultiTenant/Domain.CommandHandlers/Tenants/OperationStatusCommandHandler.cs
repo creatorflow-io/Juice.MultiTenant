@@ -53,19 +53,4 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         }
     }
 
-
-    public class OperationStatusIdentifiedCommandHandler
-        : IdentifiedCommandHandler<OperationStatusCommand, IOperationResult>
-    {
-        public OperationStatusIdentifiedCommandHandler(IMediator mediator,
-            IRequestManager requestManager, ILogger<OperationStatusIdentifiedCommandHandler> logger)
-          : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(OperationStatusCommand mesage)
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractDebugInfo(OperationStatusCommand command)
-            => (nameof(command.Id), command.Id);
-    }
 }

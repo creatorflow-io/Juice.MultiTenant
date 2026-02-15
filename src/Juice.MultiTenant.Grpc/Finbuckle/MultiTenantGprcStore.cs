@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Finbuckle.MultiTenant.Abstractions;
+using Grpc.Core;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Juice.MultiTenant.Grpc.Finbuckle
@@ -28,13 +29,18 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<bool> TryAddAsync(TTenantInfo tenantInfo)
         {
+            var headers = new Metadata
+            {
+                { "idempotency-key", Guid.NewGuid().ToString() }
+            };
+
             var tenant = (ITenantInfo)tenantInfo;
             var result = await _client.TryAddAsync(new Grpc.TenantInfo
             {
                 Id = tenant.Id,
                 Identifier = tenant.Identifier,
                 Name = tenant.Name,
-            });
+            }, headers);
             return result.Succeeded;
         }
         public async Task<TTenantInfo?> TryGetAsync(string id)
@@ -62,18 +68,27 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<bool> TryRemoveAsync(string identifier)
         {
-            var result = await _client.TryRemoveAsync(new TenantIdenfier { Identifier = identifier });
+            var headers = new Metadata
+            {
+                { "idempotency-key", Guid.NewGuid().ToString() }
+            };
+
+            var result = await _client.TryRemoveAsync(new TenantIdenfier { Identifier = identifier }, headers);
             return result.Succeeded;
         }
         public async Task<bool> TryUpdateAsync(TTenantInfo tenantInfo)
         {
+            var headers = new Metadata
+            {
+                { "idempotency-key", Guid.NewGuid().ToString() }
+            };
             var tenant = (ITenantInfo)tenantInfo;
             var result = await _client.TryUpdateAsync(new Grpc.TenantInfo
             {
                 Id = tenant.Id,
                 Identifier = tenant.Identifier,
                 Name = tenant.Name
-            });
+            }, headers);
             return result.Succeeded;
         }
     }

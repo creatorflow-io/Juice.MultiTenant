@@ -1,11 +1,16 @@
 ﻿namespace Juice.MultiTenant.Domain.Commands.Tenants
 {
-    public class AbandonTenantCommand : IRequest<IOperationResult>, ITenantCommand
+    public record AbandonTenantCommand : MessageBase, IRequest<IOperationResult>, ITenantCommand, IIdempotentRequest
     {
         public string Id { get; private set; }
-        public AbandonTenantCommand(string id)
+
+        public string IdempotencyKey => _idempotencyKey;
+        private readonly string _idempotencyKey;
+
+        public AbandonTenantCommand(string id, string idempotencyKey)
         {
             Id = id;
+            _idempotencyKey = idempotencyKey;
         }
     }
 }

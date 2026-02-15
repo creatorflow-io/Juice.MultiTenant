@@ -31,7 +31,7 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
             if (_cacheStore != null)
             {
                 var tenant = await _context.TenantInfo.Where(t => t.Identifier == @event.TenantIdentifier)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.TenantClass))
+                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                     .FirstOrDefaultAsync();
                 if (tenant is TTenantInfo tenantInfo)
                 {

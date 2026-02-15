@@ -22,6 +22,113 @@ namespace Juice.MultiTenant.EF.SqlServer.Migrations.TenantStore
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Juice.Messaging.Outbox.OutboxDelivery", b =>
+                {
+                    b.Property<Guid>("DeliveryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreationTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<DateTimeOffset?>("NextAttemptOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ProcessedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("PublisherKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("DeliveryId");
+
+                    b.HasIndex("CreationTime")
+                        .HasDatabaseName("IX_OutboxDeliveries_Pending")
+                        .HasFilter("[State] = 0")
+                        .HasAnnotation("Npgsql:IndexInclude", new[] { "EventId", "PublisherKey" });
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreationTime"), new[] { "EventId", "PublisherKey" });
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("NextAttemptOn")
+                        .HasDatabaseName("IX_OutboxDeliveries_Retry")
+                        .HasFilter("[State] = 3 AND [NextAttemptOn] IS NOT NULL")
+                        .HasAnnotation("Npgsql:IndexInclude", new[] { "EventId", "PublisherKey" });
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("NextAttemptOn"), new[] { "EventId", "PublisherKey" });
+
+                    b.HasIndex("ProcessedOn")
+                        .HasDatabaseName("IX_OutboxDeliveries_Recovery")
+                        .HasFilter("[State] = 1")
+                        .HasAnnotation("Npgsql:IndexInclude", new[] { "EventId", "PublisherKey" });
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProcessedOn"), new[] { "EventId", "PublisherKey" });
+
+                    b.HasIndex("PublisherKey");
+
+                    b.ToTable("OutboxDeliveries", (string)null);
+                });
+
+            modelBuilder.Entity("Juice.Messaging.Outbox.OutboxEvent", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreationTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("EventTypeName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Headers")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("{}");
+
+                    b.Property<byte[]>("PayloadBytes")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("TransactionId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("EventId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("OutboxEvents", (string)null);
+                });
+
             modelBuilder.Entity("Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate.Tenant", b =>
                 {
                     b.Property<string>("Id")
@@ -39,6 +146,7 @@ namespace Juice.MultiTenant.EF.SqlServer.Migrations.TenantStore
                         .HasColumnType("bit");
 
                     b.Property<string>("Identifier")
+                        .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
 
@@ -64,24 +172,43 @@ namespace Juice.MultiTenant.EF.SqlServer.Migrations.TenantStore
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("{}");
 
+                    b.Property<string>("Region")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("TenantClass")
+                    b.Property<string>("Tier")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Identifier")
-                        .IsUnique()
-                        .HasFilter("[Identifier] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Tenant", (string)null);
 
                     b
                         .HasAnnotation("Juice:Auditable", true)
                         .HasAnnotation("Juice:Expandable", true);
+                });
+
+            modelBuilder.Entity("Juice.Messaging.Outbox.OutboxDelivery", b =>
+                {
+                    b.HasOne("Juice.Messaging.Outbox.OutboxEvent", "OutboxEvent")
+                        .WithMany("Deliveries")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OutboxEvent");
+                });
+
+            modelBuilder.Entity("Juice.Messaging.Outbox.OutboxEvent", b =>
+                {
+                    b.Navigation("Deliveries");
                 });
 #pragma warning restore 612, 618
         }

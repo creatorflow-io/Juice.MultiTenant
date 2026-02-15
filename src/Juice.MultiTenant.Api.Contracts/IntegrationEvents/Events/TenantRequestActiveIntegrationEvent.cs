@@ -1,11 +1,15 @@
-﻿using Juice.EventBus;
+﻿using Juice.MultiTenant.Shared.Enums;
 
 namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
 {
     /// <summary>
     /// Tenant Request Active Integration Event
     /// </summary>
-    /// <param name="TenantId"></param>
-    /// <param name="TenantIdentifier"></param>
-    public record TenantRequestActiveIntegrationEvent(string TenantId, string TenantIdentifier) : IntegrationEvent, IMultiTenantIntegrationEvent;
+    public record TenantRequestActiveIntegrationEvent : TenantStatusChangedIntegrationEvent
+    {
+        public TenantRequestActiveIntegrationEvent(string tenantId, string tenantIdentifier, TenantStatus previousStatus)
+            : base(tenantId, tenantIdentifier, previousStatus, TenantStatus.PendingToActive)
+        {
+        }
+    }
 }

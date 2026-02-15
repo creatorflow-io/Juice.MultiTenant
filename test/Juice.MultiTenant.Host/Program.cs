@@ -1,13 +1,14 @@
 ﻿using Asp.Versioning;
 using Finbuckle.MultiTenant;
 using Juice.AspNetCore.Mvc.Formatters;
+using Juice.Extensions.MultiTenant;
 using Juice.Extensions.Swagger;
 using Juice.MultiTenant;
 using Juice.MultiTenant.Api;
 using Juice.MultiTenant.Api.Grpc.Services;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
+using Juice.MultiTenant.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
@@ -17,7 +18,7 @@ ConfigureMultiTenant(builder);
 
 ConfigureGRPC(builder.Services);
 
-ConfigureEvents(builder);
+ConfigureMessaging(builder.Services, builder.Configuration);
 
 ConfigureDistributedCache(builder.Services, builder.Configuration);
 
@@ -46,7 +47,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapTenantGrpcServices();
-app.RegisterTenantIntegrationEventSelfHandlersAsync();
 
 UseTenantSwagger(app);
 
@@ -78,7 +78,8 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
         options.DatabaseProvider = "PostgreSQL";
         options.ConnectionName = "PostgreConnection";
         options.Schema = "App";
-    }).WithBasePathStrategy(options => options.RebaseAspNetCorePathBase = true)
+    })
+    .WithBasePathStrategy(options => options.RebaseAspNetCorePathBase = true)
     .WithHeaderStrategy()
     .WithRouteStrategy()
     .WithDistributedCacheStore().ShouldUpdateCacheStore()
@@ -94,16 +95,7 @@ static void ConfigureMultiTenant(WebApplicationBuilder builder)
         options.Authority = GetAuthority(authority, tc);
     });
 
-    builder.Services.AddTenantIntegrationEventSelfHandlers<Tenant>();
-
     builder.Services.AddTenantOwnerResolverDefault();
-
-    builder.Services.AddEFMediatorRequestManager(builder.Configuration, options =>
-    {
-        options.DatabaseProvider = "PostgreSQL";
-        options.ConnectionName = "PostgreConnection";
-        options.Schema = "App";
-    });
 
 }
 
@@ -113,16 +105,27 @@ static void ConfigureGRPC(IServiceCollection services)
     services.AddGrpc(o => o.EnableDetailedErrors = true);
 }
 
-static void ConfigureEvents(WebApplicationBuilder builder)
+static void ConfigureMessaging(IServiceCollection services, IConfiguration configuration)
 {
-
-    builder.Services.RegisterRabbitMQEventBus(builder.Configuration.GetSection("RabbitMQ"),
-       options =>
-       {
-           options.BrokerName = "topic.juice_bus";
-           options.SubscriptionClientName = "juice_multitenant_test_host_events";
-           options.ExchangeType = "topic";
-       });
+    services.AddMessaging()
+        .AddPublishingPolicies(configuration.GetSection("EventBus:PublishingPolicies"))
+        .AddOutbox()
+        .AddIdempotencyRedis(redis => redis.ConnectionString = configuration.GetConnectionString("Redis"))
+        .AddDelivery(delivery =>
+        {
+            delivery.AddDeliveryPolicies(configuration.GetSection("EventBus:DeliveryPolicies"));
+            delivery.AddTenantOutboxDeliveryProcessor("rabbitmq");
+        })
+        .AddEventBus()
+            .AddRabbitMQ(cfg =>
+            {
+                cfg.AddConnection("rabbitmq", configuration.GetSection("EventBus:Connections:RabbitMQ"));
+                cfg.AddProducer("rabbitmq", "rabbitmq");
+                cfg.AddConsumer("rabbitmq", "testhost_tenants_queue", "rabbitmq");
+               
+            })
+            .RegisterTenantIntegrationEventSelfHandlers<Tenant>()
+            ;
 
 }
 

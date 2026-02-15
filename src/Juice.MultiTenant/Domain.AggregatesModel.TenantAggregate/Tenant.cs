@@ -19,20 +19,21 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         {
 
         }
-        public Tenant(string id, string identifier, string name, string? serializedProperties, string? ownerUser, string? tenantClass)
+        public Tenant(string id, string identifier, string name, string? serializedProperties, string? ownerUser, string? tier)
         {
             Id = id;
             Name = name;
             Identifier = identifier;
             OwnerUser = ownerUser;
-            TenantClass = tenantClass;
+            Tier = tier;
             Properties = JsonConvert.DeserializeObject<JObject>(serializedProperties ?? "{}") ?? new JObject();
         }
         [Key]
         public virtual string Id { get; set; }
         public string Name { get; set; }
         public string Identifier { get; set; }
-
+        public string? Tier { get; set; }
+        public string? Region { get; set; }
         public TenantStatus Status { get; private set; }
         public bool Disabled { get; protected set; }
 
@@ -54,8 +55,6 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         /// You can decide to use userid or username for the tenant owner.
         /// </summary>
         public string? OwnerUser { get; private set; }
-
-        public string? TenantClass { get; private set; }
 
         // Explicitly implement ITenantInfo to handle nullability issues
         string? ITenantInfo.Id
@@ -92,7 +91,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.New)
             {
                 Status = TenantStatus.PendingApproval;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, TenantStatus.New, Status));
             }
             else
             {
@@ -105,7 +104,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.PendingApproval)
             {
                 Status = TenantStatus.Approved;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, TenantStatus.PendingApproval, Status));
             }
             else
             {
@@ -118,7 +117,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.PendingApproval)
             {
                 Status = TenantStatus.Rejected;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, TenantStatus.PendingApproval, Status));
             }
             else
             {
@@ -130,8 +129,8 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         {
             if (Status == TenantStatus.New || Status == TenantStatus.Approved)
             {
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.Initializing));
                 Status = TenantStatus.Initializing;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
             }
             else
             {
@@ -144,7 +143,7 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.Initializing)
             {
                 Status = TenantStatus.Initialized;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, TenantStatus.Initializing, Status));
             }
             else
             {
@@ -157,8 +156,8 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.Active
                 || Status == TenantStatus.Inactive)
             {
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.Suspended));
                 Status = TenantStatus.Suspended;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
             }
             else
             {
@@ -168,8 +167,8 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
 
         public virtual void Abandon()
         {
+            DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.Abandoned));
             Status = TenantStatus.Abandoned;
-            DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
         }
 
         public virtual void RequestActivate()
@@ -177,8 +176,8 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.New || Status == TenantStatus.Approved
                  || Status == TenantStatus.Initialized)
             {
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.PendingToActive));
                 Status = TenantStatus.PendingToActive;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
             }
             else
             {
@@ -191,8 +190,9 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             if (Status == TenantStatus.New || Status == TenantStatus.Approved
                 || Status == TenantStatus.Initialized || Status == TenantStatus.PendingToActive)
             {
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.Active));
+
                 Status = TenantStatus.Active;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
             }
             else
             {
@@ -204,8 +204,9 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         {
             if (Status == TenantStatus.Inactive || Status == TenantStatus.Suspended)
             {
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.Active));
+
                 Status = TenantStatus.Active;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
             }
             else
             {
@@ -217,8 +218,9 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
         {
             if (Status == TenantStatus.Active)
             {
+                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status, TenantStatus.Inactive));
+
                 Status = TenantStatus.Inactive;
-                DomainEvents.Add(new TenantStatusChangedDomainEvent(Id, Identifier, Status));
             }
             else
             {
@@ -283,11 +285,11 @@ namespace Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate
             }
         }
 
-        public virtual void UpdateClass(string tenantClass)
+        public virtual void UpdateTier(string tier)
         {
-            this.NotExceededLength(tenantClass, LengthConstants.ShortNameLength);
-            TenantClass = tenantClass;
-            this.AddDomainEvent(new TenantClassChangedDomainEvent(Id, Identifier, tenantClass));
+            this.NotExceededLength(tier, LengthConstants.ShortNameLength);
+            Tier = tier;
+            this.AddDomainEvent(new TenantTierChangedDomainEvent(Id, Identifier, tier));
         }
 
         public override void SetProperty<T>(T? value, [CallerMemberName] string? name = null) where T : default

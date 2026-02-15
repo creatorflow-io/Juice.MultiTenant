@@ -6,12 +6,9 @@ namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
     /// <summary>
     /// Tenant Initialization Changed Integration Event
     /// </summary>
-    public record TenantInitializationChangedIntegrationEvent : IntegrationEvent, IMultiTenantIntegrationEvent
+    public record TenantInitializationChangedIntegrationEvent : IntegrationEvent
     {
-        /// <summary>
-        /// Tenant Id
-        /// </summary>
-        public string TenantId { get; init; }
+        override public string EventName => TenantEventNameConstants.TenantInitializationChanged;
         /// <summary>
         /// Tenant Identifier
         /// </summary>

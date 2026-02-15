@@ -3,32 +3,31 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Juice.EF.Extensions;
-using Juice.EventBus.IntegrationEventLog.EF;
 using Juice.Extensions.DependencyInjection;
-using Juice.Integrations.MediatR;
-using Juice.MediatR.RequestManager.EF;
+using Juice.MediatR.Behaviors;
 using Juice.MultiTenant.Api;
-using Juice.MultiTenant.Api.Behaviors.DependencyInjection;
+using Juice.MultiTenant.Api.Contracts.IntegrationEvents;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Juice.MultiTenant.Domain.Commands.Tenants;
 using Juice.MultiTenant.EF;
-using Juice.MultiTenant.EF.Migrations;
 using Juice.Services;
 using Juice.XUnit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Juice.MultiTenant.Tests
 {
     [TestCaseOrderer("Juice.XUnit.PriorityOrderer", "Juice.XUnit")]
+    [InitializeMessageContext]
     public class TenantCommandsTests
     {
         private readonly ITestOutputHelper _output;
+        private readonly TimeSpan _wait = TimeSpan.FromSeconds(2);
 
         public TenantCommandsTests(ITestOutputHelper testOutput)
         {
@@ -36,105 +35,73 @@ namespace Juice.MultiTenant.Tests
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
         }
 
-        [IgnoreOnCITheory(DisplayName = "Migrations Request DB"), TestPriority(999)]
+        #region Migrations
+
+        [IgnoreOnCITheory(DisplayName = "Migrate Outbox"), TestPriority(900)]
         [InlineData("SqlServer")]
         [InlineData("PostgreSQL")]
-        public async Task TenantRequestDbContext_should_migrate_Async(string provider)
+        public async Task Migrate_OutboxAsync(string provider)
         {
-            var resolver = new DependencyResolver
+            var resolver = DependencyResolver.Create((services, configuration) =>
             {
-                CurrentDirectory = AppContext.BaseDirectory
-            };
-
-            resolver.ConfigureServices(services =>
-            {
-                var configService = services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
-                var configuration = configService.GetConfiguration();
-
-                // Register DbContext class
-
-                services.AddEFMediatorRequestManager(configuration, options =>
-                {
-                    options.ConnectionName = provider switch
-                    {
-                        "PostgreSQL" => "PostgreConnection",
-                        "SqlServer" => "SqlServerConnection",
-                        _ => throw new NotSupportedException($"Unsupported provider: {provider}")
-                    };
-                    options.DatabaseProvider = provider;
-                    options.Schema = "App"; // default schema of Tenant
-                });
-
-                services.AddDefaultStringIdGenerator();
-
-                services.AddSingleton(provider => _output);
-
                 services.AddLogging(builder =>
                 {
                     builder.ClearProviders()
                     .AddTestOutputLogger()
                     .AddConfiguration(configuration.GetSection("Logging"));
                 });
-                services.AddMediatR(options =>
+                services.AddOutboxMigrations<TenantStoreDbContext>(configuration, options =>
                 {
-                    options.RegisterServicesFromAssemblyContaining(GetType());
-                });
-                services.AddTenantDbContext(configuration, options =>
-                {
-                    options.Schema = "App";
+                    options.ConnectionName = provider == "SqlServer" ? "SqlServerConnection" : "PostgreConnection";
                     options.DatabaseProvider = provider;
-                    //options.JsonPropertyBehavior = JsonPropertyBehavior.UpdateALL;
+                    options.Schema = "App";
                 });
-
-            });
-
-            var context = resolver.ServiceProvider.
-                CreateScope().ServiceProvider.GetRequiredService<TenantStoreDbContext>();
-
-            await context.MigrateAsync();
-            await context.SeedAsync(resolver.ServiceProvider.GetRequiredService<IConfigurationService>()
-                .GetConfiguration());
-
-            var context1 = resolver.ServiceProvider.
-                CreateScope().ServiceProvider.GetRequiredService<ClientRequestContext>();
-
-            var pendingMigrations = await context1.Database.GetPendingMigrationsAsync();
-
-            if (pendingMigrations.Any())
-            {
-                Console.WriteLine($"[App][ClientRequestContext] You have {pendingMigrations.Count()} pending migrations to apply.");
-                Console.WriteLine("[ClientRequestContext] Applying pending migrations now");
-                await context1.Database.MigrateAsync();
-            }
+            }, default);
+            await resolver.ServiceProvider.MigrateOutboxAsync<TenantStoreDbContext>();
         }
 
-        private static IServiceProvider BuildServiceProvider(ITestOutputHelper output, string provider, bool migrate = false)
+        [Fact(DisplayName = "Init RabbitMQ"), TestPriority(901)]
+        public async Task Init_RabbitMQAsync()
         {
-            var resolver = new DependencyResolver
+            var resolver = DependencyResolver.Create((services, configuration) =>
             {
-                CurrentDirectory = AppContext.BaseDirectory
-            };
-
-            resolver.ConfigureServices(services =>
-            {
-                var configService = services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
-                var configuration = configService.GetConfiguration();
-
-                services.AddHttpContextAccessor();
-
-                // Register DbContext class
-
-                services.AddEFMediatorRequestManager(configuration, options =>
+                services.AddSingleton(_output);
+                services.AddLogging(builder =>
                 {
-                    options.ConnectionName = provider switch
-                    {
-                        "PostgreSQL" => "PostgreConnection",
-                        "SqlServer" => "SqlServerConnection",
-                        _ => throw new NotSupportedException($"Unsupported provider: {provider}")
-                    };
-                    options.DatabaseProvider = provider;
-                    options.Schema = "App"; // default schema of Tenant
+                    builder.ClearProviders()
+                    .AddTestOutputLogger()
+                    .AddConfiguration(configuration.GetSection("Logging"));
                 });
+
+                services.AddEventBus()
+                    .AddRabbitMQ(cfg =>
+                    {
+                        cfg.AddConnection(name: "rabbitmq", configuration.GetSection("EventBus:Connections:RabbitMQ"))
+                            .AddInfrastructureTopology("rabbitmq", icfg =>
+                            {
+                                // logging event
+
+                                icfg.DeclareExchange("x.tenants.integration", ExchangeType.Topic)
+                                    .DeclareQueue("testhost_tenants_queue")
+                                    .BindQueue("testhost_tenants_queue", "x.tenants.integration", TenantEventNameConstants.TenantInitializationChanged)
+                                    .BindQueue("testhost_tenants_queue", "x.tenants.integration", "tenant.status.*")
+                                    .DeclareQueue("x_tenants_queue")
+                                    .BindQueue("x_tenants_queue", "x.tenants.integration", "tenant.status.*")
+                                    ;
+                            });
+                    });
+            }, default);
+            var serviceProvider = resolver.ServiceProvider;
+            await serviceProvider.InitRabbitMQInfrastructureAsync();
+        }
+
+        #endregion
+
+        private static IServiceProvider BuildServiceProvider(ITestOutputHelper output, string provider)
+        {
+            var resolver = DependencyResolver.Create((services, configuration) =>
+            {
+                services.AddHttpContextAccessor();
 
                 services.AddDefaultStringIdGenerator();
 
@@ -149,8 +116,8 @@ namespace Juice.MultiTenant.Tests
 
                 services.AddMediatR(options =>
                 {
+                    options.RegisterTenantApiMediatorHandlers();
                     options.RegisterServicesFromAssemblyContaining<TenantCommandsTests>();
-                    options.RegisterServicesFromAssemblyContaining<CreateTenantCommand>();
                     options.RegisterServicesFromAssemblyContaining<AssemblySelector>();
                 });
 
@@ -163,16 +130,20 @@ namespace Juice.MultiTenant.Tests
 
                 services.AddTenantOwnerResolverDefault();
 
-                services.AddOperationExceptionBehavior();
-                services.AddMediatRTenantBehaviors();
+                services.AddMessaging()
+                        .AddPublishingPolicies(configuration.GetSection("EventBus:PublishingPolicies"))
+                        .AddIdempotencyRedis(cfg => { cfg.ConnectionString = configuration.GetConnectionString("Redis"); })
+                        .AddOutbox()
+                        .AddEventBus()
+                            .AddRabbitMQ(cfg =>
+                            {
+                                cfg.AddConnection("rabbitmq", configuration.GetSection("EventBus:Connections:RabbitMQ"));
+                                cfg.AddProducer("rabbitmq", "rabbitmq");
+                                cfg.AddConsumer("rabbitmq.xmultitenant", "x_tenants_queue", "rabbitmq");
+                            })
+                            .RegisterTenantIntegrationEventSelfHandlers<Tenant>()
+                ;
 
-                services.AddIntegrationEventService()
-                        .AddIntegrationEventLog()
-                        .RegisterContext<TenantStoreDbContext>("App");
-
-                services.RegisterRabbitMQEventBus(configuration.GetSection("RabbitMQ"));
-
-                services.AddTenantIntegrationEventSelfHandlers<Tenant>();
 
                 services.AddStackExchangeRedisCache(options =>
                 {
@@ -180,42 +151,30 @@ namespace Juice.MultiTenant.Tests
                     options.InstanceName = "SampleInstance";
                 });
 
-            });
+            }, default);
 
-            if (migrate)
-            {
-                using var scope = resolver.ServiceProvider.CreateScope();
-                var logContextFactory = scope.ServiceProvider.GetRequiredService<Func<TenantStoreDbContext, IntegrationEventLogContext>>();
-                var tenantContext = scope.ServiceProvider.GetRequiredService<TenantStoreDbContext>();
-                var logContext = logContextFactory(tenantContext);
-                logContext.MigrateAsync().GetAwaiter().GetResult();
-            }
+            var serviceProvider = resolver.ServiceProvider;
 
-            return resolver.ServiceProvider;
-        }
+            var hostedServices = serviceProvider.GetServices<Microsoft.Extensions.Hosting.IHostedService>();
+            Task.WhenAll(hostedServices.Select(s => s.StartAsync(default))).Wait();
 
-        [IgnoreOnCITheory(DisplayName = "Migrate EventLogDb"), TestPriority(900)]
-        [InlineData("SqlServer")]
-        [InlineData("PostgreSQL")]
-        public async Task EventLogDb_should_create_Async(string provider)
-        {
-            await Task.Yield();
-            using var scope = BuildServiceProvider(_output, provider, true).
-                CreateScope();
+            return serviceProvider;
         }
 
         [IgnoreOnCITheory(DisplayName = "Create tenant"), TestPriority(800)]
         [InlineData("SqlServer")]
         [InlineData("PostgreSQL")]
+        [InitializeMessageContext]
         public async Task Tenant_should_create_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
+            var deleteCommand = new DeleteTenantCommand("xunittest", idGenerator.GenerateRandomId(6)); // make sure the tenant not exist before create
+            await mediator.Send(deleteCommand);
 
-            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default);
+            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -228,7 +187,7 @@ namespace Juice.MultiTenant.Tests
 
             stopwatch.Stop();
 
-            await Task.Delay(1000); // waitting for integration events
+            await Task.Delay(_wait); // waitting for integration events
         }
 
         [IgnoreOnCITheory(DisplayName = "Create existing tenant"), TestPriority(799)]
@@ -236,21 +195,22 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_not_create_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default);
+            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
 
-            await Assert.ThrowsAsync<DbUpdateException>(async () =>
+            await Assert.ThrowsAnyAsync<DbUpdateException>(async () =>
             {
-                var createResult = await mediator.Send(createCommand);
-            });
+                _ = await mediator.Send(createCommand);
 
+            });
+            _output.WriteLine(createCommand.GetType().Name + " take {0} milliseconds.", stopwatch.ElapsedMilliseconds);
         }
 
         [IgnoreOnCITheory(DisplayName = "Update tenant"), TestPriority(780)]
@@ -258,12 +218,11 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_update_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-
-            var updateCommand = new UpdateTenantCommand("xunittest", "test1", "Changed name");
+            var updateCommand = new UpdateTenantCommand("xunittest", "test1", "Changed name", idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -274,6 +233,7 @@ namespace Juice.MultiTenant.Tests
 
             updateResult.Succeeded.Should().BeTrue();
 
+            await Task.Delay(_wait); // waitting for integration events
         }
 
         [IgnoreOnCITheory(DisplayName = "Update not exists"), TestPriority(770)]
@@ -281,11 +241,11 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_not_update_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var updateNotExistsCommand = new UpdateTenantCommand("testnotexist", "test1", "Changed name");
+            var updateNotExistsCommand = new UpdateTenantCommand("testnotexist", "test1", "Changed name", idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -306,12 +266,11 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_accept_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-
-            var command = new ApprovalProcessCommand("xunittest", Shared.Enums.TenantStatus.PendingApproval);
+            var command = new ApprovalProcessCommand("xunittest", Shared.Enums.TenantStatus.PendingApproval, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -324,7 +283,7 @@ namespace Juice.MultiTenant.Tests
 
             result.Succeeded.Should().BeTrue();
 
-            var acceptCommand = new ApprovalProcessCommand("xunittest", Shared.Enums.TenantStatus.Approved);
+            var acceptCommand = new ApprovalProcessCommand("xunittest", Shared.Enums.TenantStatus.Approved, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var acceptResult = await mediator.Send(acceptCommand);
@@ -333,6 +292,8 @@ namespace Juice.MultiTenant.Tests
             _output.WriteLine(acceptResult.Message ?? "");
 
             acceptResult.Succeeded.Should().BeTrue();
+
+            await Task.Delay(_wait); // waitting for integration events
         }
 
 
@@ -341,12 +302,11 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_init_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-
-            var command = new InitializationProcessCommand("xunittest", Shared.Enums.TenantStatus.Initializing);
+            var command = new InitializationProcessCommand("xunittest", Shared.Enums.TenantStatus.Initializing, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -359,7 +319,7 @@ namespace Juice.MultiTenant.Tests
 
             result.Succeeded.Should().BeTrue();
 
-            var command2 = new InitializationProcessCommand("xunittest", Shared.Enums.TenantStatus.Initialized);
+            var command2 = new InitializationProcessCommand("xunittest", Shared.Enums.TenantStatus.Initialized, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result2 = await mediator.Send(command2);
@@ -368,6 +328,7 @@ namespace Juice.MultiTenant.Tests
             _output.WriteLine(result2.Message ?? "");
 
             result2.Succeeded.Should().BeTrue();
+            await Task.Delay(_wait); // waitting for integration events
         }
 
 
@@ -379,9 +340,10 @@ namespace Juice.MultiTenant.Tests
             using var scope = BuildServiceProvider(_output, provider).
                 CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
 
-            var command = new AdminStatusCommand("xunittest", Shared.Enums.TenantStatus.PendingToActive);
+            var command = new AdminStatusCommand("xunittest", Shared.Enums.TenantStatus.PendingToActive, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -394,7 +356,7 @@ namespace Juice.MultiTenant.Tests
 
             result.Succeeded.Should().BeTrue();
 
-            var command2 = new AdminStatusCommand("xunittest", Shared.Enums.TenantStatus.Active);
+            var command2 = new AdminStatusCommand("xunittest", Shared.Enums.TenantStatus.Active, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result2 = await mediator.Send(command2);
@@ -403,6 +365,7 @@ namespace Juice.MultiTenant.Tests
             _output.WriteLine(result2.Message ?? "");
 
             result2.Succeeded.Should().BeTrue();
+            await Task.Delay(_wait); // waitting for integration events
         }
 
 
@@ -411,13 +374,12 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Operation_status_change_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
+
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
-
-            var command = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Inactive);
+            var command = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Inactive, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -430,7 +392,7 @@ namespace Juice.MultiTenant.Tests
 
             await Task.Delay(1000); // waitting for integration events
 
-            var command2 = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Active);
+            var command2 = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Active, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result2 = await mediator.Send(command2);
@@ -440,7 +402,7 @@ namespace Juice.MultiTenant.Tests
 
             await Task.Delay(1000); // waitting for integration events
 
-            var command3 = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Suspended);
+            var command3 = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Suspended, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result3 = await mediator.Send(command3);
@@ -455,6 +417,7 @@ namespace Juice.MultiTenant.Tests
             _output.WriteLine(command2.GetType().Name + " take {0} milliseconds.", stopwatch.ElapsedMilliseconds);
             _output.WriteLine(result2.Message ?? "");
             result2.Succeeded.Should().BeTrue();
+            await Task.Delay(_wait); // waitting for integration events
         }
 
         [IgnoreOnCITheory(DisplayName = "Abandon tenant"), TestPriority(730)]
@@ -462,13 +425,12 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_abandoned_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
+
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
-
-            var command = new AbandonTenantCommand("xunittest");
+            var command = new AbandonTenantCommand("xunittest", idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -479,7 +441,7 @@ namespace Juice.MultiTenant.Tests
             _output.WriteLine(result.Message ?? "");
             result.Succeeded.Should().BeTrue();
 
-            await Task.Delay(1000); // waitting for integration events
+            await Task.Delay(_wait); // waitting for integration events
         }
 
         [IgnoreOnCITheory(DisplayName = "Delete tenant"), TestPriority(700)]
@@ -487,13 +449,11 @@ namespace Juice.MultiTenant.Tests
         [InlineData("PostgreSQL")]
         public async Task Tenant_should_delete_Async(string provider)
         {
-            using var scope = BuildServiceProvider(_output, provider).
-                CreateScope();
+            using var scope = BuildServiceProvider(_output, provider).CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            await scope.ServiceProvider.RegisterTenantIntegrationEventSelfHandlersAsync<Tenant>();
-
-            var command = new DeleteTenantCommand("xunittest");
+            var command = new DeleteTenantCommand("xunittest", idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -504,7 +464,7 @@ namespace Juice.MultiTenant.Tests
             _output.WriteLine(deleteResult.Message ?? "");
             deleteResult.Succeeded.Should().BeTrue();
 
-            await Task.Delay(1000); // waitting for integration events
+            await Task.Delay(_wait); // waitting for integration events
         }
 
 

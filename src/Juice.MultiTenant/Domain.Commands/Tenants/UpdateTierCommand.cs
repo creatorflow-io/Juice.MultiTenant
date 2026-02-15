@@ -1,18 +1,19 @@
 ﻿namespace Juice.MultiTenant.Domain.Commands.Tenants
 {
-    public record TransferOwnershipCommand : MessageBase, IRequest<IOperationResult>, ITenantCommand, IIdempotentRequest
+    public record UpdateTierCommand : MessageBase, IRequest<IOperationResult>, ITenantCommand, IIdempotentRequest
     {
         public string Id { get; private set; }
-        public string OwnerUser { get; private set; }
+        public string Tier { get; private set; }
 
         public string IdempotencyKey => _idempotencyKey;
         private readonly string _idempotencyKey;
 
-        public TransferOwnershipCommand(string id, string ownerUser, string idempotencyKey)
+        public UpdateTierCommand(string id, string tier, string idempotencyKey)
         {
             Id = id;
-            OwnerUser = ownerUser;
+            Tier = tier;
             _idempotencyKey = idempotencyKey;
         }
+
     }
 }

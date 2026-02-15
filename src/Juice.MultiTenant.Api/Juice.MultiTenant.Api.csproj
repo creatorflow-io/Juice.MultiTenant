@@ -20,7 +20,7 @@
 
     <ItemGroup Label="Refs">
         <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)" />
-        <PackageReference Include="Juice.Integrations" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.MediatR.Behaviors" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

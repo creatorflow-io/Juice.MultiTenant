@@ -44,18 +44,4 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         }
     }
 
-    // Use for Idempotency in Command process
-    public class DeleteTenantIdentifiedCommandHandler
-        : IdentifiedCommandHandler<DeleteTenantCommand, IOperationResult>
-    {
-        public DeleteTenantIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<DeleteTenantIdentifiedCommandHandler> logger)
-            : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(DeleteTenantCommand mesage)
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractDebugInfo(DeleteTenantCommand command)
-            => (nameof(command.Id), command.Id);
-    }
 }

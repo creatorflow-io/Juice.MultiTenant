@@ -1,13 +1,21 @@
 ﻿using Juice.EF;
 using Juice.EF.Extensions;
+using Juice.Messaging.Attributes;
+using Juice.Messaging.Outbox;
+using Juice.Messaging.Outbox.EF;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace Juice.MultiTenant.EF
 {
-    public class TenantStoreDbContext : DbContextBase
+    [Domain("Tenants")]
+    public class TenantStoreDbContext : DbContextBase, IOutboxContext
     {
         public DbSet<Tenant> TenantInfo { get; set; }
+
+        public DbSet<OutboxEvent> Outbox { get; set; }
+
+        public DbSet<OutboxDelivery> OutboxDeliveries { get; set; }
 
         public TenantStoreDbContext(
             IServiceProvider serviceProvider,
@@ -36,9 +44,12 @@ namespace Juice.MultiTenant.EF
 
                 entity.HasIndex(ti => ti.Identifier).IsUnique();
 
-                entity.Property(ti => ti.TenantClass).HasMaxLength(LengthConstants.ShortNameLength);
+                entity.Property(ti => ti.Tier).HasMaxLength(LengthConstants.ShortNameLength);
+
+                entity.Property(ti => ti.Region).HasMaxLength(LengthConstants.ShortNameLength);
             });
 
+            this.ConfigureOutbox(modelBuilder);
         }
 
     }

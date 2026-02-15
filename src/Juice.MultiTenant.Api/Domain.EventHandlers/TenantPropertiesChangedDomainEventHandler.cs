@@ -1,19 +1,18 @@
-﻿using Juice.Integrations.EventBus;
+﻿using Juice.Messaging.Outbox;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 using Juice.MultiTenant.Domain.Events;
-using Juice.MultiTenant.EF;
 
 namespace Juice.MultiTenant.Api.Domain.EventHandlers
 {
     internal class TenantPropertiesChangedDomainEventHandler :
         INotificationHandler<TenantPropertiesChangedDomainEvent>
     {
-        private IIntegrationEventService<TenantStoreDbContext> _integrationService;
+        private IOutboxService<TenantStoreDbContext> _outbox;
         private readonly ILoggerFactory _logger;
-        public TenantPropertiesChangedDomainEventHandler(ILoggerFactory logger, IIntegrationEventService<TenantStoreDbContext> integrationService)
+        public TenantPropertiesChangedDomainEventHandler(ILoggerFactory logger, IOutboxService<TenantStoreDbContext> outbox)
         {
             _logger = logger;
-            _integrationService = integrationService;
+            _outbox = outbox;
         }
         public async ValueTask Handle(TenantPropertiesChangedDomainEvent notification, CancellationToken cancellationToken)
         {
@@ -22,7 +21,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
                 notification.TenantIdentifier);
 
             var integrationEvent = new TenantPropertiesChangedIntegrationEvent(notification.TenantIdentifier);
-            await _integrationService.AddAndSaveEventAsync(integrationEvent);
+            await _outbox.AddEventAsync(integrationEvent);
         }
     }
 }

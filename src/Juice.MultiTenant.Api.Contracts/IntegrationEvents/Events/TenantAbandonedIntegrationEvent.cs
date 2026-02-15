@@ -1,11 +1,15 @@
-﻿using Juice.EventBus;
+﻿using Juice.MultiTenant.Shared.Enums;
 
 namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
 {
     /// <summary>
     /// Tenant abandoned event
     /// </summary>
-    /// <param name="TenantId"></param>
-    /// <param name="TenantIdentifier"></param>
-    public record TenantAbandonedIntegrationEvent(string TenantId, string TenantIdentifier) : IntegrationEvent, IMultiTenantIntegrationEvent;
+    public record TenantAbandonedIntegrationEvent : TenantStatusChangedIntegrationEvent
+    {
+        public TenantAbandonedIntegrationEvent(string tenantId, string tenantIdentifier, TenantStatus previousStatus)
+            : base(tenantId, tenantIdentifier, previousStatus, TenantStatus.Abandoned)
+        {
+        }
+    }
 }

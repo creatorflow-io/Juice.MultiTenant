@@ -60,20 +60,4 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
             }
         }
     }
-
-
-    public class ActivateProcessIdentifiedCommandHandler
-        : IdentifiedCommandHandler<AdminStatusCommand, IOperationResult>
-    {
-        public ActivateProcessIdentifiedCommandHandler(IMediator mediator,
-            IRequestManager requestManager, ILogger<ActivateProcessIdentifiedCommandHandler> logger)
-          : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(AdminStatusCommand message) 
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractDebugInfo(AdminStatusCommand command)
-            => (nameof(command.Id), command.Id);
-    }
 }

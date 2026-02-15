@@ -2,20 +2,19 @@
 
 namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
 {
-    public class UpdateTenantCommandHandler
-        : IRequestHandler<UpdateTenantCommand, IOperationResult>
+    public class UpdateTierCommandHandler
+        : IRequestHandler<UpdateTierCommand, IOperationResult>
     {
         private readonly IUnitOfWork<Tenant> _unitOfWork;
         private readonly ILogger _logger;
 
-        public UpdateTenantCommandHandler(IUnitOfWork<Tenant> unitOfWork
-            , ILogger<UpdateTenantCommandHandler> logger)
+        public UpdateTierCommandHandler(IUnitOfWork<Tenant> unitOfWork
+            , ILogger<UpdateTierCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
-
-        public async ValueTask<IOperationResult> Handle(UpdateTenantCommand request, CancellationToken cancellationToken)
+        public async ValueTask<IOperationResult> Handle(UpdateTierCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -24,7 +23,7 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
                 {
                     return OperationResult.Failed("Tenant not found");
                 }
-                tenant.Update(request.Name, request.Identifier);
+                tenant.UpdateTier(request.Tier);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return OperationResult.Success;
             }

@@ -2,7 +2,10 @@
 using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Juice.EF;
+using Juice.EF.MultiTenant.Extensions;
 using Juice.MediatR;
+using Juice.Messaging.Outbox;
+using Juice.Messaging.Outbox.EF;
 using Juice.MultiTenant.Domain.AggregatesModel.SettingsAggregate;
 using Juice.MultiTenant.Domain.Events;
 using Juice.MultiTenant.EF.Extensions;
@@ -10,15 +13,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Juice.MultiTenant.EF
 {
-    public class TenantSettingsDbContext : UnitOfWork, ISchemaDbContext, IMultiTenantDbContext
+    public class TenantSettingsDbContext : UnitOfWork, ISchemaDbContext, IMultiTenantDbContext, IOutboxContext
     {
         #region Finbuckle
         public ITenantInfo TenantInfo { get; internal set; }
         public TenantMismatchMode TenantMismatchMode { get; set; } = TenantMismatchMode.Throw;
 
-        public TenantNotSetMode TenantNotSetMode { get; set; } = TenantNotSetMode.Throw;
+        public TenantNotSetMode TenantNotSetMode { get; set; } = TenantNotSetMode.Overwrite;
         #endregion
         public string? Schema { get; protected set; }
+
+        public DbSet<OutboxEvent> Outbox { get; set; }
+
+        public DbSet<OutboxDelivery> OutboxDeliveries { get; set; }
 
         public DbSet<TenantSettings> TenantSettings { get; set; }
 
@@ -59,6 +66,8 @@ namespace Juice.MultiTenant.EF
                 entity.HasKey(p => p.Id);
                 entity.HasIndex("Key", "TenantId").IsUnique();
             });
+
+            this.ConfigureOutbox(modelBuilder, Schema);
         }
 
         protected async Task DispatchDomainEventsAsync()
@@ -74,7 +83,7 @@ namespace Juice.MultiTenant.EF
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            this.EnforceMultiTenant();
+            this.EnforceTenantPolicies();
             DispatchDomainEventsAsync().GetAwaiter().GetResult();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
@@ -82,7 +91,7 @@ namespace Juice.MultiTenant.EF
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            this.EnforceMultiTenant();
+            this.EnforceTenantPolicies();
             await DispatchDomainEventsAsync();
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }

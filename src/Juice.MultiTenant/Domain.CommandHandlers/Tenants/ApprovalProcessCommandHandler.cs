@@ -54,19 +54,4 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
         }
     }
 
-
-    public class ApprovalProcessIdentifiedCommandHandler
-        : IdentifiedCommandHandler<ApprovalProcessCommand, IOperationResult>
-    {
-        public ApprovalProcessIdentifiedCommandHandler(IMediator mediator,
-            IRequestManager requestManager, ILogger<ApprovalProcessIdentifiedCommandHandler> logger)
-          : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(ApprovalProcessCommand mesage)
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractDebugInfo(ApprovalProcessCommand command)
-            => (nameof(command.Id), command.Id);
-    }
 }

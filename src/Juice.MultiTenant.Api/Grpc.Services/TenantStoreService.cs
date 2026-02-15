@@ -13,10 +13,21 @@ namespace Juice.MultiTenant.Api.Grpc.Services
     {
         private readonly TenantStoreDbContext _dbContext;
         private readonly IMediator _mediator;
+
         public TenantStoreService(TenantStoreDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
             _mediator = mediator;
+        }
+
+        private string GetIdempotencyKey(ServerCallContext context)
+        {
+            var idempotencyKey = context.RequestHeaders.GetValue("idempotency-key");
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Idempotency-Key metadata is required"));
+            }
+            return idempotencyKey;
         }
 
         public override async Task<MultiTenant.Grpc.TenantInfo?> TryGetByIdentifier(TenantIdenfier request, ServerCallContext? context = default)
@@ -67,15 +78,15 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                 }
             }
 
-            if (request.Class != null)
+            if (request.Tier != null)
             {
-                if (!string.IsNullOrEmpty(request.Class))
+                if (!string.IsNullOrEmpty(request.Tier))
                 {
-                    query = query.Where(t => t.TenantClass == request.Class);
+                    query = query.Where(t => t.Tier == request.Tier);
                 }
                 else
                 {
-                    query = query.Where(t => t.TenantClass != null);
+                    query = query.Where(t => t.Tier != null);
                 }
             }
 
@@ -119,10 +130,12 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
+                var idempotencyKey = GetIdempotencyKey(context);
+
                 var properties = string.IsNullOrEmpty(request.SerializedProperties)
                     ? new Dictionary<string, string>()
                     : (JsonConvert.DeserializeObject<Dictionary<string, string>>(request.SerializedProperties) ?? new Dictionary<string, string>());
-                var command = new CreateTenantCommand(request.Id, request.Identifier, request.Name, properties!);
+                var command = new CreateTenantCommand(request.Id, request.Identifier, request.Name, properties!, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -147,7 +160,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new UpdateTenantCommand(request.Id, request.Identifier, request.Name);
+                var idempotencyKey = GetIdempotencyKey(context);
+
+                var command = new UpdateTenantCommand(request.Id, request.Identifier, request.Name, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -172,7 +187,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new AbandonTenantCommand(request.Id);
+                var idempotencyKey = GetIdempotencyKey(context);
+
+                var command = new AbandonTenantCommand(request.Id, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -197,7 +214,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new OperationStatusCommand(request.Id, TenantStatus.Suspended);
+                var idempotencyKey = GetIdempotencyKey(context);
+
+                var command = new OperationStatusCommand(request.Id, TenantStatus.Suspended, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -223,6 +242,8 @@ namespace Juice.MultiTenant.Api.Grpc.Services
 
             try
             {
+                var idempotencyKey = GetIdempotencyKey(context);
+
                 var properties = JsonConvert.DeserializeObject<Dictionary<string, string?>>(request.SerializedProperties)??[];
                 if (!properties.Any())
                 {
@@ -232,7 +253,7 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                         Succeeded = false
                     };
                 }
-                var command = new UpdateTenantPropertiesCommand(request.Id, properties);
+                var command = new UpdateTenantPropertiesCommand(request.Id, properties, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -257,7 +278,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new AdminStatusCommand(request.Id, TenantStatus.Active);
+                var idempotencyKey = GetIdempotencyKey(context);
+
+                var command = new AdminStatusCommand(request.Id, TenantStatus.Active, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -282,7 +305,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new OperationStatusCommand(request.Id, TenantStatus.Active);
+                var idempotencyKey = GetIdempotencyKey(context);
+
+                var command = new OperationStatusCommand(request.Id, TenantStatus.Active, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 
@@ -307,7 +332,9 @@ namespace Juice.MultiTenant.Api.Grpc.Services
         {
             try
             {
-                var command = new DeleteTenantCommand(request.Id);
+                var idempotencyKey = GetIdempotencyKey(context);
+
+                var command = new DeleteTenantCommand(request.Id, idempotencyKey);
 
                 var result = await _mediator.Send(command);
 

@@ -113,6 +113,9 @@ namespace Juice.MultiTenant.Tests
                     var context = serviceProvider.GetRequiredService<TenantContentDbContext>();
 
                     var tenant = serviceProvider.GetRequiredService<ITenant>();
+                    tenant.Should().NotBeNull();
+                    tenant.Id.Should().NotBeNullOrEmpty();
+                    _output.WriteLine($"Current tenant: {tenant.Id}");
                     var time = DateTimeOffset.Now.ToString();
                     var idGenerator = serviceProvider.GetRequiredService<IStringIdGenerator>();
                     var code = idGenerator.GenerateUniqueId();

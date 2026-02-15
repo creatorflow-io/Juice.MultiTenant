@@ -1,8 +1,7 @@
 ﻿using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using Juice.EF;
-using Juice.Integrations.MediatR;
-using Juice.MultiTenant.Api.Behaviors.DependencyInjection;
+using Juice.MediatR.Behaviors;
 using Juice.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,24 +32,15 @@ namespace Juice.MultiTenant.Api
             builder.Services.AddDefaultStringIdGenerator();
             builder.Services.AddMediatR(options =>
             {
-                options.RegisterServicesFromAssemblyContaining<CreateTenantCommand>();
-                options.RegisterServicesFromAssemblyContaining<ITenantSettingsCommand>();
-                options.RegisterServicesFromAssemblyContaining<AssemblySelector>();
+                options.RegisterTenantApiMediatorHandlers();
+                options.RegisterServicesFromAssemblyContaining<AssemblySelector>(true);
             });
-
-            builder.Services
-                .AddOperationExceptionBehavior()
-                .AddMediatRTenantBehaviors()
-                .AddMediatRTenantSettingsBehaviors()
-                ;
 
             var dbOptions = new DbOptions<TenantStoreDbContext>();
             configureTenantDb(dbOptions);
 
-            builder.Services.AddIntegrationEventService()
-                    .AddIntegrationEventLog()
-                    .RegisterContext<TenantStoreDbContext>(dbOptions.Schema)
-                    .RegisterContext<TenantSettingsDbContext>(dbOptions.Schema);
+            builder.Services.AddMessaging()
+                    .AddOutbox();
 
             //add service manually with distributed cache together
             //builder.Services.AddTenantIntegrationEventSelfHandlers<TTenantInfo>();

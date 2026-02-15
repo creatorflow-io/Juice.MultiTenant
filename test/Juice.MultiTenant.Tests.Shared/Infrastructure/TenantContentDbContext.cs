@@ -1,7 +1,9 @@
 ﻿using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Juice.EF.Extensions;
 using Juice.Extensions.Configuration;
 using Juice.Extensions.DependencyInjection;
+using Juice.MultiTenant.EF.Extensions;
 using Juice.MultiTenant.Tests.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -13,6 +15,8 @@ namespace Juice.MultiTenant.Tests.Infrastructure
     public class TenantContentDbContext : EF.MultiTenantDbContext
     {
         public DbSet<TenantContent> TenantContents { get; set; }
+        public override TenantMismatchMode TenantMismatchMode { get; set; } = TenantMismatchMode.Throw;
+        public override TenantNotSetMode TenantNotSetMode { get; set; } = TenantNotSetMode.Overwrite;
 
         public TenantContentDbContext(IServiceProvider serviceProvider,
            DbContextOptions options) : base(options)

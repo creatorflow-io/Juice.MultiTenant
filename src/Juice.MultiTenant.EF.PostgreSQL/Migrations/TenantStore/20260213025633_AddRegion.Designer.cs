@@ -3,17 +3,20 @@ using System;
 using Juice.MultiTenant.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Juice.MultiTenant.EF.PostgreSQL.Migrations.TenantStore
+namespace Juice.MultiTenant.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(TenantStoreDbContext))]
-    partial class TenantStoreDbContextWrapperModelSnapshot : ModelSnapshot
+    [Migration("20260213025633_AddRegion")]
+    partial class AddRegion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

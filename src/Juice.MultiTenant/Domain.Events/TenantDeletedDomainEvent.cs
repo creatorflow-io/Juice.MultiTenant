@@ -1,9 +1,8 @@
 ﻿
 namespace Juice.MultiTenant.Domain.Events
 {
-    public class TenantDeletedDomainEvent : INotification
+    public record TenantDeletedDomainEvent : MessageBase, INotification
     {
-        public string TenantId { get; init; }
         public string TenantIdentifier { get; init; }
         public string? TenantName { get; init; }
 

@@ -1,11 +1,16 @@
 ﻿namespace Juice.MultiTenant.Domain.Commands.Tenants
 {
-    public class DeleteTenantCommand : IRequest<IOperationResult>, ITenantCommand
+    public record DeleteTenantCommand : MessageBase, IRequest<IOperationResult>, ITenantCommand, IIdempotentRequest
     {
         public string Id { get; private set; }
-        public DeleteTenantCommand(string id)
+
+        public string IdempotencyKey => _idempotencyKey;
+        private readonly string _idempotencyKey;
+
+        public DeleteTenantCommand(string id, string idempotencyKey)
         {
             Id = id;
+            _idempotencyKey = idempotencyKey;
         }
     }
 }

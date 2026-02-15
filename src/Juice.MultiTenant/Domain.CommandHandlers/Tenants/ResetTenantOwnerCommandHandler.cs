@@ -48,19 +48,4 @@ namespace Juice.MultiTenant.Api.CommandHandlers.Tenants
         }
     }
 
-
-    public class ResetTenantOwnerIdentifiedCommandHandler
-        : IdentifiedCommandHandler<ResetTenantOwnerCommand, IOperationResult>
-    {
-        public ResetTenantOwnerIdentifiedCommandHandler(IMediator mediator,
-            IRequestManager requestManager, ILogger<ResetTenantOwnerIdentifiedCommandHandler> logger)
-          : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(ResetTenantOwnerCommand mesage)
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractDebugInfo(ResetTenantOwnerCommand command)
-            => (nameof(command.Id), command.Id);
-    }
 }

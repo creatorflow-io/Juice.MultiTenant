@@ -25,6 +25,14 @@ namespace Juice.MultiTenant.Api.Controllers
     [RootTenant]
     public class AdminController : ControllerBase
     {
+        private string GetIdempotencyKey()
+        {
+            if (!Request.Headers.TryGetValue("Idempotency-Key", out var idempotencyKey) || string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return string.Empty;
+            }
+            return idempotencyKey.ToString();
+        }
 
         /// <summary>
         /// Get tenant info
@@ -86,6 +94,11 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IStringIdGenerator idGenerator,
             [FromBody] TenantCreateModel model)
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
 
             var id = idGenerator.GenerateUniqueId();
 
@@ -99,7 +112,7 @@ namespace Juice.MultiTenant.Api.Controllers
                 properties["AdminEmail"] = model.AdminEmail;
             }
 
-            var command = new CreateTenantCommand(id, model.Identifier, model.Name, properties);
+            var command = new CreateTenantCommand(id, model.Identifier, model.Name, properties, idempotencyKey);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -131,8 +144,14 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromRoute] string id
             )
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
+
             var command = new UpdateTenantCommand(id, model.Identifier,
-                            model.Name);
+                            model.Name, idempotencyKey);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -162,8 +181,14 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromRoute] string id
             )
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
+
             var command = new UpdateTenantPropertiesCommand(id,
-                model.Properties?.ToDictionary(k => k.Key, k => (string?)k.Value) ?? []);
+                model.Properties?.ToDictionary(k => k.Key, k => (string?)k.Value) ?? [], idempotencyKey);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -190,8 +215,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
 
-            var command = new DeleteTenantCommand(id);
+            var command = new DeleteTenantCommand(id, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -216,8 +246,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
 
-            var command = new AdminStatusCommand(id, TenantStatus.Active);
+            var command = new AdminStatusCommand(id, TenantStatus.Active, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -242,8 +277,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
            [FromRoute] string id)
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
 
-            var command = new AdminStatusCommand(id, TenantStatus.Inactive);
+            var command = new AdminStatusCommand(id, TenantStatus.Inactive, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -268,8 +308,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
 
-            var command = new AdminStatusCommand(id, TenantStatus.Suspended);
+            var command = new AdminStatusCommand(id, TenantStatus.Suspended, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -294,7 +339,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
-            var command = new OperationStatusCommand(id, TenantStatus.Active);
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
+
+            var command = new OperationStatusCommand(id, TenantStatus.Active, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -321,8 +372,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromBody] TenantOwnerTransferModel model,
             [FromRoute] string id)
         {
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
 
-            var command = new TransferOwnershipCommand(id, model.NewOwner);
+            var command = new TransferOwnershipCommand(id, model.NewOwner, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -347,7 +403,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
-            var command = new AbandonTenantCommand(id);
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
+
+            var command = new AbandonTenantCommand(id, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -372,7 +434,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
-            var command = new ApprovalProcessCommand(id, TenantStatus.Approved);
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
+
+            var command = new ApprovalProcessCommand(id, TenantStatus.Approved, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -396,7 +464,13 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromServices] IMediator mediator,
             [FromRoute] string id)
         {
-            var command = new ApprovalProcessCommand(id, TenantStatus.Approved);
+            var idempotencyKey = GetIdempotencyKey();
+            if (string.IsNullOrWhiteSpace(idempotencyKey))
+            {
+                return BadRequest("Idempotency-Key header is required");
+            }
+
+            var command = new ApprovalProcessCommand(id, TenantStatus.Rejected, idempotencyKey);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {

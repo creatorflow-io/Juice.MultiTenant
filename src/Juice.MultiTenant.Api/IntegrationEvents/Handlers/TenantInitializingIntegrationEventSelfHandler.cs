@@ -1,5 +1,4 @@
 ﻿using Juice.EventBus;
-using Juice.MediatR;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 
 namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
@@ -17,10 +16,14 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
 
         public async Task HandleAsync(TenantInitializationChangedIntegrationEvent @event)
         {
-            var command = new InitializationProcessCommand(@event.TenantId, @event.Status);
+            if(@event.TenantId == null)
+            {
+                _logger.LogError("TenantId is null or empty for tenant initialization changed event. TenantIdentifier: {tenantIdentifier}", @event.TenantIdentifier);
+                return;
+            }
+            var command = new InitializationProcessCommand(@event.TenantId, @event.Status, @event.MessageId.ToString());
 
-            var identifiedCommand = new IdentifiedCommand<InitializationProcessCommand, IOperationResult>(command, @event.Id);
-            var rs = await _mediator.Send(identifiedCommand);
+            var rs = await _mediator.Send(command);
             if (!rs.Succeeded)
             {
                 _logger.LogError("Failed to change initialization state {id}. {message}", @event.TenantIdentifier, rs.Message);

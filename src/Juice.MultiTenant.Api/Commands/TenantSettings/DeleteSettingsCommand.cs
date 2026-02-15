@@ -1,6 +1,6 @@
 ﻿namespace Juice.MultiTenant.Api.Commands.TenantSettings
 {
-    public class DeleteSettingsCommand : IRequest<IOperationResult>, ITenantSettingsCommand
+    public record DeleteSettingsCommand : MessageBase, IRequest<IOperationResult>, ITenantSettingsCommand
     {
         public string Section { get; private set; }
         public DeleteSettingsCommand(string section)

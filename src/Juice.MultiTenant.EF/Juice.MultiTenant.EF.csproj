@@ -9,6 +9,8 @@
 
     <ItemGroup Label="refs">
         <PackageReference Include="Juice.EF.MultiTenant" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Messaging.Outbox.EF" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Messaging.Outbox.Delivery" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

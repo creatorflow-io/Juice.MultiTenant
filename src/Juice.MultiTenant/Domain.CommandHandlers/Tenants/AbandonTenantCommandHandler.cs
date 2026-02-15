@@ -38,18 +38,4 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
             }
         }
     }
-
-    public class AbandonTenantIdentifiedCommandHandler
-        : IdentifiedCommandHandler<AbandonTenantCommand, IOperationResult>
-    {
-        public AbandonTenantIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<AbandonTenantIdentifiedCommandHandler> logger)
-          : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(AbandonTenantCommand message) 
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string? IdProperty, string? CommandId) ExtractDebugInfo(AbandonTenantCommand command) 
-            => (nameof(command.Id), command.Id);
-    }
 }

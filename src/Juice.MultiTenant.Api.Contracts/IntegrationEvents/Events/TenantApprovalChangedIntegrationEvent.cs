@@ -1,4 +1,5 @@
 ﻿using Juice.EventBus;
+using Juice.Extensions;
 using Juice.MultiTenant.Shared.Enums;
 
 namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
@@ -6,8 +7,23 @@ namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
     /// <summary>
     /// Tenant approval changed integration event
     /// </summary>
-    /// <param name="TenantId"></param>
-    /// <param name="TenantIdentifier"></param>
-    /// <param name="Status"></param>
-    public record TenantApprovalChangedIntegrationEvent(string TenantId, string TenantIdentifier, TenantStatus Status) : IntegrationEvent, IMultiTenantIntegrationEvent;
+    public record TenantApprovalChangedIntegrationEvent : IntegrationEvent
+    {
+        public override string EventName => "tenant.approval." + Status.StringValue().ToLower();
+        public string TenantIdentifier { get; init; }
+        public TenantStatus Status { get; init; }
+
+        /// <summary>
+        /// Tenant approval changed integration event constructor
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="tenantIdentifier"></param>
+        /// <param name="status"></param>
+        public TenantApprovalChangedIntegrationEvent(string tenantId, string tenantIdentifier, TenantStatus status)
+        {
+            TenantId = tenantId;
+            TenantIdentifier = tenantIdentifier;
+            Status = status;
+        }
+    }
 }

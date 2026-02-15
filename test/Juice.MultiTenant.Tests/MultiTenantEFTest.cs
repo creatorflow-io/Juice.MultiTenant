@@ -36,7 +36,7 @@ namespace Juice.MultiTenant.Tests
         [IgnoreOnCITheory(DisplayName = "Migrations"), TestPriority(999)]
         [InlineData("SqlServer")]
         [InlineData("PostgreSQL")]
-        public async Task TenantDbContext_should_migrate_Async(string provider)
+        public async Task Migrate_TenantDbContextAsync(string provider)
         {
             var resolver = new DependencyResolver
             {

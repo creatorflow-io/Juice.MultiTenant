@@ -27,14 +27,14 @@ namespace Juice.MultiTenant.EF.Stores
         {
             return await dbContext.TenantInfo.AsNoTracking()
                     .Where(ti => ti.Id == id)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.TenantClass))
+                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                     .SingleOrDefaultAsync() as TTenantInfo;
         }
 
         public virtual async Task<IEnumerable<TTenantInfo>> GetAllAsync()
         {
             return (await dbContext.TenantInfo.AsNoTracking()
-                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.TenantClass))
+                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                 .ToListAsync())
                 .Select(ti => (ti as TTenantInfo)!)
                 .ToList();
@@ -44,7 +44,7 @@ namespace Juice.MultiTenant.EF.Stores
         {
             return await dbContext.TenantInfo.AsNoTracking()
                 .Where(ti => ti.Identifier == identifier && ti.Status == TenantStatus.Active)
-                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.TenantClass))
+                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                 .SingleOrDefaultAsync() as TTenantInfo;
         }
 
@@ -116,11 +116,11 @@ namespace Juice.MultiTenant.EF.Stores
             {
                 if (!string.IsNullOrEmpty(@class))
                 {
-                    query = query.Where(t => t.TenantClass == @class);
+                    query = query.Where(t => t.Tier == @class);
                 }
                 else
                 {
-                    query = query.Where(t => t.TenantClass != null);
+                    query = query.Where(t => t.Tier != null);
                 }
             }
             if (statuses != null && statuses.Any())
@@ -134,7 +134,7 @@ namespace Juice.MultiTenant.EF.Stores
             while (!cancellationToken.IsCancellationRequested)
             {
                 var batch = await query.Skip(skip).Take(take)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.TenantClass))
+                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                     .ToListAsync(cancellationToken);
                 if (batch.Count == 0)
                 {

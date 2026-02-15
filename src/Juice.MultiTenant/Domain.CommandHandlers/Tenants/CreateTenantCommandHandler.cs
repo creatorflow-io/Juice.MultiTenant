@@ -68,7 +68,8 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
                     }
                 }
 
-                return await _unitOfWork.AddAndSaveAsync(tenant, cancellationToken);
+                await _unitOfWork.AddAsync(tenant, cancellationToken);
+                return OperationResult.Success;
             }
             catch (Exception ex)
             {
@@ -80,18 +81,4 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
         }
     }
 
-    // Use for Idempotency in Command process
-    public class CreateTenantIdentifiedCommandHandler
-        : IdentifiedCommandHandler<CreateTenantCommand, IOperationResult>
-    {
-        public CreateTenantIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<CreateTenantIdentifiedCommandHandler> logger)
-            : base(mediator, requestManager, logger)
-        {
-        }
-
-        protected override ValueTask<IOperationResult> CreateResultForDuplicatedRequestAsync(CreateTenantCommand mesage)
-            => ValueTask.FromResult(OperationResult.Success);
-        protected override (string IdProperty, string CommandId) ExtractDebugInfo(CreateTenantCommand command)
-            => (nameof(command.Identifier), command.Identifier);
-    }
 }

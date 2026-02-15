@@ -2,15 +2,18 @@
 
 namespace Juice.MultiTenant.Domain.Events
 {
-    public class TenantStatusChangedDomainEvent : INotification
+    public record TenantStatusChangedDomainEvent : MessageBase, INotification
     {
-        public string TenantId { get; private set; }
+        public string Id { get; init; }
         public string TenantIdentifier { get; private set; }
+        public TenantStatus PreviousStatus { get; private set; }
         public TenantStatus TenantStatus { get; private set; }
-        public TenantStatusChangedDomainEvent(string tenantId, string tenantIdentifier, TenantStatus tenantStatus)
+        public TenantStatusChangedDomainEvent(string tenantId, string tenantIdentifier, TenantStatus previousStatus, TenantStatus tenantStatus)
         {
+            Id = tenantId;
             TenantId = tenantId;
             TenantIdentifier = tenantIdentifier;
+            PreviousStatus = previousStatus;
             TenantStatus = tenantStatus;
         }
     }
