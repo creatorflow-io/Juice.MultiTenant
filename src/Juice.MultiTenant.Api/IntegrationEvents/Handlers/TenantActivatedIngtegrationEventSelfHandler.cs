@@ -1,6 +1,6 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
-using Juice.EventBus;
+using Juice.Messaging;
 using Juice.Extensions.MultiTenant;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 

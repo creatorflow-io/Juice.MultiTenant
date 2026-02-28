@@ -1,4 +1,4 @@
-﻿using Juice.EventBus;
+﻿using Juice.Messaging;
 
 namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
 {

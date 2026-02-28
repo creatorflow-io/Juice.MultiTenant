@@ -1,4 +1,4 @@
-﻿using Juice.EventBus;
+﻿using Juice.Messaging;
 using Juice.Extensions;
 using Juice.MultiTenant.Shared.Enums;
 

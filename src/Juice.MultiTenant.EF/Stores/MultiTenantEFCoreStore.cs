@@ -14,18 +14,18 @@ namespace Juice.MultiTenant.EF.Stores
     internal class MultiTenantEFCoreStore<TTenantInfo> : IForeachableTenantStore<TTenantInfo>
         where TTenantInfo : class, ITenant, ITenantInfo, new()
     {
-        internal readonly TenantStoreDbContext dbContext;
+        internal readonly TenantStoreDbContext _dbContext;
         internal readonly IStringIdGenerator _idGenerator;
 
         public MultiTenantEFCoreStore(TenantStoreDbContext dbContext, IStringIdGenerator idGenerator)
         {
-            this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _idGenerator = idGenerator ?? throw new ArgumentNullException(nameof(idGenerator));
         }
 
         public virtual async Task<TTenantInfo?> TryGetAsync(string id)
         {
-            return await dbContext.TenantInfo.AsNoTracking()
+            return await _dbContext.TenantInfo.AsNoTracking()
                     .Where(ti => ti.Id == id)
                     .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                     .SingleOrDefaultAsync() as TTenantInfo;
@@ -33,7 +33,7 @@ namespace Juice.MultiTenant.EF.Stores
 
         public virtual async Task<IEnumerable<TTenantInfo>> GetAllAsync()
         {
-            return (await dbContext.TenantInfo.AsNoTracking()
+            return (await _dbContext.TenantInfo.AsNoTracking()
                 .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                 .ToListAsync())
                 .Select(ti => (ti as TTenantInfo)!)
@@ -42,7 +42,7 @@ namespace Juice.MultiTenant.EF.Stores
 
         public virtual async Task<TTenantInfo?> TryGetByIdentifierAsync(string identifier)
         {
-            return await dbContext.TenantInfo.AsNoTracking()
+            return await _dbContext.TenantInfo.AsNoTracking()
                 .Where(ti => ti.Identifier == identifier && ti.Status == TenantStatus.Active)
                 .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
                 .SingleOrDefaultAsync() as TTenantInfo;
@@ -58,16 +58,16 @@ namespace Juice.MultiTenant.EF.Stores
                 Identifier = tenant.Identifier ?? id,
                 Name = tenant.Name ?? id,
             };
-            await dbContext.TenantInfo.AddAsync(entity);
-            var result = await dbContext.SaveChangesAsync() > 0;
-            dbContext.Entry(tenantInfo).State = EntityState.Detached;
+            await _dbContext.TenantInfo.AddAsync(entity);
+            var result = await _dbContext.SaveChangesAsync() > 0;
+            _dbContext.Entry(tenantInfo).State = EntityState.Detached;
 
             return result;
         }
 
         public virtual async Task<bool> TryRemoveAsync(string identifier)
         {
-            var existing = await dbContext.TenantInfo
+            var existing = await _dbContext.TenantInfo
                 .Where(ti => ti.Identifier == identifier)
                 .SingleOrDefaultAsync();
 
@@ -76,14 +76,14 @@ namespace Juice.MultiTenant.EF.Stores
                 return false;
             }
 
-            dbContext.TenantInfo.Remove(existing);
-            return await dbContext.SaveChangesAsync() > 0;
+            _dbContext.TenantInfo.Remove(existing);
+            return await _dbContext.SaveChangesAsync() > 0;
         }
 
         public virtual async Task<bool> TryUpdateAsync(TTenantInfo tenantInfo)
         {
             var tenant = (ITenantInfo)tenantInfo;
-            var entity = await dbContext.TenantInfo
+            var entity = await _dbContext.TenantInfo
                  .Where(ti => ti.Id == tenant.Id)
                  .SingleOrDefaultAsync();
             if (entity is null)
@@ -99,15 +99,15 @@ namespace Juice.MultiTenant.EF.Stores
                 entity.Name = tenant.Name ?? "";
             }
 
-            var result = await dbContext.SaveChangesAsync() > 0;
-            dbContext.Entry(tenantInfo).State = EntityState.Detached;
+            var result = await _dbContext.SaveChangesAsync() > 0;
+            _dbContext.Entry(tenantInfo).State = EntityState.Detached;
             return result;
         }
 
         public async Task ForeachAsync(Func<TTenantInfo, Task> action, string? q, string? @class,
             IEnumerable<TenantStatus>? statuses, CancellationToken cancellationToken = default)
         {
-            var query = dbContext.TenantInfo.AsNoTracking();
+            var query = _dbContext.TenantInfo.AsNoTracking();
             if (!string.IsNullOrEmpty(q))
             {
                 query = query.Where(t => t.Name.Contains(q) || t.Identifier!.Contains(q));

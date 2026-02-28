@@ -1,4 +1,5 @@
 ﻿using Juice.EventBus;
+using Juice.Messaging;
 using Juice.Messaging.Outbox;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
 using Juice.MultiTenant.Domain.Events;
