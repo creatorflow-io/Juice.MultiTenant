@@ -18,7 +18,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Juice.MultiTenant.Tests
 {

@@ -23,9 +23,10 @@
     <RedisVersion>2.6.122</RedisVersion>
     <SwashbuckleVersion>6.8.*</SwashbuckleVersion>
     <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == '' And '$(CI)' == '' ">-alpha.*</JuiceRefSuffix>
-    <JuiceVersion>9.1.*$(JuiceRefSuffix)</JuiceVersion>
-    <XUnitVersion>2.9.*</XUnitVersion>
-    <TestSdk>17.11.*</TestSdk>
+    <JuiceVersion>10.1.*$(JuiceRefSuffix)</JuiceVersion>
+    <XUnitVersion>3.*</XUnitVersion>
+    <XUnitRunnerVersion>3.*</XUnitRunnerVersion>
+    <TestSdk>17.13.*</TestSdk>
   </PropertyGroup>
 
 
