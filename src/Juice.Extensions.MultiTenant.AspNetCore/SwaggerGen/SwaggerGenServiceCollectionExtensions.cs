@@ -28,7 +28,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register generator and it's dependencies
             services.TryAddTransient<ISwaggerProvider, SwaggerGenerator>();
+#if NET6_0
             services.TryAddTransient<IAsyncSwaggerProvider, SwaggerGenerator>();
+#endif
             services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
             
             services.TryAddTransient<ISerializerDataContractResolver>(s =>

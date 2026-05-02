@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
+#if NET6_0
 using Microsoft.OpenApi.Writers;
+#else
+using Microsoft.OpenApi;
+#endif
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -20,12 +24,21 @@ internal class DocumentProvider : IDocumentProvider
 {
     private readonly SwaggerGeneratorOptions _generatorOptions;
     private readonly SwaggerOptions _options;
+#if NET8_0_OR_GREATER
+    private readonly ISwaggerProvider _swaggerProvider;
+
+    public DocumentProvider(
+        IOptionsSnapshot<SwaggerGeneratorOptions> generatorOptions,
+        IOptions<SwaggerOptions> options,
+        ISwaggerProvider swaggerProvider)
+#else
     private readonly IAsyncSwaggerProvider _swaggerProvider;
 
     public DocumentProvider(
         IOptionsSnapshot<SwaggerGeneratorOptions> generatorOptions,
         IOptions<SwaggerOptions> options,
         IAsyncSwaggerProvider swaggerProvider)
+#endif
     {
         _generatorOptions = generatorOptions.Value;
         _options = options.Value;
@@ -40,9 +53,14 @@ internal class DocumentProvider : IDocumentProvider
     public async Task GenerateAsync(string documentName, TextWriter writer)
     {
         // Let UnknownSwaggerDocument or other exception bubble up to caller.
+#if NET8_0_OR_GREATER
+        var swagger = _swaggerProvider.GetSwagger(documentName, host: null, basePath: null);
+        var jsonWriter = new OpenApiJsonWriter(writer);
+        swagger.SerializeAsV3(jsonWriter);
+#else
         var swagger = await _swaggerProvider.GetSwaggerAsync(documentName, host: null, basePath: null);
         var jsonWriter = new OpenApiJsonWriter(writer);
-        if (_options.SerializeAsV2)
+         if (_options.SerializeAsV2)
         {
             swagger.SerializeAsV2(jsonWriter);
         }
@@ -50,5 +68,6 @@ internal class DocumentProvider : IDocumentProvider
         {
             swagger.SerializeAsV3(jsonWriter);
         }
+#endif
     }
 }

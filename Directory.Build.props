@@ -10,7 +10,7 @@
     <PackageIconUrl>https://avatars.githubusercontent.com/u/107674950</PackageIconUrl>
     <RepositoryUrl>https://github.com/creatorflow-io/Juice.MultiTenant</RepositoryUrl>
     <LangVersion>latest</LangVersion>
-    <VersionPrefix>10.0.0</VersionPrefix>
+    <VersionPrefix>10.0.1</VersionPrefix>
     <VersionSuffix>local.$([System.DateTime]::Now.ToString(`yyyyMMdd`)).1</VersionSuffix>
   </PropertyGroup>
 
@@ -22,7 +22,7 @@
     <GrpcVersion>2.66.*</GrpcVersion>
     <ProtobufVersion>3.28.*</ProtobufVersion>
     <RedisVersion>2.6.122</RedisVersion>
-    <SwashbuckleVersion>6.8.*</SwashbuckleVersion>
+    <SwashbuckleVersion>10.*</SwashbuckleVersion>
     <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == '' And '$(CI)' == '' ">-alpha.*</JuiceRefSuffix>
     <JuiceVersion>10.1.*$(JuiceRefSuffix)</JuiceVersion>
     <XUnitVersion>3.*</XUnitVersion>
@@ -59,14 +59,15 @@
     <NpgsqlVersion>7.0.*</NpgsqlVersion>
     <FinbuckleVersion>8.1.*</FinbuckleVersion>
     <OpenApiVersion>1.6.*</OpenApiVersion>
+    <SwashbuckleVersion>6.9.*</SwashbuckleVersion>
   </PropertyGroup>
   
   <PropertyGroup Label="Build">
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <EnableSourceLink>false</EnableSourceLink>
-    <BaseIntermediateOutputPath>$(SolutionDir)/build/obj/$(MSBuildProjectName)</BaseIntermediateOutputPath>
-    <OutputPath>$(SolutionDir)/build/bin/$(Configuration)/$(MSBuildProjectName)</OutputPath>
-    <PackageLocation>$(SolutionDir)build/publish/$(Configuration)/</PackageLocation>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)build/obj/$(MSBuildProjectName)</BaseIntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)build/bin/$(Configuration)/$(MSBuildProjectName)</OutputPath>
+    <PackageLocation>$(MSBuildThisFileDirectory)build/publish/$(Configuration)/</PackageLocation>
   </PropertyGroup>
 
 </Project>

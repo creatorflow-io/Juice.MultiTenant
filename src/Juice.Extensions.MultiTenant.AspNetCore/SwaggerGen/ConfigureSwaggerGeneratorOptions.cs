@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+#if NET6_0
 using Microsoft.OpenApi.Models;
+#else
+using Microsoft.OpenApi;
+#endif
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 
@@ -83,8 +87,13 @@ namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
             target.InferSecuritySchemes = source.InferSecuritySchemes;
             target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
             target.Servers = new List<OpenApiServer>(source.Servers);
+#if NET6_0
             target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
             target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
+#else
+            target.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>(source.SecuritySchemes);
+            target.SecurityRequirements = new List<Func<OpenApiDocument, OpenApiSecurityRequirement>>(source.SecurityRequirements);
+#endif
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
@@ -105,7 +114,7 @@ namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
             }
             catch (Exception)
             {
-                if(filterDescriptor.FilterInstance is TFilter filter)
+                if (filterDescriptor.FilterInstance is TFilter filter)
                 {
                     return filter;
                 }

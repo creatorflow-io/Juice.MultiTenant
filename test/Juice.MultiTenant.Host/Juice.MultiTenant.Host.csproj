@@ -12,7 +12,7 @@
   </ItemGroup>
   
   <ItemGroup Label="refs">
-      <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)" />
+      <PackageReference Include="Juice.AspNetCore" Version="10.1.2-alpha.281" />
       <PackageReference Include="Juice.EventBus.RabbitMQ" Version="$(JuiceVersion)" />
       <PackageReference Include="Juice.Messaging.Idempotency.Redis" Version="$(JuiceVersion)" />
       <PackageReference Include="Juice.Messaging.Outbox.EF" Version="$(JuiceVersion)" />
@@ -27,6 +27,6 @@
   <ItemGroup>
     <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="$(FinbuckleVersion)" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="*" />
-    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="$(AspNetCoreVersion)"/>
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="$(AspNetCoreVersion)" />
   </ItemGroup>
 </Project>

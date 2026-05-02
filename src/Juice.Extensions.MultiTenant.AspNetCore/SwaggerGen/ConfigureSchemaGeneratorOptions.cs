@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+#if NET6_0
 using Microsoft.OpenApi.Models;
+#else
+using Microsoft.OpenApi;
+#endif
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
@@ -29,7 +33,11 @@ namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
 
         private void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
         {
+#if NET6_0
             target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
+#else
+            target.CustomTypeMappings = new Dictionary<Type, Func<IOpenApiSchema>>(source.CustomTypeMappings);
+#endif
             target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
@@ -58,7 +66,7 @@ namespace Juice.Extensions.MultiTenant.AspNetCore.SwaggerGen
             }
             catch (Exception)
             {
-                if(filterDescriptor.FilterInstance is TFilter filter)
+                if (filterDescriptor.FilterInstance is TFilter filter)
                 {
                     return filter;
                 }
