@@ -18,7 +18,7 @@ using Xunit;
 
 namespace Juice.MultiTenant.Tests
 {
-    [TestCaseOrderer("Juice.XUnit.PriorityOrderer", "Juice.XUnit")]
+    [TestCaseOrderer(typeof(PriorityOrderer))]
     public class MultiTenantDbContextTest
     {
         private readonly ITestOutputHelper _output;

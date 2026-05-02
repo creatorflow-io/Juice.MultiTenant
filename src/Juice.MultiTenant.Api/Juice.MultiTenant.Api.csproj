@@ -15,14 +15,18 @@
 
     <ItemGroup>
         <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="$(FinbuckleVersion)" />
-        <PackageReference Include="Asp.Versioning.Abstractions" Version="8.1.*" />
+        <PackageReference Include="Asp.Versioning.Abstractions" Version="$(AspNetCoreVersion)" />
     </ItemGroup>
 
     <ItemGroup Label="Refs">
         <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.MediatR.Behaviors" Version="$(JuiceVersion)" />
     </ItemGroup>
-
+    
+    <ItemGroup Label="Fix vulnerabilities">
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="$(AspNetCoreVersion)" Condition="'$(TargetFramework)' == 'net10.0'" />
+    </ItemGroup>
+    
     <ItemGroup>
         <ProjectReference Include="..\Juice.MultiTenant.EF\Juice.MultiTenant.EF.csproj" />
         <ProjectReference Include="..\Juice.MultiTenant.Api.Contracts\Juice.MultiTenant.Api.Contracts.csproj" />

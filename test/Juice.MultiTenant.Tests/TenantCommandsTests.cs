@@ -21,7 +21,7 @@ using Xunit;
 
 namespace Juice.MultiTenant.Tests
 {
-    [TestCaseOrderer("Juice.XUnit.PriorityOrderer", "Juice.XUnit")]
+    [TestCaseOrderer(typeof(PriorityOrderer))]
     [InitializeMessageContext]
     public class TenantCommandsTests
     {

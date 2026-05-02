@@ -1,15 +1,13 @@
 ﻿using Asp.Versioning;
 using Finbuckle.MultiTenant;
 using Juice.AspNetCore.Mvc.Formatters;
-using Juice.Extensions.MultiTenant;
 using Juice.Extensions.Swagger;
 using Juice.MultiTenant;
 using Juice.MultiTenant.Api;
 using Juice.MultiTenant.Api.Grpc.Services;
 using Juice.MultiTenant.Domain.AggregatesModel.TenantAggregate;
-using Juice.MultiTenant.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
