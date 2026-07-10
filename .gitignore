@@ -11,6 +11,8 @@
 
 # AI tools
 .claude/settings.local.json
+.claude/skills
+.specify
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
