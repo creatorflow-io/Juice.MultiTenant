@@ -51,7 +51,7 @@ $dark-theme: mat.m2-define-dark-theme((
   @include mat.all-component-colors($dark-theme);
   @include layout.layout-component-colors($dark-theme);
   @include tenants.component-themes($dark-theme);
-  --mdc-filled-text-field-focus-label-text-color: #8c9eff !important;
+  --mat-form-field-filled-focus-label-text-color: #8c9eff !important;
 }
 
 .density-compact {
