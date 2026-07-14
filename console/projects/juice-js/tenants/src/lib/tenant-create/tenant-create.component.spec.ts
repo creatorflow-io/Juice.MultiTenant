@@ -4,7 +4,6 @@ import { TenantCreateComponent } from './tenant-create.component';
 import {} from '@angular/common/http';
 import { TenantConfiguration } from '../shared/tenant-configuration';
 import { MaterialModule } from '../shared/material.module';
-import { TranslateModule } from '@ngx-translate/core';
 import { TenantsTestingModule } from '../shared/tenant-testing';
 
 describe('TenantCreateComponent', () => {
@@ -14,7 +13,6 @@ describe('TenantCreateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        TranslateModule.forRoot(),
         TenantsTestingModule.forTest({}),
       ],
       declarations: [ TenantCreateComponent ]

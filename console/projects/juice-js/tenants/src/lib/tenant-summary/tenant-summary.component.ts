@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { TenantBasic } from '../shared/models/tenant.model';
 import { TenantAdminService } from '../shared/services/tenant-admin.service';
 
@@ -6,6 +6,7 @@ import { TenantAdminService } from '../shared/services/tenant-admin.service';
     selector: 'juice-tenant-summary',
     templateUrl: './tenant-summary.component.html',
     styleUrls: ['./tenant-summary.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TenantSummaryComponent implements OnChanges{

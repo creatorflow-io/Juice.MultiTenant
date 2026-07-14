@@ -5,8 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TenantsModule } from '@juice-js/tenants';
 import { environment } from '../environments/environment';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { TranslateModule, MissingTranslationHandler } from '@ngx-translate/core';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { provideTranslateService } from '@ngx-translate/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { OAuthModule } from 'angular-oauth2-oidc';
@@ -24,9 +24,8 @@ const {localize, auth, production, layout, tenantOptions} = environment;
         LayoutModule.forRoot(production, layout),
         UserProfileDialogModule,
         AuthModule.forRoot(auth),
-        TranslateModule.forRoot(),
         OAuthModule.forRoot(),
         BrowserAnimationsModule,
-        MaterialModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        MaterialModule], providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideTranslateService()] })
 export class AppModule { }
 

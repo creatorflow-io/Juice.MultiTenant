@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';  
-import { TranslateModule } from '@ngx-translate/core'
+import { TranslatePipe, TranslateDirective } from '@ngx-translate/core'
 import { TenantsComponent } from './tenants.component';
 import { TenantDetailComponent } from './tenant-detail/tenant-detail.component';
 import { TenantAdminService } from './shared/services/tenant-admin.service';
@@ -29,7 +29,8 @@ import { IdempotencyModule } from '@juice-js/core';
     TenantSettingsComponent
   ],
   imports: [
-    TranslateModule,
+    TranslatePipe,
+    TranslateDirective,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
@@ -45,7 +46,8 @@ import { IdempotencyModule } from '@juice-js/core';
     TenantSummaryComponent,
     TenantCreateComponent,
     TenantUpdateComponent,
-    TranslateModule
+    TranslatePipe,
+    TranslateDirective
   ]
 })
 export class TenantsModule { 

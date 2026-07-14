@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { TenantAdminService } from './tenant-admin.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { TenantConfiguration } from '../tenant-configuration';
 
 describe('TenantsService', () => {
@@ -15,7 +15,7 @@ describe('TenantsService', () => {
             provide: TenantConfiguration,
             useValue: {}
         },
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withXhr(), withInterceptorsFromDi())
     ]
 });
     service = TestBed.inject(TenantAdminService);

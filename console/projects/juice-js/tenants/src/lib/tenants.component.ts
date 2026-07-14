@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TenantAdminService } from './shared/services/tenant-admin.service';
 import { MatMultiSort, MatMultiSortTableDataSource, TableData  } from 'ngx-mat-multi-sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -21,6 +21,7 @@ import { TenantSettingsComponent } from './tenant-settings/tenant-settings.compo
     selector: 'juice-tenants',
     templateUrl: './tenants.component.html',
     styleUrls: ['./tenants.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TenantsComponent implements AfterViewInit{

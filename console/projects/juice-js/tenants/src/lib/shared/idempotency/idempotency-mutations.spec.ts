@@ -5,7 +5,7 @@ import { IDEMPOTENCY_OPERATION, IdempotencyModule } from '@juice-js/core';
 import { TenantAdminService } from '../services/tenant-admin.service';
 import { TenantConfiguration } from '../tenant-configuration';
 import { TenantUpdate } from '../models/tenant.update.model';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 // US2 - Safe retries of tenant state changes.
 describe('Idempotency: tenant state changes (US2)', () => {
@@ -20,7 +20,7 @@ describe('Idempotency: tenant state changes (US2)', () => {
     imports: [IdempotencyModule],
     providers: [
         { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 });

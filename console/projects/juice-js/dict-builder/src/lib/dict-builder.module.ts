@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { NewKeyModalComponent } from './new-key-modal/new-key-modal.component';
@@ -32,7 +32,8 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    TranslateModule
+    TranslatePipe,
+    TranslateDirective
   ],
   exports: [
     DictBuilderComponent

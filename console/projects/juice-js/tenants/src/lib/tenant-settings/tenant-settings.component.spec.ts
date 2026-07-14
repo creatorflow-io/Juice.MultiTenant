@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TenantSettingsComponent } from './tenant-settings.component';
-import { TranslateModule } from '@ngx-translate/core';
 import { TenantsTestingModule } from '../shared/tenant-testing';
 import { DictBuilderModule } from '@juice-js/dict-builder';
 
@@ -12,7 +11,6 @@ describe('TenantSettingsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        TranslateModule.forRoot(),
         TenantsTestingModule.forTest({}),
         DictBuilderModule
       ],

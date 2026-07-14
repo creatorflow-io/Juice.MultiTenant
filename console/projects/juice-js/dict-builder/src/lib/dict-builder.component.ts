@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit , SimpleChange} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, SimpleChange, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NewKeyModalComponent } from './new-key-modal/new-key-modal.component';
 import { first, lastValueFrom, Observable } from 'rxjs';
@@ -91,6 +91,7 @@ export class KeyErrorStateMatcher implements ErrorStateMatcher {
     selector: 'juice-dict-builder',
     templateUrl: './dict-builder.component.html',
     styleUrls: ['./dict-builder.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

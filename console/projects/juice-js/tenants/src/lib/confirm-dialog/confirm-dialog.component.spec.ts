@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
-import { TranslateModule } from '@ngx-translate/core';
 import { TenantsTestingModule } from '../shared/tenant-testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -12,7 +11,6 @@ describe('ConfirmDialogComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports:[
-        TranslateModule.forRoot(),
         TenantsTestingModule.forTest({}),
       ],
       declarations: [ ConfirmDialogComponent ],

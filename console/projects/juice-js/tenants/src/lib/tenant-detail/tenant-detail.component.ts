@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { TenantAdminService } from '../shared/services/tenant-admin.service';
 import { Tenant } from '../shared/models/tenant.model';
 import { TenantStatusHelper } from '../shared/models/tenant.status';
@@ -7,6 +7,7 @@ import { TenantStatusHelper } from '../shared/models/tenant.status';
     selector: 'juice-tenant-detail',
     templateUrl: './tenant-detail.component.html',
     styleUrls: ['./tenant-detail.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TenantDetailComponent implements OnChanges {

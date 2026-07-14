@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TenantUpdateComponent } from './tenant-update.component';
-import { TranslateModule } from '@ngx-translate/core';
 import { TenantsTestingModule } from '../shared/tenant-testing';
 
 describe('TenantUpdateComponent', () => {
@@ -11,7 +10,6 @@ describe('TenantUpdateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        TranslateModule.forRoot(),
         TenantsTestingModule.forTest({}),
       ],
       declarations: [ TenantUpdateComponent ]

@@ -5,7 +5,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -22,11 +22,13 @@ describe('NewKeyModalComponent', () => {
         MatIconModule,
         MatInputModule,
         MatDialogModule,
-        TranslateModule.forRoot()
+        TranslatePipe,
+        TranslateDirective
       ],
       declarations: [NewKeyModalComponent],
       providers:[
-        { provide: MatDialogRef, useValue: {} }
+        { provide: MatDialogRef, useValue: {} },
+        provideTranslateService()
       ]
     });
     fixture = TestBed.createComponent(NewKeyModalComponent);

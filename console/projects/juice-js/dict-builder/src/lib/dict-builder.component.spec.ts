@@ -7,7 +7,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
@@ -17,8 +17,9 @@ describe('DictBuilderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ 
-        TranslateModule.forRoot(),
+      imports: [
+        TranslatePipe,
+        TranslateDirective,
         MatButtonModule,
         MatCardModule,
         MatProgressBarModule,
@@ -28,7 +29,8 @@ describe('DictBuilderComponent', () => {
         MatInputModule,
         MatDialogModule
       ],
-      declarations: [ DictBuilderComponent ]
+      declarations: [ DictBuilderComponent ],
+      providers: [ provideTranslateService() ]
     })
     .compileComponents();
 

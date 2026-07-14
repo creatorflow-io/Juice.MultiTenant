@@ -5,7 +5,7 @@ import { IDEMPOTENCY_OPERATION, IdempotencyModule, IdempotencyKeyService } from 
 import { TenantAdminService } from '../services/tenant-admin.service';
 import { TenantConfiguration } from '../tenant-configuration';
 import { TenantCreate } from '../models/tenant.create.model';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 // US1 - Safe retries of tenant creation.
 describe('Idempotency: tenant creation (US1)', () => {
@@ -18,7 +18,7 @@ describe('Idempotency: tenant creation (US1)', () => {
     imports: [IdempotencyModule],
     providers: [
         { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 });

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { IDEMPOTENCY_OPERATION, IdempotencyModule } from '@juice-js/core';
 
@@ -18,7 +18,7 @@ describe('Idempotency: reads unaffected & scoping (US3)', () => {
     imports: [IdempotencyModule],
     providers: [
         { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 });
@@ -69,7 +69,7 @@ describe('Idempotency: opt-out via enableIdempotency=false', () => {
     imports: [IdempotencyModule],
     providers: [
         { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2', enableIdempotency: false } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 });
