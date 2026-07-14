@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { IDEMPOTENCY_OPERATION, IdempotencyModule } from '@juice-js/core';
 
 import { TenantAdminService } from '../services/tenant-admin.service';
 import { TenantConfiguration } from '../tenant-configuration';
 import { TenantUpdate } from '../models/tenant.update.model';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 // US2 - Safe retries of tenant state changes.
 describe('Idempotency: tenant state changes (US2)', () => {
@@ -16,11 +17,13 @@ describe('Idempotency: tenant state changes (US2)', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, IdempotencyModule],
-      providers: [
-        { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } }
-      ]
-    });
+    imports: [IdempotencyModule],
+    providers: [
+        { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     service = TestBed.inject(TenantAdminService);
     httpMock = TestBed.inject(HttpTestingController);
   });

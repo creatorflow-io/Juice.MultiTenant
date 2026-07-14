@@ -17,23 +17,23 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$app-primary: mat.define-palette(mat.$indigo-palette);
-$app-primary-light: mat.define-palette(mat.$indigo-palette, A200);
-$app-accent: mat.define-palette(mat.$pink-palette);
-$app-warn: mat.define-palette(mat.$red-palette);
+$app-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$app-primary-light: mat.m2-define-palette(mat.$m2-indigo-palette, A200);
+$app-accent: mat.m2-define-palette(mat.$m2-pink-palette);
+$app-warn: mat.m2-define-palette(mat.$m2-red-palette);
 
 // Define a light theme
-$light-theme: mat.define-light-theme((
+$light-theme: mat.m2-define-light-theme((
   color: (
     primary: $app-primary-light,
     accent: $app-accent,
     warn: $app-warn,
   ),
    // Only include `typography` and `density` in the default theme.
-   typography: mat.define-typography-config(),
+   typography: mat.m2-define-typography-config(),
    density: -1//'minimum', // -1 -2 -3
 ));
-$dark-theme: mat.define-dark-theme((
+$dark-theme: mat.m2-define-dark-theme((
   color: (
     primary: $app-primary,
     accent: $app-accent,

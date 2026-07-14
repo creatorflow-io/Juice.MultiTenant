@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { IDEMPOTENCY_OPERATION, IdempotencyModule, IdempotencyKeyService } from '@juice-js/core';
 
 import { TenantAdminService } from '../services/tenant-admin.service';
 import { TenantConfiguration } from '../tenant-configuration';
 import { TenantCreate } from '../models/tenant.create.model';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 // US1 - Safe retries of tenant creation.
 describe('Idempotency: tenant creation (US1)', () => {
@@ -14,11 +15,13 @@ describe('Idempotency: tenant creation (US1)', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, IdempotencyModule],
-      providers: [
-        { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } }
-      ]
-    });
+    imports: [IdempotencyModule],
+    providers: [
+        { provide: TenantConfiguration, useValue: { apiEndpoint, apiVersion: '2' } },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     service = TestBed.inject(TenantAdminService);
     httpMock = TestBed.inject(HttpTestingController);
   });

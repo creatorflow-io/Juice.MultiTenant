@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { TenantAdminService } from './tenant-admin.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TenantConfiguration } from '../tenant-configuration';
 
 describe('TenantsService', () => {
@@ -9,16 +9,15 @@ describe('TenantsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule
-      ],
-      providers: [
+    imports: [],
+    providers: [
         {
-          provide: TenantConfiguration,
-          useValue: {}
-        }
-      ]
-    });
+            provide: TenantConfiguration,
+            useValue: {}
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+});
     service = TestBed.inject(TenantAdminService);
   });
 

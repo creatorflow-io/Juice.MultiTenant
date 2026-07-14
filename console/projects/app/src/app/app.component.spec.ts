@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TenantsModule } from '@juice-js/tenants';
 import { environment } from '../environments/environment';
 import { MaterialModule } from './material.module';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,21 +15,19 @@ const { tenantOptions } = environment;
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
+    declarations: [
+        AppComponent
+    ],
+    imports: [RouterTestingModule,
         TranslateModule.forRoot(),
         TenantsModule.forRoot(tenantOptions),
         MaterialModule,
         FormsModule,
         ReactiveFormsModule,
         CommonModule,
-        HttpClientModule,
-        BrowserAnimationsModule
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
+        BrowserAnimationsModule],
+    providers: [provideHttpClient(withInterceptorsFromDi())]
+}).compileComponents();
   });
 
   it('should create the app', () => {

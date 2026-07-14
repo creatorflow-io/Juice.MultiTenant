@@ -3,20 +3,20 @@
 
 @mixin component-themes($theme){
     // Get the color config from the theme.
-    $color-config: mat.get-color-config($theme);
+    $color-config: mat.m2-get-color-config($theme);
     // Get the primary color palette from the color-config.
     $primary-palette: map.get($color-config, 'primary');
     $accent-palette: map.get($color-config, 'accent');
     $warn-palette: map.get($color-config, 'warn');
 
-    $green-palette: mat.define-palette(mat.$green-palette, 500, 300, 700);
+    $green-palette: mat.m2-define-palette(mat.$m2-green-palette, 500, 300, 700);
     $is-dark-theme: map.get($theme, is-dark);
 
-    $color-primary: if($is-dark-theme, mat.get-color-from-palette($primary-palette, 100), mat.get-color-from-palette($primary-palette, 'darker'));
-    $primary-contrast: if($is-dark-theme, mat.get-color-from-palette($primary-palette, 400-contrast), mat.get-color-from-palette($primary-palette, 100-contrast));
-    $color-accent: if($is-dark-theme,  mat.get-color-from-palette($accent-palette, 200), mat.get-color-from-palette($accent-palette, 'darker'));
-    $color-warn: if($is-dark-theme, mat.get-color-from-palette($warn-palette), mat.get-color-from-palette($warn-palette, 'darker'));
-    $color-success: mat.get-color-from-palette($green-palette, 400);
+    $color-primary: if($is-dark-theme, mat.m2-get-color-from-palette($primary-palette, 100), mat.m2-get-color-from-palette($primary-palette, 'darker'));
+    $primary-contrast: if($is-dark-theme, mat.m2-get-color-from-palette($primary-palette, 400-contrast), mat.m2-get-color-from-palette($primary-palette, 100-contrast));
+    $color-accent: if($is-dark-theme,  mat.m2-get-color-from-palette($accent-palette, 200), mat.m2-get-color-from-palette($accent-palette, 'darker'));
+    $color-warn: if($is-dark-theme, mat.m2-get-color-from-palette($warn-palette), mat.m2-get-color-from-palette($warn-palette, 'darker'));
+    $color-success: mat.m2-get-color-from-palette($green-palette, 400);
 
     .inherited{
         color: $primary-contrast;
@@ -26,15 +26,15 @@
     }
 
     .bg-accent {
-        background-color: mat.get-color-from-palette($accent-palette, 'lighter') !important;
+        background-color: mat.m2-get-color-from-palette($accent-palette, 'lighter') !important;
     }
     
     .bg-warn {
-        background-color: mat.get-color-from-palette($warn-palette, 'lighter') !important;
+        background-color: mat.m2-get-color-from-palette($warn-palette, 'lighter') !important;
     }    
 
     .bg-success{
-        background-color: mat.get-color-from-palette($green-palette, 'lighter') !important;
+        background-color: mat.m2-get-color-from-palette($green-palette, 'lighter') !important;
     }
 
     .color-warn {
