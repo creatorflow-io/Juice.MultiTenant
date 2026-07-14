@@ -20,7 +20,7 @@ export const environment = {
         userImageUrl: "https://i.pravatar.cc/64"
     },
     tenantOptions:{
-        apiEndpoint: 'https://tenants-api.hdstation.net',
+        apiEndpoint: "https://localhost:7079", //'https://tenants-api.hdstation.net',
         apiVersion: '2'
     }
 };

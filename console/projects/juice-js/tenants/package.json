@@ -17,7 +17,8 @@
     "url": "https://github.com/creatorflow-io/juice-tenants.git"
   },
   "peerDependencies": {
-    "@juice-js/dict-builder": "^1.0.3"
+    "@juice-js/dict-builder": "^1.0.3",
+    "@juice-js/core": "^1.2.0"
   },
   "exports":{
     ".": {

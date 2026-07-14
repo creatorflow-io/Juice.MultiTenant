@@ -15,6 +15,7 @@ import { MatMultiSortModule } from 'ngx-mat-multi-sort';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { TenantSettingsComponent } from './tenant-settings/tenant-settings.component';
 import { DictBuilderModule } from '@juice-js/dict-builder';
+import { IdempotencyModule } from '@juice-js/core';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { DictBuilderModule } from '@juice-js/dict-builder';
     MaterialModule,
     ClipboardModule,
     MatMultiSortModule,
-    DictBuilderModule
+    DictBuilderModule,
+    IdempotencyModule
   ],
   exports: [
     TenantsComponent,

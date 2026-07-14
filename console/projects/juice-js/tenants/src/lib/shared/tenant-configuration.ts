@@ -8,6 +8,9 @@ export class TenantConfiguration {
     apiVersion: string = "2";
     dialogWidth: string = "800px";
     dialogMaxHeight: string = "600px";
+    // When not explicitly false, state-changing tenant requests opt into the
+    // @juice-js/core idempotency interceptor (retry-safe Idempotency-Key).
+    enableIdempotency?: boolean;
 }
 
 export interface TenantConfigurationParams {
@@ -15,4 +18,5 @@ export interface TenantConfigurationParams {
     apiVersion?: string;
     dialogWidth?: string;
     dialogMaxHeight?: string;
+    enableIdempotency?: boolean;
 }
