@@ -3,10 +3,10 @@
 **Branch**: `001-idempotency-interceptor` | **Date**: 2026-07-12 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/001-idempotency-interceptor/spec.md`
 
-> **⚠️ Blocked by Angular 22 upgrade** — `@juice-js/core@1.2.0` (and the whole `@juice-js/*@1.2.0`
-> suite) is compiled for Angular 22, but this workspace is Angular 16. The tenants **library**
-> builds and its 32 tests pass in isolation, but the full **app** cannot build until the workspace
-> migrates. See [../002-angular-22-upgrade/plan.md](../002-angular-22-upgrade/plan.md).
+> **✅ Unblocked (2026-07-14)** — the workspace was migrated to Angular 22
+> (see [../002-angular-22-upgrade/plan.md](../002-angular-22-upgrade/plan.md)), so `@juice-js/core@1.2.0`
+> and the idempotency integration now build and run in the **full app**, not just in library
+> isolation. All tests green across the workspace (tenants 32/32, dict-builder 4/4, app 2/2).
 
 ## Summary
 

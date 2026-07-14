@@ -1,8 +1,21 @@
 # Upgrade Plan: Angular 16 → 22 Workspace Migration
 
-**Status**: Draft (prerequisite epic) | **Date**: 2026-07-14
+**Status**: ✅ COMPLETE (2026-07-14) | **Date**: 2026-07-14
 **Blocks**: `specs/001-idempotency-interceptor` (idempotency requires `@juice-js/core@1.2.0`,
-which — like the whole `@juice-js/*@1.2.0` suite — is compiled for Angular 22).
+which — like the whole `@juice-js/*@1.2.0` suite — is compiled for Angular 22). **Now unblocked.**
+
+> **Outcome**: Migrated 16 → 17 → 18 → 19 → 20 → 21 → 22, one major per commit on branch
+> `002-angular-22-upgrade`. Final state: `@angular/* 22.0.6`, `material/cdk 22.0.4`,
+> TypeScript 6.0.3, `@juice-js/*@1.2.0`. **Full suite green**: app builds; tenants 32/32,
+> dict-builder 4/4, app 2/2 tests. The `001` idempotency feature now builds and runs in the
+> full app, not just in library isolation.
+>
+> Key work beyond version bumps: (R4) `@ngx-translate/core` 14 → 18 API migration
+> (`TranslateModule` → standalone `TranslatePipe`/`TranslateDirective` + `provideTranslateService()`,
+> `setDefaultLang` → `setFallbackLang`); (R1) `ngx-mat-multi-sort` held at 21.0.3 under Material 22
+> and **validated at runtime** — no fork needed; TS 6.0 `ignoreDeprecations`; app bundle budget
+> raised. Recurring gotcha handled at every step: `legacy-peer-deps` let the `@angular/*` graph
+> drift to mixed majors, so each step re-pinned the whole family to the exact target version.
 
 ## Why this exists
 
