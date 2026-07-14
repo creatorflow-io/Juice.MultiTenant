@@ -1,26 +1,24 @@
 <h2 mat-dialog-title>{{ 'Organization summary' | translate }}</h2>
 
-<mat-dialog-content *ngIf="tenant">
+@if (tenant) {
+  <mat-dialog-content>
     <h3>{{ tenant.name }}</h3>
-
     <mat-list>
-        <mat-list-item>
-            <span matListItemTitle>{{ 'Unique Id' | translate }}</span>
-            <span matListItemLine>{{ tenant.id }}</span>
-        </mat-list-item>
-
-        <mat-list-item>
-            <span matListItemTitle>{{ 'Identifier' | translate }}</span>
-            <span matListItemLine>{{ tenant.identifier }}</span>
-        </mat-list-item>
-
-        <mat-list-item>
-            <span matListItemTitle>{{ 'Status' | translate }}</span>
-            <span matListItemLine>{{ tenant.status }}</span>
-        </mat-list-item>
-
+      <mat-list-item>
+        <span matListItemTitle>{{ 'Unique Id' | translate }}</span>
+        <span matListItemLine>{{ tenant.id }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matListItemTitle>{{ 'Identifier' | translate }}</span>
+        <span matListItemLine>{{ tenant.identifier }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matListItemTitle>{{ 'Status' | translate }}</span>
+        <span matListItemLine>{{ tenant.status }}</span>
+      </mat-list-item>
     </mat-list>
-</mat-dialog-content>
+  </mat-dialog-content>
+}
 <mat-dialog-actions align="end">
-    <button mat-raised-button mat-dialog-close><mat-icon>close</mat-icon>{{ 'Close' | translate }}</button>
+  <button mat-raised-button mat-dialog-close><mat-icon>close</mat-icon>{{ 'Close' | translate }}</button>
 </mat-dialog-actions>
