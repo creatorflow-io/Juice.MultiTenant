@@ -88,9 +88,10 @@ export class KeyErrorStateMatcher implements ErrorStateMatcher {
 
 
 @Component({
-  selector: 'juice-dict-builder',
-  templateUrl: './dict-builder.component.html',
-  styleUrls: ['./dict-builder.component.css']
+    selector: 'juice-dict-builder',
+    templateUrl: './dict-builder.component.html',
+    styleUrls: ['./dict-builder.component.css'],
+    standalone: false
 })
 
 export class DictBuilderComponent implements OnInit{

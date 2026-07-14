@@ -10,9 +10,10 @@ import { CustomErrorStateMatcher } from '../shared/custom-error-state-matcher';
 
 
 @Component({
-  selector: 'juice-tenant-update',
-  templateUrl: './tenant-update.component.html',
-  styleUrls: ['./tenant-update.component.scss']
+    selector: 'juice-tenant-update',
+    templateUrl: './tenant-update.component.html',
+    styleUrls: ['./tenant-update.component.scss'],
+    standalone: false
 })
 export class TenantUpdateComponent{
 

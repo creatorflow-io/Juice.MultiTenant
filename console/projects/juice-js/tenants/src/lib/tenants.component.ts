@@ -18,9 +18,10 @@ import { TenantConfiguration } from './shared/tenant-configuration';
 import { TenantSettingsComponent } from './tenant-settings/tenant-settings.component';
 
 @Component({
-  selector: 'juice-tenants',
-  templateUrl: './tenants.component.html',
-  styleUrls: ['./tenants.component.scss']
+    selector: 'juice-tenants',
+    templateUrl: './tenants.component.html',
+    styleUrls: ['./tenants.component.scss'],
+    standalone: false
 })
 export class TenantsComponent implements AfterViewInit{
 

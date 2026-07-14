@@ -11,9 +11,10 @@ import {
 import { CustomErrorStateMatcher } from '../shared/custom-error-state-matcher';
 
 @Component({
-  selector: 'juice-tenant-create',
-  templateUrl: './tenant-create.component.html',
-  styleUrls: ['./tenant-create.component.scss']
+    selector: 'juice-tenant-create',
+    templateUrl: './tenant-create.component.html',
+    styleUrls: ['./tenant-create.component.scss'],
+    standalone: false
 })
 export class TenantCreateComponent implements OnInit{
   model: TenantCreate = new TenantCreate();
