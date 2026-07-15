@@ -109,11 +109,11 @@ static void ConfigureMessaging(IServiceCollection services, IConfiguration confi
         .AddPublishingPolicies(configuration.GetSection("EventBus:PublishingPolicies"))
         .AddOutbox()
         .AddIdempotencyRedis(redis => redis.ConnectionString = configuration.GetConnectionString("Redis"))
-        .AddDelivery(delivery =>
-        {
-            delivery.AddDeliveryPolicies(configuration.GetSection("EventBus:DeliveryPolicies"));
-            delivery.AddTenantOutboxDeliveryProcessor("rabbitmq");
-        })
+        //.AddDelivery(delivery =>
+        //{
+        //    delivery.AddDeliveryPolicies(configuration.GetSection("EventBus:DeliveryPolicies"));
+        //    delivery.AddTenantOutboxDeliveryProcessor("rabbitmq");
+        //})
         .AddEventBus()
             .AddRabbitMQ(cfg =>
             {

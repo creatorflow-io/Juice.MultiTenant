@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup Label="Refs">
+        <PackageReference Include="Juice.AspNetCore.Idempotency" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.MediatR.Behaviors" Version="$(JuiceVersion)" />
     </ItemGroup>

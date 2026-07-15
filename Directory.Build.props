@@ -24,7 +24,7 @@
     <RedisVersion>2.6.122</RedisVersion>
     <SwashbuckleVersion>10.*</SwashbuckleVersion>
     <JuiceRefSuffix Condition="'$(JuiceRefSuffix)' == '' And '$(CI)' == '' ">-alpha.*</JuiceRefSuffix>
-    <JuiceVersion>10.2.*$(JuiceRefSuffix)</JuiceVersion>
+    <JuiceVersion>10.3.*$(JuiceRefSuffix)</JuiceVersion>
     <XUnitVersion>3.*</XUnitVersion>
     <XUnitRunnerVersion>3.*</XUnitRunnerVersion>
     <TestSdk>17.13.*</TestSdk>

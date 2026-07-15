@@ -36,6 +36,10 @@ namespace Juice.MultiTenant.Api
                 options.RegisterServicesFromAssemblyContaining<AssemblySelector>(true);
             });
 
+            // Enforce HTTP Idempotency-Key on controller actions marked [Idempotent].
+            // Reuses whichever IIdempotencyService the host registers (Redis/EF/InMemory/DistributedCache).
+            builder.Services.AddApiIdempotency();
+
             var dbOptions = new DbOptions<TenantStoreDbContext>();
             configureTenantDb(dbOptions);
 

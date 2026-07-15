@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Asp.Versioning;
+using Juice.AspNetCore.Idempotency;
 using Juice.AspNetCore.Mvc.Filters;
 using Juice.MultiTenant.Shared.Authorization;
 using Juice.MultiTenant.Shared.Enums;
@@ -19,17 +20,9 @@ namespace Juice.MultiTenant.Api.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [IgnoreAntiforgeryToken]
     [RequireTenant]
+    [MessageContext]
     public class OperationController : ControllerBase
     {
-        private string GetIdempotencyKey()
-        {
-            if (!Request.Headers.TryGetValue("Idempotency-Key", out var idempotencyKey) || string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return string.Empty;
-            }
-            return idempotencyKey.ToString();
-        }
-
         /// <summary>
         /// Get tenant info
         /// </summary>
@@ -67,8 +60,10 @@ namespace Juice.MultiTenant.Api.Controllers
         /// <param name="mediator"></param>
         /// <param name="model"></param>
         /// <param name="tenant"></param>
+        /// <param name="idempotencyKey"></param>
         /// <returns></returns>
         [HttpPut]
+        [Idempotent]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -77,21 +72,16 @@ namespace Juice.MultiTenant.Api.Controllers
         public async Task<ActionResult> UpdateAsync(
             [FromServices] IMediator mediator,
             [FromBody] TenantBasicUpdateModel model,
-            [FromServices] ITenant tenant)
+            [FromServices] ITenant tenant,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
             if(string.IsNullOrWhiteSpace(tenant.Id))
             {
                 return BadRequest("Tenant not resolved");
             }
 
-            var idempotencyKey = GetIdempotencyKey();
-            if (string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return BadRequest("Idempotency-Key header is required");
-            }
-
             var command = new UpdateTenantCommand(tenant.Id, model.Identifier,
-                model.Name, idempotencyKey);
+                model.Name, idempotencyKey!);
 
             var result = await mediator.Send(command);
             if (result.Succeeded)
@@ -107,28 +97,25 @@ namespace Juice.MultiTenant.Api.Controllers
         /// </summary>
         /// <param name="mediator"></param>
         /// <param name="tenant"></param>
+        /// <param name="idempotencyKey"></param>
         /// <returns></returns>
         [HttpDelete]
+        [Idempotent]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policies.TenantDeletePolicy)]
         public async Task<ActionResult> DeleteAsync(
             [FromServices] IMediator mediator,
-            [FromServices] ITenant tenant)
+            [FromServices] ITenant tenant,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
             if (string.IsNullOrWhiteSpace(tenant.Id))
             {
                 return BadRequest("Tenant not resolved");
             }
 
-            var idempotencyKey = GetIdempotencyKey();
-            if (string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return BadRequest("Idempotency-Key header is required");
-            }
-
-            var command = new DeleteTenantCommand(tenant.Id, idempotencyKey);
+            var command = new DeleteTenantCommand(tenant.Id, idempotencyKey!);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -144,28 +131,25 @@ namespace Juice.MultiTenant.Api.Controllers
         /// </summary>
         /// <param name="mediator"></param>
         /// <param name="tenant"></param>
+        /// <param name="idempotencyKey"></param>
         /// <returns></returns>
         [HttpPost("deactivate")]
+        [Idempotent]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policies.TenantOperationPolicy)]
 
         public async Task<ActionResult> DeactivateAsync(
             [FromServices] IMediator mediator,
-           [FromServices] ITenant tenant)
+           [FromServices] ITenant tenant,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
             if (string.IsNullOrWhiteSpace(tenant.Id))
             {
                 return BadRequest("Tenant not resolved");
             }
 
-            var idempotencyKey = GetIdempotencyKey();
-            if (string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return BadRequest("Idempotency-Key header is required");
-            }
-
-            var command = new AbandonTenantCommand(tenant.Id, idempotencyKey);
+            var command = new AbandonTenantCommand(tenant.Id, idempotencyKey!);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -180,28 +164,25 @@ namespace Juice.MultiTenant.Api.Controllers
         /// </summary>
         /// <param name="mediator"></param>
         /// <param name="tenant"></param>
+        /// <param name="idempotencyKey"></param>
         /// <returns></returns>
         [HttpPost("suspend")]
+        [Idempotent]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policies.TenantOperationPolicy)]
 
         public async Task<ActionResult> SuspendAsync(
             [FromServices] IMediator mediator,
-            [FromServices] ITenant tenant)
+            [FromServices] ITenant tenant,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
             if (string.IsNullOrWhiteSpace(tenant.Id))
             {
                 return BadRequest("Tenant not resolved");
             }
 
-            var idempotencyKey = GetIdempotencyKey();
-            if (string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return BadRequest("Idempotency-Key header is required");
-            }
-
-            var command = new OperationStatusCommand(tenant.Id, TenantStatus.Suspended, idempotencyKey);
+            var command = new OperationStatusCommand(tenant.Id, TenantStatus.Suspended, idempotencyKey!);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -217,28 +198,25 @@ namespace Juice.MultiTenant.Api.Controllers
         /// </summary>
         /// <param name="mediator"></param>
         /// <param name="tenant"></param>
+        /// <param name="idempotencyKey"></param>
         /// <returns></returns>
         [HttpPost("reactivate")]
+        [Idempotent]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policies.TenantOperationPolicy)]
 
         public async Task<ActionResult> ReactivateAsync(
             [FromServices] IMediator mediator,
-            [FromServices] ITenant tenant)
+            [FromServices] ITenant tenant,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
             if (string.IsNullOrWhiteSpace(tenant.Id))
             {
                 return BadRequest("Tenant not resolved");
             }
 
-            var idempotencyKey = GetIdempotencyKey();
-            if (string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return BadRequest("Idempotency-Key header is required");
-            }
-
-            var command = new OperationStatusCommand(tenant.Id, TenantStatus.Active, idempotencyKey);
+            var command = new OperationStatusCommand(tenant.Id, TenantStatus.Active, idempotencyKey!);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
@@ -255,28 +233,25 @@ namespace Juice.MultiTenant.Api.Controllers
         /// <param name="mediator"></param>
         /// <param name="model"></param>
         /// <param name="tenant"></param>
+        /// <param name="idempotencyKey"></param>
         /// <returns></returns>
         [HttpPost("transfer")]
+        [Idempotent]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policies.TenantOwnerPolicy)]
         public async Task<ActionResult> TransferAsync(
             [FromServices] IMediator mediator,
             [FromBody] TenantOwnerTransferModel model,
-            [FromServices] ITenant tenant)
+            [FromServices] ITenant tenant,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
             if (string.IsNullOrWhiteSpace(tenant.Id))
             {
                 return BadRequest("Tenant not resolved");
             }
 
-            var idempotencyKey = GetIdempotencyKey();
-            if (string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                return BadRequest("Idempotency-Key header is required");
-            }
-
-            var command = new TransferOwnershipCommand(tenant.Id, model.NewOwner, idempotencyKey);
+            var command = new TransferOwnershipCommand(tenant.Id, model.NewOwner, idempotencyKey!);
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {
