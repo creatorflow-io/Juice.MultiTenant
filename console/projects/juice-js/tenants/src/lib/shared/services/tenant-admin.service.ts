@@ -50,7 +50,7 @@ export class TenantAdminService {
       if(sortDirections.length != sortColumns.length) throw new Error("sortColumns and sortDirections must be the same length");
       for (var i = 0; i < sortColumns.length; i++) {
           params = params.set("sorts["+i+"].property", sortColumns[i])
-                .set("sorts["+i+"].sortDir", sortDirections[i]);
+                .set("sorts["+i+"].direction", sortDirections[i]);
       }
     }
     return this.http.get<TableQueryResult<TenantBasic>>(`${this.options.apiEndpoint}/api/v${this.options.apiVersion}/tenants`,

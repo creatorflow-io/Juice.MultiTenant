@@ -15,6 +15,7 @@
     },
     "baseUrl": "./",
     "ignoreDeprecations": "6.0",
+    "rootDir": ".",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,

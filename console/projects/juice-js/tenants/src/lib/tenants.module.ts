@@ -11,7 +11,7 @@ import { TenantSummaryComponent } from './tenant-summary/tenant-summary.componen
 import { TenantCreateComponent } from './tenant-create/tenant-create.component';
 import { TenantUpdateComponent } from './tenant-update/tenant-update.component';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { MatMultiSortModule } from 'ngx-mat-multi-sort';
+import { MatMultiSort, MatMultiSortHeaderComponent } from 'ngx-mat-multi-sort';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { TenantSettingsComponent } from './tenant-settings/tenant-settings.component';
 import { DictBuilderModule } from '@juice-js/dict-builder';
@@ -36,7 +36,8 @@ import { IdempotencyModule } from '@juice-js/core';
     CommonModule,
     MaterialModule,
     ClipboardModule,
-    MatMultiSortModule,
+    MatMultiSort,
+    MatMultiSortHeaderComponent,
     DictBuilderModule,
     IdempotencyModule
   ],
