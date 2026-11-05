@@ -3,7 +3,10 @@ using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
 using Juice.Messaging;
 using Juice.Extensions.MultiTenant;
 using Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events;
+using Juice.MultiTenant.Shared.Enums;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Juice.MultiTenant.Tests")]
 namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
 {
     /// <summary>
@@ -30,10 +33,13 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
         {
             if (_cacheStore != null)
             {
-                var tenant = await _context.TenantInfo.Where(t => t.Identifier == @event.TenantIdentifier)
-                    .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
-                    .FirstOrDefaultAsync();
-                if (tenant is TTenantInfo tenantInfo)
+                // This event can arrive after a later deactivation or suspension, so the row decides, not the event.
+                var tenant = await FindActiveAsync(@event.TenantIdentifier);
+                if (tenant == null)
+                {
+                    _logger.LogInformation("Tenant {identifier} is not active, it was not added to DistributedCacheStore", @event.TenantIdentifier);
+                }
+                else if (tenant is TTenantInfo tenantInfo)
                 {
                     var added = await _cacheStore.TryAddAsync(tenantInfo);
                     if (added)
@@ -44,10 +50,17 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
                     {
                         _logger.LogInformation("Tenant {identifier} info was not updated to DistributedCacheStore", @event.TenantIdentifier);
                     }
+
+                    // A deactivation committed since the read may have removed the entry before it was added.
+                    if (await FindActiveAsync(@event.TenantIdentifier) == null)
+                    {
+                        await _cacheStore.TryRemoveAsync(@event.TenantIdentifier);
+                        _logger.LogInformation("Tenant {identifier} stopped being active, it was removed from DistributedCacheStore", @event.TenantIdentifier);
+                    }
                 }
                 else
                 {
-                    _logger.LogWarning("Tenant {identifier} info was not found", @event.TenantIdentifier);
+                    _logger.LogWarning("Tenant {identifier} info is not a {type}", @event.TenantIdentifier, typeof(TTenantInfo).Name);
                 }
             }
             else
@@ -55,5 +68,11 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
                 _logger.LogInformation("DistributedCacheStore was not registerd in DI");
             }
         }
+
+        private Task<TenantInfo?> FindActiveAsync(string identifier)
+            => _context.TenantInfo.AsNoTracking()
+                .Where(t => t.Identifier == identifier && t.Status == TenantStatus.Active)
+                .Select(ti => new TenantInfo(ti.Id, ti.Identifier, ti.Name, ti.Properties, ti.OwnerUser, ti.Tier, ti.Region))
+                .FirstOrDefaultAsync();
     }
 }
