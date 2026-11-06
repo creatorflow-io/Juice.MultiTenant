@@ -26,7 +26,8 @@ namespace Juice.MultiTenant.Api.IntegrationEvents.Handlers
             var rs = await _mediator.Send(command);
             if (!rs.Succeeded)
             {
-                _logger.LogError("Failed to change initialization state {id}. {message}", @event.TenantIdentifier, rs.Message);
+                // Fails the message, so a retry policy can try again; returning would acknowledge it and lose the change.
+                throw new InvalidOperationException($"Failed to change initialization state of {@event.TenantIdentifier}: {rs.Message}");
             }
         }
     }
