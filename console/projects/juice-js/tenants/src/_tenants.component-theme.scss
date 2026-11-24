@@ -1,6 +1,39 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
+/// The tenants pages' classes for Material 3 apps, from the system colours and juice-layout's --juice-* tokens: include
+/// it once, after `layout.theme()`. They follow the layout's palette, light and dark, so no theme is passed. Without the
+/// layout's tokens (another layout on Material 3), "success" falls back to Material's green.
+@mixin component-styles() {
+    $ok: var(--juice-ok, light-dark(#2e7d32, #81c784));
+    $ok-bg: var(--juice-ok-bg, light-dark(#e3efe3, #2e4a30));
+    .inherited { color: var(--mat-sys-on-surface-variant); }
+    .overridden { color: var(--mat-sys-tertiary); }
+
+    .bg-accent { background-color: var(--mat-sys-tertiary-container) !important; }
+    .bg-warn { background-color: var(--mat-sys-error-container) !important; }
+    .bg-success { background-color: $ok-bg !important; }
+
+    .color-warn {
+        color: var(--mat-sys-error) !important;
+        .mdc-list-item__primary-text,
+        &.mat-mdc-menu-item .mat-icon-no-color { color: var(--mat-sys-error) !important; }
+    }
+    .color-success {
+        color: $ok !important;
+        .mdc-list-item__primary-text,
+        &.mat-mdc-menu-item .mat-icon-no-color { color: $ok !important; }
+    }
+
+    .mat-success.mat-mdc-raised-button:not(:disabled) { background-color: $ok !important; }
+
+    .mat-form-field-hide-placeholder .mat-mdc-select-placeholder {
+        color: var(--mat-select-placeholder-text-color);
+        -webkit-text-fill-color: var(--mat-select-placeholder-text-color);
+    }
+}
+
+/// Material 2 (1.x): the same classes from an M2 theme, under each theme's selector.
 @mixin component-themes($theme){
     // Get the color config from the theme.
     $color-config: mat.m2-get-color-config($theme);
