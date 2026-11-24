@@ -45,7 +45,15 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
         }
         public async Task<TTenantInfo?> TryGetAsync(string id)
         {
-            var tenantInfo = await _client.TryGetAsync(new TenantIdenfier { Id = id }, deadline: DateTime.UtcNow.AddSeconds(10));
+            Grpc.TenantInfo? tenantInfo;
+            try
+            {
+                tenantInfo = await _client.TryGetAsync(new TenantIdenfier { Id = id }, deadline: DateTime.UtcNow.AddSeconds(10));
+            }
+            catch (RpcException e) when (e.StatusCode == StatusCode.NotFound)
+            {
+                return default; // no such tenant
+            }
             return tenantInfo == null ? default
                 : JsonSerializer.Deserialize<TTenantInfo>(
                         JsonSerializer.Serialize(tenantInfo));
@@ -56,7 +64,15 @@ namespace Juice.MultiTenant.Grpc.Finbuckle
             {
                 return cachedTenant;
             }
-            var tenantInfo = await _client.TryGetByIdentifierAsync(new TenantIdenfier { Identifier = identifier }, deadline: DateTime.UtcNow.AddSeconds(10));
+            Grpc.TenantInfo? tenantInfo;
+            try
+            {
+                tenantInfo = await _client.TryGetByIdentifierAsync(new TenantIdenfier { Identifier = identifier }, deadline: DateTime.UtcNow.AddSeconds(10));
+            }
+            catch (RpcException e) when (e.StatusCode == StatusCode.NotFound)
+            {
+                return default; // no such tenant
+            }
             var resolvedTenant = tenantInfo == null ? default
                 : JsonSerializer.Deserialize<TTenantInfo>(
                         JsonSerializer.Serialize(tenantInfo));

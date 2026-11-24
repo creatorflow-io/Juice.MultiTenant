@@ -39,7 +39,8 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                 var t = await _dbContext.TenantInfo
                             .Where(ti => ti.Identifier == request.Identifier)
                             .SingleOrDefaultAsync();
-                return t == null ? null : new MultiTenant.Grpc.TenantInfo
+                // No such tenant: NotFound, which the client reads as none (a null reply can't be sent, and failed as Unknown).
+                return t == null ? throw new RpcException(new Status(StatusCode.NotFound, "No such tenant")) : new MultiTenant.Grpc.TenantInfo
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -115,7 +116,8 @@ namespace Juice.MultiTenant.Api.Grpc.Services
             var ti = await _dbContext.TenantInfo
                             .Where(ti => ti.Id == request.Id)
                             .SingleOrDefaultAsync();
-            return ti == null ? null : new MultiTenant.Grpc.TenantInfo
+            // No such tenant: NotFound, which the client reads as none (a null reply can't be sent, and failed as Unknown).
+            return ti == null ? throw new RpcException(new Status(StatusCode.NotFound, "No such tenant")) : new MultiTenant.Grpc.TenantInfo
             {
                 Id = ti.Id,
                 Name = ti.Name,
