@@ -121,6 +121,8 @@ namespace Juice.MultiTenant.Api.Grpc.Services
                 Name = ti.Name,
                 Identifier = ti.Identifier,
                 Disabled = ti.Disabled,
+                // Services check it (the tenant pattern): a suspended tenant isn't served.
+                Status = ti.Status.StringValue(),
                 SerializedProperties = JsonConvert.SerializeObject(ti.Properties)
             };
         }

@@ -51,7 +51,12 @@ namespace Juice.MultiTenant.EF.Stores
         public virtual async Task<bool> TryAddAsync(TTenantInfo tenantInfo)
         {
             var tenant = (ITenantInfo)tenantInfo;
-            var id = tenant.Id ?? _idGenerator.GenerateUniqueId();
+            // A GUID in its standard form (the tenant pattern); a given Id that isn't a GUID is refused.
+            var id = string.IsNullOrWhiteSpace(tenant.Id) ? TenantIdForm.New() : TenantIdForm.Standard(tenant.Id);
+            if (id is null || (!string.IsNullOrWhiteSpace(tenant.Id) && !Guid.TryParse(tenant.Id, out _)))
+            {
+                return false;
+            }
             var entity = new Tenant
             {
                 Id = id,

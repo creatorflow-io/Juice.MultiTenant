@@ -1,13 +1,20 @@
-﻿using Juice.Messaging;
+using Juice.Messaging;
 
 namespace Juice.MultiTenant.Api.Contracts.IntegrationEvents.Events
 {
     /// <summary>
-    /// Tenant Properties Changed Integration Event
+    /// Tenant Properties Changed Integration Event: the tenant's Id (<c>TenantId</c>), which services key on, and its Identifier.
     /// </summary>
-    /// <param name="TenantIdentifier"></param>
-    public record TenantPropertiesChangedIntegrationEvent(string TenantIdentifier) : IntegrationEvent
+    public record TenantPropertiesChangedIntegrationEvent : IntegrationEvent
     {
         public override string EventName => TenantEventNameConstants.TenantPropertiesChanged;
+
+        public string TenantIdentifier { get; init; }
+
+        public TenantPropertiesChangedIntegrationEvent(string tenantId, string tenantIdentifier)
+        {
+            TenantId = tenantId;
+            TenantIdentifier = tenantIdentifier;
+        }
     }
 }

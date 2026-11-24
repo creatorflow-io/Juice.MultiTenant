@@ -20,7 +20,7 @@ namespace Juice.MultiTenant.Api.Domain.EventHandlers
             .LogTrace("Tenant with Identifier: {Identifier} has been successfully updated properties",
                 notification.TenantIdentifier);
 
-            var integrationEvent = new TenantPropertiesChangedIntegrationEvent(notification.TenantIdentifier);
+            var integrationEvent = new TenantPropertiesChangedIntegrationEvent(notification.TenantId ?? "", notification.TenantIdentifier);
             await _outbox.AddEventAsync(integrationEvent);
         }
     }
