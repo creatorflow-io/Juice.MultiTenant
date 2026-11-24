@@ -25,6 +25,9 @@ namespace Juice.MultiTenant.Tests
     [InitializeMessageContext]
     public class TenantCommandsTests
     {
+        /// <summary>The test tenant's Id: a GUID, as every tenant's is (the tenant pattern); its Identifier stays "xunittest".</summary>
+        private const string XUnitTenantId = "0193f0aa-0000-7000-8000-0000000000d4";
+
         private readonly ITestOutputHelper _output;
         private readonly TimeSpan _wait = TimeSpan.FromSeconds(2);
 
@@ -170,10 +173,11 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var deleteCommand = new DeleteTenantCommand("xunittest", idGenerator.GenerateRandomId(6)); // make sure the tenant not exist before create
+            var deleteCommand = new DeleteTenantCommand(XUnitTenantId, idGenerator.GenerateRandomId(6)); // make sure the tenant not exist before create
             await mediator.Send(deleteCommand);
+            await mediator.Send(new DeleteTenantCommand("xunittest", idGenerator.GenerateRandomId(6))); // and the one earlier runs made (Id = Identifier)
 
-            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default, idGenerator.GenerateRandomId(6));
+            var createCommand = new CreateTenantCommand(XUnitTenantId, "xunittest", "Test tenant", default, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -198,7 +202,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var createCommand = new CreateTenantCommand("xunittest", "xunittest", "Test tenant", default, idGenerator.GenerateRandomId(6));
+            var createCommand = new CreateTenantCommand(XUnitTenantId, "xunittest", "Test tenant", default, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -221,7 +225,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var updateCommand = new UpdateTenantCommand("xunittest", "test1", "Changed name", idGenerator.GenerateRandomId(6));
+            var updateCommand = new UpdateTenantCommand(XUnitTenantId, "test1", "Changed name", idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -269,7 +273,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var command = new ApprovalProcessCommand("xunittest", Shared.Enums.TenantStatus.PendingApproval, idGenerator.GenerateRandomId(6));
+            var command = new ApprovalProcessCommand(XUnitTenantId, Shared.Enums.TenantStatus.PendingApproval, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -282,7 +286,7 @@ namespace Juice.MultiTenant.Tests
 
             result.Succeeded.Should().BeTrue();
 
-            var acceptCommand = new ApprovalProcessCommand("xunittest", Shared.Enums.TenantStatus.Approved, idGenerator.GenerateRandomId(6));
+            var acceptCommand = new ApprovalProcessCommand(XUnitTenantId, Shared.Enums.TenantStatus.Approved, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var acceptResult = await mediator.Send(acceptCommand);
@@ -305,7 +309,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var command = new InitializationProcessCommand("xunittest", Shared.Enums.TenantStatus.Initializing, idGenerator.GenerateRandomId(6));
+            var command = new InitializationProcessCommand(XUnitTenantId, Shared.Enums.TenantStatus.Initializing, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -318,7 +322,7 @@ namespace Juice.MultiTenant.Tests
 
             result.Succeeded.Should().BeTrue();
 
-            var command2 = new InitializationProcessCommand("xunittest", Shared.Enums.TenantStatus.Initialized, idGenerator.GenerateRandomId(6));
+            var command2 = new InitializationProcessCommand(XUnitTenantId, Shared.Enums.TenantStatus.Initialized, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result2 = await mediator.Send(command2);
@@ -342,7 +346,7 @@ namespace Juice.MultiTenant.Tests
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
 
-            var command = new AdminStatusCommand("xunittest", Shared.Enums.TenantStatus.PendingToActive, idGenerator.GenerateRandomId(6));
+            var command = new AdminStatusCommand(XUnitTenantId, Shared.Enums.TenantStatus.PendingToActive, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -355,7 +359,7 @@ namespace Juice.MultiTenant.Tests
 
             result.Succeeded.Should().BeTrue();
 
-            var command2 = new AdminStatusCommand("xunittest", Shared.Enums.TenantStatus.Active, idGenerator.GenerateRandomId(6));
+            var command2 = new AdminStatusCommand(XUnitTenantId, Shared.Enums.TenantStatus.Active, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result2 = await mediator.Send(command2);
@@ -378,7 +382,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var command = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Inactive, idGenerator.GenerateRandomId(6));
+            var command = new OperationStatusCommand(XUnitTenantId, Shared.Enums.TenantStatus.Inactive, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -391,7 +395,7 @@ namespace Juice.MultiTenant.Tests
 
             await Task.Delay(1000); // waitting for integration events
 
-            var command2 = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Active, idGenerator.GenerateRandomId(6));
+            var command2 = new OperationStatusCommand(XUnitTenantId, Shared.Enums.TenantStatus.Active, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result2 = await mediator.Send(command2);
@@ -401,7 +405,7 @@ namespace Juice.MultiTenant.Tests
 
             await Task.Delay(1000); // waitting for integration events
 
-            var command3 = new OperationStatusCommand("xunittest", Shared.Enums.TenantStatus.Suspended, idGenerator.GenerateRandomId(6));
+            var command3 = new OperationStatusCommand(XUnitTenantId, Shared.Enums.TenantStatus.Suspended, idGenerator.GenerateRandomId(6));
             stopwatch.Start();
 
             var result3 = await mediator.Send(command3);
@@ -429,7 +433,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var command = new AbandonTenantCommand("xunittest", idGenerator.GenerateRandomId(6));
+            var command = new AbandonTenantCommand(XUnitTenantId, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 
@@ -452,7 +456,7 @@ namespace Juice.MultiTenant.Tests
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var idGenerator = scope.ServiceProvider.GetRequiredService<IStringIdGenerator>();
 
-            var command = new DeleteTenantCommand("xunittest", idGenerator.GenerateRandomId(6));
+            var command = new DeleteTenantCommand(XUnitTenantId, idGenerator.GenerateRandomId(6));
 
             var stopwatch = new Stopwatch();
 

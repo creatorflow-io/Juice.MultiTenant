@@ -30,9 +30,15 @@ namespace Juice.MultiTenant.Domain.CommandHandlers.Tenants
                 {
                     return OperationResult.Failed("Identifier is required");
                 }
+                // The Id is a GUID in its standard form: generated when none is given, and never the Identifier (the tenant pattern).
+                var id = string.IsNullOrWhiteSpace(request.Id) ? TenantIdForm.New() : TenantIdForm.Standard(request.Id);
+                if (id is null || (!string.IsNullOrWhiteSpace(request.Id) && !Guid.TryParse(request.Id, out _)))
+                {
+                    return OperationResult.Failed("Id must be a GUID");
+                }
                 var tenant = new Tenant
                 {
-                    Id = request.Id ?? request.Identifier,
+                    Id = id,
                     Identifier = request.Identifier,
                     Name = request.Name
                 };

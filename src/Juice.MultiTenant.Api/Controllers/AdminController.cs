@@ -90,7 +90,7 @@ namespace Juice.MultiTenant.Api.Controllers
             [FromBody] TenantCreateModel model,
             [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey = null)
         {
-            var id = idGenerator.GenerateUniqueId();
+            var id = TenantIdForm.New(); // a GUID in its standard form (the tenant pattern), not a base32 string
 
             var properties = model.Properties ?? [];
             if (!string.IsNullOrEmpty(model.AdminUser))
