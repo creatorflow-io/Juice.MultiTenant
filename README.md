@@ -23,3 +23,23 @@ passes. Its Identifier (`acme`) is for URLs and display only. This follows the t
 - **Lifecycle events** carry the Id (`TenantId`) and the Identifier. Services key on the Id. These are tenant created, activated,
   deactivated, suspended, abandoned, deleted, settings changed and properties changed.
 - **The gRPC store** sends each tenant's status, so a service can refuse a tenant that isn't active.
+
+## Console
+
+`console/` is the Angular workspace for the tenant admin UI (formerly the `juice-tenants` repository, moved here with
+its history):
+
+| Project | Package | What |
+|---|---|---|
+| `projects/juice-js/tenants` | `@juice-js/tenants` | tenant admin pages (list, edit, settings) |
+| `projects/juice-js/dict-builder` | `@juice-js/dict-builder` | the key/value dictionary editor the tenant pages use |
+| `projects/app` | (not published) | a host app that runs the pages against a local Juice.MultiTenant API |
+
+```bash
+cd console
+npm ci
+npm run build:lib    # dict-builder, then tenants (the app and tenants read them from dist/)
+npm run test:ci      # Karma, ChromeHeadless
+npm run build        # the app
+npm start            # the app on https://localhost:4200 with the ASP.NET dev certificate
+```

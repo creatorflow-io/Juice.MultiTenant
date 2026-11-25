@@ -1,0 +1,58 @@
+{
+  "name": "juice-tenants",
+  "version": "0.0.0",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || ^24.0.0"
+  },
+  "scripts": {
+    "ng": "ng",
+    "start": "run-script-os",
+    "start:windows": "ng serve --port 4200 --ssl --ssl-cert %APPDATA%\\ASP.NET\\https\\aspnetapp.crt --ssl-key %APPDATA%\\ASP.NET\\https\\aspnetapp-decrypted.key",
+    "start:default": "ng serve --port 4200 --ssl --ssl-cert $HOME/.aspnet/https/aspnetapp.crt --ssl-key $HOME/.aspnet/https/aspnetapp-decrypted.key",
+    "build": "ng build app",
+    "build:lib": "ng build @juice-js/dict-builder && ng build @juice-js/tenants",
+    "watch": "ng build --watch --configuration development",
+    "watch:lib": "ng build @juice-js/tenants --watch --configuration development",
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "22.0.6",
+    "@angular/cdk": "22.0.4",
+    "@angular/common": "22.0.6",
+    "@angular/compiler": "22.0.6",
+    "@angular/core": "22.0.6",
+    "@angular/forms": "22.0.6",
+    "@angular/material": "22.0.4",
+    "@angular/platform-browser": "22.0.6",
+    "@angular/platform-browser-dynamic": "22.0.6",
+    "@angular/router": "22.0.6",
+    "@juice-js/auth": "1.2.0",
+    "@juice-js/core": "1.2.0",
+    "@juice-js/layout": "1.2.0",
+    "@juice-js/localize": "1.2.0",
+    "@ngx-translate/core": "^18.0.0",
+    "angular-oauth2-oidc": "^22.0.2",
+    "ngx-mat-multi-sort": "^21.0.3",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.1"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "22.0.6",
+    "@angular/cli": "^22.0.6",
+    "@angular/compiler-cli": "22.0.6",
+    "@types/jasmine": "~4.3.0",
+    "istanbul-lib-instrument": "^6.0.3",
+    "jasmine-core": "~4.5.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.0.0",
+    "ng-packagr": "22.0.1",
+    "run-script-os": "^1.1.6",
+    "typescript": "6.0.3"
+  }
+}

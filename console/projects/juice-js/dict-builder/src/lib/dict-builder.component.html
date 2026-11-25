@@ -1,0 +1,62 @@
+
+@if (loading) {
+  <mat-progress-bar mode="indeterminate" style="width: 100%; margin-bottom: 20px;"></mat-progress-bar>
+}
+@for (kvp of models; track kvp) {
+  <mat-form-field>
+    <mat-label ><span class="key">{{ kvp.key }}</span>@if (kvp.inherited) {
+    <span class="inherited">- {{ 'inherited' | translate }}</span>
+    }@if (kvp.override) {
+    <span class="overridden">- {{ 'overridden' | translate }}</span>
+  }</mat-label>
+  @if (kvp.keyEditing) {
+    <input matInput [(ngModel)]="kvp.key" [errorStateMatcher]="matcher">
+  }
+  @if (keyDuplicated(kvp.key)) {
+    <mat-error>
+      {{ 'This key is already existed' | translate }}
+    </mat-error>
+  }
+  @if (kvp.keyEditing) {
+    <button matSuffix mat-icon-button matTooltip="{{ 'Restore key' | translate}}" (click)="kvp.RestoreKey()">
+      <mat-icon>restore</mat-icon>
+    </button>
+  }
+  @if (kvp.keyEditing) {
+    <button matSuffix mat-icon-button matTooltip="{{ 'Update key' | translate}}" (click)="updateKey(kvp.key)">
+      <mat-icon>save</mat-icon>
+    </button>
+  }
+  @if (!kvp.keyEditing) {
+    <input matInput   [(ngModel)]="kvp.value">
+  }
+  @if (!kvp.keyEditing && !kvp.valueEditing) {
+    <button matSuffix mat-icon-button matTooltip="{{ 'Edit key' | translate}}" (click)="kvp.EditKey()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  }
+  @if (!kvp.keyEditing && kvp.valueEditing) {
+    <button matSuffix mat-icon-button matTooltip="{{ 'Update value' | translate}}" (click)="updateValue(kvp.key)">
+      <mat-icon>save</mat-icon>
+    </button>
+  }
+  @if (!kvp.keyEditing && kvp.valueEditing) {
+    <button matSuffix mat-icon-button matTooltip="{{ 'Restore value' | translate}}" (click)="kvp.RestoreValue()">
+      <mat-icon>restore</mat-icon>
+    </button>
+  }
+  @if (kvp.value && !kvp.keyEditing) {
+    <button matSuffix mat-icon-button matTooltip="{{ 'Clear value' | translate}}" (click)="clear(kvp.key)">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+  <button matSuffix mat-icon-button matTooltip="{{ 'Remove key-value' | translate}}" color="warn" (click)="remove(kvp.key)">
+    <mat-icon>delete</mat-icon>
+  </button>
+</mat-form-field>
+}
+@if (!loading) {
+  <button mat-icon-button matTooltip="{{ 'Add new key' | translate }}" (click)="add()">
+    <mat-icon>add</mat-icon>
+  </button>
+}

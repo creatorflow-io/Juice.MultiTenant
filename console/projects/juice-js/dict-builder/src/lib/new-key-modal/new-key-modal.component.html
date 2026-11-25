@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{ 'Enter New Key' | translate }}</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+    <mat-label>Key</mat-label>
+    <input matInput [(ngModel)]="key" />
+    </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="onSubmit()"><mat-icon>save</mat-icon>{{ 'Save' | translate }}</button>
+    <button mat-raised-button (click)="onCancel()"><mat-icon>cancel</mat-icon>{{ 'Cancel' | translate }}</button>
+</mat-dialog-actions>

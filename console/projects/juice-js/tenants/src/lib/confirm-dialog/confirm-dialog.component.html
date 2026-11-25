@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{ confirmTitle | translate }}</h2>
+<mat-dialog-content>
+  <p [class]="confirmMessageClasses">{{ confirmMessage | translate }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="confirm()" [color]="confirmButtonColor">{{ confirmButtonText | translate }}</button>
+  <button mat-raised-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
+</mat-dialog-actions>

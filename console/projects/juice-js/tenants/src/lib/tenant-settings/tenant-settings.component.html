@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{ title | translate }}</h2>
+<mat-dialog-content>
+    <juice-dict-builder #dict></juice-dict-builder>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button [disabled]="loading" color="primary" (click)="save()"><mat-icon>save</mat-icon>{{ 'Save' | translate }}</button>
+    <button mat-raised-button (click)="cancel()"><mat-icon>cancel</mat-icon>{{ 'Cancel' | translate }}</button>
+</mat-dialog-actions>
