@@ -1,6 +1,6 @@
 {
   "name": "juice-tenants",
-  "version": "1.1.0-alpha.4",
+  "version": "0.0.0",
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || ^24.0.0"
   },
@@ -9,9 +9,12 @@
     "start": "run-script-os",
     "start:windows": "ng serve --port 4200 --ssl --ssl-cert %APPDATA%\\ASP.NET\\https\\aspnetapp.crt --ssl-key %APPDATA%\\ASP.NET\\https\\aspnetapp-decrypted.key",
     "start:default": "ng serve --port 4200 --ssl --ssl-cert $HOME/.aspnet/https/aspnetapp.crt --ssl-key $HOME/.aspnet/https/aspnetapp-decrypted.key",
-    "build": "ng build",
+    "build": "ng build app",
+    "build:lib": "ng build @juice-js/dict-builder && ng build @juice-js/tenants",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "watch:lib": "ng build @juice-js/tenants --watch --configuration development",
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {
@@ -40,7 +43,6 @@
     "@angular-devkit/build-angular": "22.0.6",
     "@angular/cli": "^22.0.6",
     "@angular/compiler-cli": "22.0.6",
-    "@juice-js/semantic-release-npm": "2.0.3-next.2",
     "@types/jasmine": "~4.3.0",
     "istanbul-lib-instrument": "^6.0.3",
     "jasmine-core": "~4.5.0",
@@ -51,9 +53,6 @@
     "karma-jasmine-html-reporter": "~2.0.0",
     "ng-packagr": "22.0.1",
     "run-script-os": "^1.1.6",
-    "semantic-release": "^22.0.5",
     "typescript": "6.0.3"
-  },
-  "readme": "ERROR: No README data found!",
-  "_id": "juice-tenants@1.1.0-alpha.4"
+  }
 }

@@ -1,26 +1,27 @@
 {
   "name": "@juice-js/tenants",
-  "version": "1.0.4",
+  "version": "1.3.0",
   "description": "Juice tenants admin module",
   "author": "jack@creatorflow.io",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creatorflow-io/juice-tenants/issues"
+    "url": "https://github.com/creatorflow-io/Juice.MultiTenant/issues"
   },
-  "homepage": "https://github.com/creatorflow-io/juice-tenants#readme",
+  "homepage": "https://github.com/creatorflow-io/Juice.MultiTenant#readme",
   "publishConfig": {
     "access": "public",
     "provenance": true
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/creatorflow-io/juice-tenants.git"
+    "url": "git+https://github.com/creatorflow-io/Juice.MultiTenant.git",
+    "directory": "console/projects/juice-js/tenants"
   },
   "peerDependencies": {
-    "@juice-js/dict-builder": "^1.0.3",
+    "@juice-js/dict-builder": "^1.3.0",
     "@juice-js/core": "^1.2.0"
   },
-  "exports":{
+  "exports": {
     ".": {
       "sass": "./theming/_tenants.component-theme.scss"
     }
