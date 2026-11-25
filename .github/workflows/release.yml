@@ -1,0 +1,128 @@
+name: Release
+
+# Create a GitHub release on master (or on release/* to patch an older line). The tag names the package and its
+# version (no "v"); each side has its own version and is released on its own:
+#   api-10.4.0      → Juice.MultiTenant.*, Juice.Extensions.MultiTenant.AspNetCore  → nuget.org
+#   console-1.3.0   → @juice-js/dict-builder and @juice-js/tenants (same version)    → npmjs
+# A pre-release version (api-10.4.0-beta.1, console-1.3.0-rc.1) is published as a pre-release; Juice.MultiTenant then
+# references the Juice packages of the same stage (-beta.*, -rc.*).
+# npm dist-tag: "latest" for a stable release, unless npm's latest is already a newer stable version (patching an older
+# line: then the branch name, such as "release-10"); for a pre-release, its label ("beta", "rc").
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      package: ${{ steps.tag.outputs.package }}
+      version: ${{ steps.tag.outputs.version }}
+      dist-tag: ${{ steps.tag.outputs.dist-tag }}
+      juice-suffix: ${{ steps.tag.outputs.juice-suffix }}
+    steps:
+      - name: Check the tag and the branch
+        id: tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          TARGET: ${{ github.event.release.target_commitish }}
+          NPM_PACKAGE: '@juice-js/tenants'
+        run: |
+          if ! [[ "$TAG" =~ ^(api|console)-([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?)$ ]]; then
+            echo "::error::The release tag must be api-<version> or console-<version>, for example api-10.4.0 or console-1.3.0-rc.1 (no 'v'), not '$TAG'"; exit 1
+          fi
+          package=${BASH_REMATCH[1]}; version=${BASH_REMATCH[2]}
+          if [[ "$TARGET" != "master" && "$TARGET" != release/* ]]; then
+            echo "::error::Release from master or a release/* branch, not '$TARGET'"; exit 1
+          fi
+          suffix=''
+          if [[ "$version" == *-* ]]; then
+            label=${version#*-}; tag=${label%%.*}
+            [[ "$tag" == beta || "$tag" == rc ]] && suffix="-$tag.*"
+          elif [[ "$TARGET" == "master" ]]; then
+            tag=latest
+          else
+            # A stable release from release/*: "latest" unless npm's latest is a newer stable version, so patching an
+            # older line never moves latest back. The current line is released from release/* too.
+            current=$(npm view "$NPM_PACKAGE" dist-tags.latest 2>/dev/null || true)
+            newest=$(printf '%s\n%s\n' "$current" "$version" | sort -V | tail -1)
+            if [[ -z "$current" || "$current" == *-* || "$newest" == "$version" ]]; then tag=latest; else tag=${TARGET//\//-}; fi
+          fi
+          {
+            echo "package=$package"
+            echo "version=$version"
+            echo "dist-tag=$tag"
+            echo "juice-suffix=$suffix"
+          } >> "$GITHUB_OUTPUT"
+          echo "Publishing $package $version from $TARGET; npm dist-tag $tag; Juice references ${suffix:-stable}"
+
+  # Trusted publishing: nuget.org matches its policy against this workflow file, so the push runs here.
+  # Policy: owner creatorflow-io, repository Juice.MultiTenant, workflow file release.yml.
+  nuget:
+    needs: check
+    if: needs.check.outputs.package == 'api'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+      JuiceRefSuffix: ${{ needs.check.outputs.juice-suffix }}
+      GITHUB_PACKAGE_USERNAME: ${{ github.actor }}
+      GITHUB_PACKAGE_TOKEN: ${{ secrets.GIT_HUB_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - run: dotnet restore --no-cache
+      - run: dotnet build --no-restore --configuration Release -p:Version=$VERSION
+      - run: dotnet test --no-build --configuration Release
+      - run: dotnet pack --no-build --configuration Release -p:Version=$VERSION -p:PackageOutputPath=$GITHUB_WORKSPACE/packages
+      - name: NuGet login
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Push ${{ env.VERSION }} to nuget.org
+        run: dotnet nuget push "packages/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
+
+  npm:
+    needs: check
+    if: needs.check.outputs.package == 'console'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # npm provenance
+    defaults:
+      run:
+        working-directory: console
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+      DIST_TAG: ${{ needs.check.outputs.dist-tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: console/package-lock.json
+      - run: npm ci
+      - run: npm run build:lib
+      - run: npm run test:ci
+      # dict-builder first: tenants has it as a peer dependency.
+      - name: Publish ${{ env.VERSION }}
+        run: |
+          for dir in dict-builder tenants; do
+            pushd "dist/juice-js/$dir" > /dev/null
+            npm version "$VERSION" --no-git-tag-version --allow-same-version   # a stable tag matches package.json
+            npm publish --tag "$DIST_TAG"
+            popd > /dev/null
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
