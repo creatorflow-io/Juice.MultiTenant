@@ -1,0 +1,67 @@
+:host{
+    display: block;
+}
+
+mat-form-field{
+    width: 100%;
+}
+
+.additional-selection{
+    opacity: 0.75;
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+.clear-statuses{
+    padding: 10px;
+    cursor: pointer;
+}
+
+.button-cell, .actions-cell{
+    display: flex;
+    align-items: center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.button-cell{
+    justify-content: space-between;
+}
+.actions-cell{
+    justify-content: center;
+    .mdc-button{
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+.table-form{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    mat-card-actions{
+        flex: 1 1 auto;
+    }
+}
+
+.mat-mdc-menu-item{
+    min-height: 38px;
+}
+
+.controls{
+    display: flex;
+    .control-buttons{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .control-buttons-container{
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+    }
+    .spacer{
+        height: 22px;
+    }
+}
