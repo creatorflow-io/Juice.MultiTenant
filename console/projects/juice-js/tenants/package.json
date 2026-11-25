@@ -18,8 +18,8 @@
     "directory": "console/projects/juice-js/tenants"
   },
   "peerDependencies": {
-    "@juice-js/dict-builder": "^1.3.0",
-    "@juice-js/core": "^1.2.0"
+    "@juice-js/core": "^2.3.0",
+    "@juice-js/dict-builder": "^1.3.0"
   },
   "exports": {
     ".": {

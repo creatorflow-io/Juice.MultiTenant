@@ -12,6 +12,8 @@ export const environment = {
         responseType: 'code',
         scope: 'openid profile roles offline_access localize_api',
         basePath : 'https://localhost:4200/auth',
+        // @juice-js/auth 2.x sends the access token only to the listed URLs ('' is the app's own origin).
+        allowedUrls: ['', 'https://localhost:44314'],
     },
     layout:{
         brand: "cfio",
