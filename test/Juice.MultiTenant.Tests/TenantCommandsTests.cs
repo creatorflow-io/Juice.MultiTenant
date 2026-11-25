@@ -62,7 +62,7 @@ namespace Juice.MultiTenant.Tests
             await resolver.ServiceProvider.MigrateOutboxAsync<TenantStoreDbContext>();
         }
 
-        [Fact(DisplayName = "Init RabbitMQ"), TestPriority(901)]
+        [IgnoreOnCIFact(DisplayName = "Init RabbitMQ"), TestPriority(901)]
         public async Task Init_RabbitMQAsync()
         {
             var resolver = DependencyResolver.Create((services, configuration) =>
