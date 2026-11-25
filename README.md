@@ -43,3 +43,25 @@ npm run test:ci      # Karma, ChromeHeadless
 npm run build        # the app
 npm start            # the app on https://localhost:4200 with the ASP.NET dev certificate
 ```
+
+## Building and releasing
+
+`build.yml` builds and tests both sides on every push to `master`, `release/**` and `dev/**`. On a `release/*` branch,
+once build and test pass, it publishes alphas of each side the push changed:
+
+| Package | Alpha | Version from |
+|---|---|---|
+| `Juice.MultiTenant.*` | `<VersionPrefix>-alpha.<run>` on GitHub Packages | `VersionPrefix` in `Directory.Build.props` |
+| `@juice-js/tenants`, `@juice-js/dict-builder` | `<version>-alpha.<run>` on npm, dist-tag `alpha` | `version` in `console/projects/juice-js/*/package.json` (keep the two equal) |
+
+Run Build by hand on a `release/*` branch to publish both. Releases come from a GitHub release on `master` or a
+`release/*` branch (`release.yml`). The tag names the package and its version, without a "v":
+
+| Tag | Publishes |
+|---|---|
+| `api-10.4.0` | `Juice.MultiTenant.*` to nuget.org (trusted publishing) |
+| `console-1.3.0` | `@juice-js/dict-builder` and `@juice-js/tenants` to npm at that version. Dist-tag `latest` from `master`, `release-10` from `release/10` unless it is the newest |
+
+A pre-release version (`api-10.4.0-beta.1`, `console-1.3.0-rc.1`) is published as a pre-release, with its label as the
+npm dist-tag. A NuGet beta or rc references the Juice packages of the same stage. Each next version is the one to
+release: raise it after a release so alphas sort above it.
